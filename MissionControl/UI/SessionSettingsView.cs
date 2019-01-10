@@ -3,11 +3,11 @@ using Gtk;
 
 namespace MissionControl.UI
 {
-    public partial class NewSessionView : Window
+    public partial class SessionSettingsView : Window
     {
 
-        IUserInterface _eventHandler;
-        public NewSessionView(IUserInterface handler) : base(WindowType.Toplevel)
+        ISessionSettingsViewListener _eventHandler;
+        public SessionSettingsView(ISessionSettingsViewListener handler) : base(WindowType.Toplevel)
         {
             _eventHandler = handler;
             Build();
@@ -23,7 +23,7 @@ namespace MissionControl.UI
         protected void OnButton1Clicked(object sender, EventArgs e)
         {
             Console.WriteLine("Button clicked");
-            _eventHandler.ShowTestStandView();
+
         }
     }
 }

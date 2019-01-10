@@ -1,24 +1,29 @@
 ﻿using System;
 using System.Threading;
+using MissionControl.Connection.Commands;
 
 namespace MissionControl.Connection
 {
-    public class IOThread
+    public class IOThread : IIOThread
     {
         Thread t;
 
         public IOThread()
         {
-            t = new Thread(RunMethod);
+            t = new Thread(runMethod);
             t.Name = "IO Thread";
-            Start();
         }
 
 
-        public void Start() { t.Start(); }
-        public void Stop() { t.Abort(); }
+        public void StartThread() { t.Start(); }
+        public void StopThread() { t.Abort(); }
 
-        public void RunMethod()
+        public void SendCommand(Command cmd)
+        {
+         
+        }
+
+        private void runMethod()
         {
 
             while (true)

@@ -6,6 +6,7 @@
   </configuration>
   <import>
     <widget-library name="../bin/Debug/MissionControl.exe" internal="true" />
+    <widget-library name="../../../../../../Applications/Visual Studio.app/Contents/Resources/lib/monodevelop/AddIns/MonoDevelop.GtkCore/libstetic.dll" />
   </import>
   <widget class="Gtk.Window" id="MissionControl.UI.NewSessionView" design-size="400 300">
     <property name="MemberName" />
@@ -28,6 +29,15 @@
     <property name="WindowPosition">CenterOnParent</property>
     <child>
       <placeholder />
+    </child>
+  </widget>
+  <widget class="Gtk.Bin" id="MissionControl.UI.SVGWidget" design-size="600 600">
+    <property name="MemberName" />
+    <property name="Visible">False</property>
+    <child>
+      <widget class="Gtk.Image" id="imageView">
+        <property name="MemberName" />
+      </widget>
     </child>
   </widget>
 </stetic-interface>

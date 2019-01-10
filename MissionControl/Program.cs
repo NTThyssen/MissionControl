@@ -3,24 +3,31 @@ using Gtk;
 using MissionControl.Connection;
 using MissionControl.Data;
 using MissionControl.UI;
+using Svg;
 
 namespace MissionControl
 {
     class Program : IUIEvents
     {
-        public static void Main(string[] args)
-        {
-            Program p = new Program();
-        }
 
-        public Program() 
+        ILogThread _logThread;
+        IIOThread _ioThread;
+        IUserInterface _ui;
+
+        public Program(ILogThread logThread, IIOThread ioThread, IUserInterface ui) 
         {
-            LogThread logThread = new LogThread();
-            IOThread ioThread = new IOThread();
-            UserInterface ui = new UserInterface();
+            _logThread =  logThread;
+            _ioThread = ioThread;
+            _ui = ui;
+            //_logThread.StartThread();
+            //_ioThread.StartThread();
+
+            // Blocking call
+            _ui.StartUI(new TestStandMapping());
+
             // When UserInterface loops stop so should other threads
-            logThread.Stop();
-            ioThread.Stop();
+            _logThread.StopThread();
+            _ioThread.StopThread();
         }
 
 
@@ -32,6 +39,11 @@ namespace MissionControl
         public void OnValvePressed()
         {
             throw new NotImplementedException();
+        }
+
+        public static void Main(string[] args)
+        {
+            Program p = new Program(new LogThread(), new IOThread(), new UserInterface());
         }
     }
 }

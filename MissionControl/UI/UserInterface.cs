@@ -1,32 +1,36 @@
 ﻿using System;
 using Gtk;
+using MissionControl.Data;
 
 namespace MissionControl.UI
 {
-    public class UserInterface : IUserInterface
+    public class UserInterface : IUserInterface, ITestStandViewListener, ISessionSettingsViewListener
     {
 
-        NewSessionView _newSessionView;
+        SessionSettingsView _newSessionView;
         TestStandView _testStandView;
 
         public UserInterface()
         {
+
+        }
+
+        public void StartUI(TestStandMapping map) {
             Application.Init();
-            ShowNewSessionView();
+            //ShowNewSessionView();
+            ShowTestStandView(map);
             Application.Run();
         }
 
         public void ShowNewSessionView()
         {
-            _newSessionView = new NewSessionView(this);
-            _newSessionView.Show();
+            _newSessionView = new SessionSettingsView(this);
         }
 
-        public void ShowTestStandView()
+        public void ShowTestStandView(TestStandMapping map)
         {
-            _newSessionView.Destroy();
-            _testStandView = new TestStandView();
-            _testStandView.Show();
+            if (_newSessionView != null) _newSessionView.Destroy();
+            _testStandView = new TestStandView(this, map);
         }
     }
 }

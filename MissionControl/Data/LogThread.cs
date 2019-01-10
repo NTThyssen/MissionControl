@@ -3,22 +3,24 @@ using System.Threading;
 
 namespace MissionControl.Data
 {
-    public class LogThread
+    public class LogThread : ILogThread
     {
         Thread t;
 
         public LogThread()
         {
-            t = new Thread(RunMethod);
+            t = new Thread(runMethod);
             t.Name = "Logger Thread";
-            Start();
         }
 
 
-        public void Start() { t.Start(); }
-        public void Stop() { t.Abort(); }
+        public void StartThread() { t.Start(); }
+        public void StopThread() { t.Abort(); }
 
-        public void RunMethod() {
+        public void StartLogging(string filepath) { }
+        public void StopLogging() { }
+
+        private void runMethod() {
         
             while(true) {
                 Console.WriteLine("Thread {0}", Thread.CurrentThread.Name);

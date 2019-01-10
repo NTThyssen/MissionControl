@@ -34,6 +34,15 @@
     <Reference Include="glib-sharp, Version=2.12.0.0, Culture=neutral, PublicKeyToken=35e10195dab3c99f" />
     <Reference Include="pango-sharp, Version=2.12.0.0, Culture=neutral, PublicKeyToken=35e10195dab3c99f" />
     <Reference Include="atk-sharp, Version=2.12.0.0, Culture=neutral, PublicKeyToken=35e10195dab3c99f" />
+    <Reference Include="libstetic">
+      <HintPath>..\..\..\..\..\Applications\Visual Studio.app\Contents\Resources\lib\monodevelop\AddIns\MonoDevelop.GtkCore\libstetic.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Web" />
+    <Reference Include="System.Xml" />
+    <Reference Include="Svg">
+      <HintPath>..\packages\Svg.2.3.0\lib\net35\Svg.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="gtk-gui\gui.stetic">
@@ -49,15 +58,50 @@
     <Compile Include="UI\IUIEvents.cs" />
     <Compile Include="UI\IUserInterface.cs" />
     <Compile Include="UI\UserInterface.cs" />
-    <Compile Include="UI\NewSessionView.cs" />
+    <Compile Include="UI\SessionSettingsView.cs" />
     <Compile Include="gtk-gui\MissionControl.UI.NewSessionView.cs" />
     <Compile Include="UI\TestStandView.cs" />
     <Compile Include="gtk-gui\MissionControl.UI.TestStandView.cs" />
+    <Compile Include="Data\DataStore.cs" />
+    <Compile Include="Data\ComponentMapping.cs" />
+    <Compile Include="Data\TestStandMapping.cs" />
+    <Compile Include="Data\Session.cs" />
+    <Compile Include="Connection\Commands\Command.cs" />
+    <Compile Include="Connection\Commands\ActuatorCommand.cs" />
+    <Compile Include="Connection\Commands\StreamCommand.cs" />
+    <Compile Include="Connection\Commands\StateCommand.cs" />
+    <Compile Include="Data\DataPacket.cs" />
+    <Compile Include="Data\Components\Component.cs" />
+    <Compile Include="Data\ILogThread.cs" />
+    <Compile Include="Connection\IIOThread.cs" />
+    <Compile Include="Data\Components\PressureComponent.cs" />
+    <Compile Include="Data\Components\TemperatureComponent.cs" />
+    <Compile Include="Data\Components\TankComponent.cs" />
+    <Compile Include="UI\ILockable.cs" />
+    <Compile Include="Data\Components\ServoComponent.cs" />
+    <Compile Include="Data\Components\VoltageComponent.cs" />
+    <Compile Include="Data\Components\LoadComponent.cs" />
+    <Compile Include="UI\SVGWidget.cs" />
+    <Compile Include="gtk-gui\MissionControl.UI.SVGWidget.cs" />
+    <Compile Include="UI\ITestStandViewListener.cs" />
+    <Compile Include="UI\ISessionSettingsViewListener.cs" />
+    <Compile Include="Data\Components\SolenoidComponent.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Connection\" />
     <Folder Include="Data\" />
     <Folder Include="UI\" />
+    <Folder Include="Connection\Commands\" />
+    <Folder Include="Data\Components\" />
+    <Folder Include="Resources\" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Resources\TestStand.svg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
 </Project>
