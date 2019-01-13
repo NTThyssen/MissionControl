@@ -1,6 +1,8 @@
 ﻿using System;
 using Gtk;
 using MissionControl.Data;
+using MissionControl.Data.Components;
+using MissionControl.UI.Widgets;
 
 namespace MissionControl.UI
 {
@@ -8,6 +10,7 @@ namespace MissionControl.UI
     {
 
         SVGWidget _svgWidget;
+        ValveControlWidget _valveWidget;
         ITestStandViewListener _listener;
 
         public TestStandView(ITestStandViewListener listener, TestStandMapping map) :
@@ -15,6 +18,9 @@ namespace MissionControl.UI
         {
             _listener = listener;
             _svgWidget = new SVGWidget(@"Resources/TestStand.svg", map);
+            _valveWidget = new ValveControlWidget(map.Components(), 
+                new ServoControlWidget.ServoCallback(TestStandServoCallback), 
+                new SolenoidControlWidget.SolenoidCallback(TestStandSolenoidCallback));
             Layout();
             DeleteEvent += OnDeleteEvent;
             KeyPressEvent += WindowKeyPress;
@@ -22,17 +28,27 @@ namespace MissionControl.UI
 
         public void Layout()
         {
-            this.Build();
+           this.Build();
 
             // Background color
             ModifyBg(StateType.Normal, new Gdk.Color(0, 0, 0));
 
             // Horizonal layout
             HBox horizontalLayout = new HBox();
-            horizontalLayout.PackStart(_svgWidget);
+            horizontalLayout.PackStart(_svgWidget, false, false, 0);
+            horizontalLayout.PackStart(_valveWidget, false, false, 20);
 
             // Window layout
-            Add(horizontalLayout);
+            Alignment align = new Alignment(0.5f, 0.5f, 1, 1)
+            {
+                TopPadding = 20,
+                LeftPadding = 20,
+                RightPadding = 20,
+                BottomPadding = 20
+            };
+            align.Add(horizontalLayout);
+
+            Add(align);
 
             SetPosition(WindowPosition.Center);
 
@@ -48,7 +64,6 @@ namespace MissionControl.UI
                 _svgWidget.Refresh();
             }
         }
-    
 
         public void Lock()
         {
@@ -59,6 +74,10 @@ namespace MissionControl.UI
         {
             throw new NotImplementedException();
         }
+
+        private void TestStandServoCallback(ServoComponent component, float value) { }
+        private void TestStandSolenoidCallback(SolenoidComponent component, bool active) { }
+
 
         protected void OnDeleteEvent(object sender, DeleteEventArgs a)
         {

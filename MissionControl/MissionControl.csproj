@@ -43,6 +43,7 @@
     <Reference Include="Svg">
       <HintPath>..\packages\Svg.2.3.0\lib\net35\Svg.dll</HintPath>
     </Reference>
+    <Reference Include="Mono.Cairo" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="gtk-gui\gui.stetic">
@@ -59,7 +60,6 @@
     <Compile Include="UI\IUserInterface.cs" />
     <Compile Include="UI\UserInterface.cs" />
     <Compile Include="UI\SessionSettingsView.cs" />
-    <Compile Include="gtk-gui\MissionControl.UI.NewSessionView.cs" />
     <Compile Include="UI\TestStandView.cs" />
     <Compile Include="gtk-gui\MissionControl.UI.TestStandView.cs" />
     <Compile Include="Data\DataStore.cs" />
@@ -81,11 +81,21 @@
     <Compile Include="Data\Components\ServoComponent.cs" />
     <Compile Include="Data\Components\VoltageComponent.cs" />
     <Compile Include="Data\Components\LoadComponent.cs" />
-    <Compile Include="UI\SVGWidget.cs" />
-    <Compile Include="gtk-gui\MissionControl.UI.SVGWidget.cs" />
     <Compile Include="UI\ITestStandViewListener.cs" />
     <Compile Include="UI\ISessionSettingsViewListener.cs" />
     <Compile Include="Data\Components\SolenoidComponent.cs" />
+    <Compile Include="UI\Widgets\SVGWidget.cs" />
+    <Compile Include="UI\Widgets\ValveControlWidget.cs" />
+    <Compile Include="gtk-gui\MissionControl.UI.Widgets.SVGWidget.cs" />
+    <Compile Include="gtk-gui\MissionControl.UI.Widgets.ValveControlWidget.cs" />
+    <Compile Include="gtk-gui\MissionControl.UI.SessionSettingsView.cs" />
+    <Compile Include="UI\Widgets\ServoControlWidget.cs" />
+    <Compile Include="gtk-gui\MissionControl.UI.Widgets.ServoControlWidget.cs" />
+    <Compile Include="UI\Widgets\SolenoidControlWidget.cs" />
+    <Compile Include="gtk-gui\MissionControl.UI.Widgets.SolenoidControlWidget.cs" />
+    <Compile Include="UI\PlotView.cs" />
+    <Compile Include="gtk-gui\MissionControl.UI.PlotView.cs" />
+    <Compile Include="UI\Plot.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Connection\" />
@@ -94,6 +104,7 @@
     <Folder Include="Connection\Commands\" />
     <Folder Include="Data\Components\" />
     <Folder Include="Resources\" />
+    <Folder Include="UI\Widgets\" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

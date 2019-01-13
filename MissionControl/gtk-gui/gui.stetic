@@ -5,10 +5,10 @@
     <target-gtk-version>2.12</target-gtk-version>
   </configuration>
   <import>
-    <widget-library name="../bin/Debug/MissionControl.exe" internal="true" />
     <widget-library name="../../../../../../Applications/Visual Studio.app/Contents/Resources/lib/monodevelop/AddIns/MonoDevelop.GtkCore/libstetic.dll" />
+    <widget-library name="../bin/Debug/MissionControl.exe" internal="true" />
   </import>
-  <widget class="Gtk.Window" id="MissionControl.UI.NewSessionView" design-size="400 300">
+  <widget class="Gtk.Window" id="MissionControl.UI.SessionSettingsView" design-size="400 300">
     <property name="MemberName" />
     <property name="Title" translatable="yes">NewSessionView</property>
     <property name="WindowPosition">CenterOnParent</property>
@@ -31,13 +31,42 @@
       <placeholder />
     </child>
   </widget>
-  <widget class="Gtk.Bin" id="MissionControl.UI.SVGWidget" design-size="600 600">
+  <widget class="Gtk.Bin" id="MissionControl.UI.Widgets.SVGWidget" design-size="600 600">
     <property name="MemberName" />
     <property name="Visible">False</property>
     <child>
       <widget class="Gtk.Image" id="imageView">
         <property name="MemberName" />
       </widget>
+    </child>
+  </widget>
+  <widget class="Gtk.Bin" id="MissionControl.UI.Widgets.ValveControlWidget" design-size="300 300">
+    <property name="MemberName" />
+    <property name="Visible">False</property>
+    <child>
+      <placeholder />
+    </child>
+  </widget>
+  <widget class="Gtk.Bin" id="MissionControl.UI.Widgets.ServoControlWidget" design-size="326 300">
+    <property name="MemberName" />
+    <property name="Visible">False</property>
+    <child>
+      <placeholder />
+    </child>
+  </widget>
+  <widget class="Gtk.Bin" id="MissionControl.UI.Widgets.SolenoidControlWidget" design-size="300 300">
+    <property name="MemberName" />
+    <property name="Visible">False</property>
+    <child>
+      <placeholder />
+    </child>
+  </widget>
+  <widget class="Gtk.Window" id="MissionControl.UI.PlotView" design-size="400 300">
+    <property name="MemberName" />
+    <property name="Title" translatable="yes">PlotView</property>
+    <property name="WindowPosition">CenterOnParent</property>
+    <child>
+      <placeholder />
     </child>
   </widget>
 </stetic-interface>

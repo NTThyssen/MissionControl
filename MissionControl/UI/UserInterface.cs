@@ -9,6 +9,7 @@ namespace MissionControl.UI
 
         SessionSettingsView _newSessionView;
         TestStandView _testStandView;
+        PlotView _plotView;
 
         public UserInterface()
         {
@@ -18,7 +19,8 @@ namespace MissionControl.UI
         public void StartUI(TestStandMapping map) {
             Application.Init();
             //ShowNewSessionView();
-            ShowTestStandView(map);
+            //ShowTestStandView(map);
+            ShowPlotView();
             Application.Run();
         }
 
@@ -31,6 +33,11 @@ namespace MissionControl.UI
         {
             if (_newSessionView != null) _newSessionView.Destroy();
             _testStandView = new TestStandView(this, map);
+        }
+
+        public void ShowPlotView()
+        {
+            _plotView = new PlotView();
         }
     }
 }

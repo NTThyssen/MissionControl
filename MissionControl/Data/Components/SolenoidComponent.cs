@@ -29,5 +29,7 @@ namespace MissionControl.Data.Components
         {
             return (_raw == 0) ? 0 : 1;
         }
+
+        public bool Open { get { return _raw != 0; } }
     }
 }

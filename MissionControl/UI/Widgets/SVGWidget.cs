@@ -8,7 +8,7 @@ using MissionControl.Data;
 using MissionControl.Data.Components;
 using Svg;
 
-namespace MissionControl.UI
+namespace MissionControl.UI.Widgets
 {
     [System.ComponentModel.ToolboxItem(true)]
     public partial class SVGWidget : Gtk.Bin
@@ -26,7 +26,7 @@ namespace MissionControl.UI
         {
             this.Build();
 
-            imageView.SetSizeRequest(800, 800);
+            imageView.SetSizeRequest(600, 600);
             ModifyBg(StateType.Normal, new Gdk.Color(255, 0, 0));
             imageView.ModifyBg(StateType.Normal, new Gdk.Color(255, 255, 0));
 

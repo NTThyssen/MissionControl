@@ -9,11 +9,11 @@ namespace MissionControl.UI
 		protected virtual void Build()
 		{
 			global::Stetic.Gui.Initialize(this);
-			// Widget MissionControl.UI.NewSessionView
-			this.Name = "MissionControl.UI.NewSessionView";
+			// Widget MissionControl.UI.SessionSettingsView
+			this.Name = "MissionControl.UI.SessionSettingsView";
 			this.Title = global::Mono.Unix.Catalog.GetString("NewSessionView");
 			this.WindowPosition = ((global::Gtk.WindowPosition)(4));
-			// Container child MissionControl.UI.NewSessionView.Gtk.Container+ContainerChild
+			// Container child MissionControl.UI.SessionSettingsView.Gtk.Container+ContainerChild
 			this.button1 = new global::Gtk.Button();
 			this.button1.CanFocus = true;
 			this.button1.Name = "button1";
