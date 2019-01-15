@@ -1,19 +1,19 @@
 ﻿using System;
 namespace MissionControl.Data.Components
 {
-    public class ServoComponent : Component
+    public class ServoComponent : ValveComponent
     {
         private int _rawPosition;
         private float _closePosition;
         private float _openPosition;
 
-        public ServoComponent(int boardID, string graphicID, string name, float closePosition, float openPosition) : base(boardID, graphicID, name)
+        public ServoComponent(int boardID, string graphicID, string name, float closePosition, float openPosition, string graphicIDSymbol) : base(boardID, graphicID, name, graphicIDSymbol)
         {
             _closePosition = closePosition;
             _openPosition = openPosition;
         }
 
-        public ServoComponent(int boardID, string graphicID, string name) : base(boardID, graphicID, name)
+        public ServoComponent(int boardID, string graphicID, string name, string graphicIDSymbol) : base(boardID, graphicID, name, graphicIDSymbol)
         {
             _closePosition = 100.0f;
             _openPosition = 0.0f;
@@ -33,5 +33,8 @@ namespace MissionControl.Data.Components
         {
             return _rawPosition;
         }
+
+        public float ClosePosition { get { return _closePosition; } }
+        public float OpenPosition { get { return _openPosition; } }
     }
 }

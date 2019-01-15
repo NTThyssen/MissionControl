@@ -6,7 +6,7 @@ using MissionControl.Data.Components;
 namespace MissionControl.UI.Widgets
 {
     [System.ComponentModel.ToolboxItem(true)]
-    public partial class SolenoidControlWidget : Bin
+    public partial class SolenoidControlWidget : EventBox
     {
 
         public delegate void SolenoidCallback(SolenoidComponent component, bool active);
@@ -14,57 +14,43 @@ namespace MissionControl.UI.Widgets
         private readonly string OPEN = "Open";
         private readonly string CLOSED = "Closed";
 
-        private VBox _container;
-        private Label _name;
-        private ToggleButton _toggle;
-
         private SolenoidCallback _callback;
         private SolenoidComponent _component;
+
+        private DToggleButton _toggle;
 
         public SolenoidControlWidget(SolenoidComponent component, SolenoidCallback callback)
         {
             this.Build();
+
+            VisibleWindow = false;
+            AboveChild = false;
+
             _callback = callback;
             _component = component;
 
-            _container = new VBox(false, 5);
-            _name = new Label
+            VBox container = new VBox(false, 5);
+            Label name = new Label
             {
                 Text = component.Name,
                 Xalign = 0
             };
-            _name.ModifyFg(StateType.Normal, new Gdk.Color(255, 255, 255));
+            name.ModifyFg(StateType.Normal, new Gdk.Color(255, 255, 255));
 
-            _toggle = new ToggleButton
-            {
-                WidthRequest = 40,
-                HeightRequest = 40
-            };
-            _toggle.ModifyBg(StateType.Active, new Gdk.Color(57, 120, 77));
+            _toggle = new DToggleButton(40, 40, OPEN, CLOSED, DToggleButton.ToggleState.Inactive);
+            _toggle.Pressed += Toggle_Pressed;
 
-            _toggle.Toggled += OnToggleChanged;
-            SetToggleText(component.Open);
+            container.PackStart(name, false, false, 0);
+            container.PackStart(_toggle, true, true, 0);
 
-            _container.PackStart(_name, false, false, 0);
-            _container.PackStart(_toggle, false, false, 0);
-
-            Add(_container);
+            Add(container);
+            ShowAll();
         }
 
-        private void OnToggleChanged(object sender, EventArgs e)
+        void Toggle_Pressed(object sender, EventArgs e)
         {
-            SetToggleText(_toggle.Active);
+            _toggle.Toggle();
             _callback(_component, _toggle.Active);
-
-        }
-
-        private void SetToggleText(bool active)
-        {
- 
-            _toggle.Label = (active) ? OPEN : CLOSED;
-            Color c = (active) ? new Gdk.Color(70, 148, 95) : new Gdk.Color(230, 230, 230);
-            _toggle.ModifyBg(StateType.Prelight, c);
-
         }
 
     }

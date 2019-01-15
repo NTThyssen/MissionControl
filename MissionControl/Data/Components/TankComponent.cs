@@ -4,10 +4,10 @@ namespace MissionControl.Data.Components
     public class TankComponent : Component
     {
 
-        private float _full;
-        private float _initial;
+        private readonly float _full;
+        private readonly float _initial;
         private int _rawVolume;
-        private string _graphicIDGradient;
+        private readonly string _graphicIDGradient;
 
         public TankComponent(int boardID, string graphicID, string name, string graphicIDGradient, float full, float initial) : base(boardID, graphicID, name)
         {

@@ -4,6 +4,14 @@ using MissionControl.Data;
 
 namespace MissionControl.UI
 {
+    public interface IUserInterface
+    {
+        void ShowTestStandView(TestStandMapping map);
+        void ShowSessionSettings();
+        void ShowPlotViewer();
+        void StartUI(TestStandMapping map);
+    }
+
     public class UserInterface : IUserInterface, ITestStandViewListener, ISessionSettingsViewListener
     {
 
@@ -19,12 +27,12 @@ namespace MissionControl.UI
         public void StartUI(TestStandMapping map) {
             Application.Init();
             //ShowNewSessionView();
-            //ShowTestStandView(map);
-            ShowPlotView();
+            ShowTestStandView(map);
+            //ShowPlotView();
             Application.Run();
         }
 
-        public void ShowNewSessionView()
+        public void ShowSessionSettings()
         {
             _newSessionView = new SessionSettingsView(this);
         }
@@ -35,9 +43,19 @@ namespace MissionControl.UI
             _testStandView = new TestStandView(this, map);
         }
 
-        public void ShowPlotView()
+        public void ShowPlotViewer()
         {
             _plotView = new PlotView();
+        }
+
+        public void MenuSettingsPressed()
+        {
+            ShowSessionSettings();
+        }
+
+        public void MenuPlotViewerPressed()
+        {
+            ShowPlotViewer();
         }
     }
 }

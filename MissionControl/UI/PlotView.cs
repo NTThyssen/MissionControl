@@ -26,7 +26,6 @@ namespace MissionControl.UI
             SetDefaultSize(800, 600);
             SetPosition(WindowPosition.Center);
             ModifyBg(StateType.Normal, _bgColor);
-            DeleteEvent += OnDeleteEvent;
 
             // File and sensor view
             HBox chooseSensorBox = new HBox(false, 5);
@@ -99,19 +98,12 @@ namespace MissionControl.UI
             _plot.Points = GetRandomData(-245, 245, -499, 600, 50);
 
             VBox container = new VBox(false, 10);
-            container.PackStart(topContainer, false, false, 0);
+            container.PackStart(topContainer, false, false, 10);
             container.PackStart(_plot, true, true, 0);
 
             Add(container);
 
             ShowAll();
-        }
-
-
-        protected void OnDeleteEvent(object sender, DeleteEventArgs a)
-        {
-            Application.Quit();
-            a.RetVal = true;
         }
 
         private void OnSelectFilePressed(object sender, EventArgs e)

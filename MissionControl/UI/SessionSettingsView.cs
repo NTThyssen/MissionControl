@@ -3,6 +3,10 @@ using Gtk;
 
 namespace MissionControl.UI
 {
+    public interface ISessionSettingsViewListener
+    {
+    }
+
     public partial class SessionSettingsView : Window
     {
 
@@ -11,13 +15,7 @@ namespace MissionControl.UI
         {
             _eventHandler = handler;
             Build();
-            DeleteEvent += OnDeleteEvent;
-        }
-
-        protected void OnDeleteEvent(object sender, DeleteEventArgs a)
-        {
-            Application.Quit();
-            a.RetVal = true;
+           
         }
 
         protected void OnButton1Clicked(object sender, EventArgs e)

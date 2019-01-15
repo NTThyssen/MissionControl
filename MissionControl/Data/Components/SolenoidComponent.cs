@@ -1,7 +1,7 @@
 ﻿using System;
 namespace MissionControl.Data.Components
 {
-    public class SolenoidComponent : Component
+    public class SolenoidComponent : ValveComponent
     {
         public enum SolenoidState 
         {
@@ -11,7 +11,7 @@ namespace MissionControl.Data.Components
 
         private int _raw;
 
-        public SolenoidComponent(int boardID, string graphicID, string name) : base(boardID, graphicID, name)
+        public SolenoidComponent(int boardID, string graphicID, string name, string graphicIDSymbol) : base(boardID, graphicID, name, graphicIDSymbol)
         {
         }
 

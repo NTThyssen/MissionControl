@@ -3,14 +3,33 @@ using System.Collections.Generic;
 
 namespace MissionControl.Data
 {
-    public class DataStore
+
+    public interface IDataStore
+    {   
+        void GetCurrentState();
+        Session GetCurrentSession();
+    }
+
+    public interface IDataLog
+    {
+        void Enqueue(DataPacket packet);
+        DataPacket Dequeue();
+        bool Empty();
+    }
+
+    public class DataStore : IDataStore, IDataLog
     {
         private Queue<DataPacket> _data;
         private Session _session;
+        private LogThread _logThread;
 
-        public DataStore()
+        private bool _isLogging = false;
+
+        public DataStore(Session session)
         {
             _data = new Queue<DataPacket>();
+            _session = session;
+            _logThread = new LogThread(this);
         }
 
         public void Enqueue(DataPacket packet) {
@@ -21,9 +40,21 @@ namespace MissionControl.Data
             return _data.Dequeue();
         }
 
-        public Session CurrentSession() 
+        public bool Empty()
+        {
+            return _data.Count == 0;
+        }
+
+        public void GetCurrentState()
+        {
+            throw new NotImplementedException();
+        }
+
+        public Session GetCurrentSession()
         {
             return _session;
         }
+
+
     }
 }

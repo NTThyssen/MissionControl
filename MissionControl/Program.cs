@@ -9,14 +9,12 @@ namespace MissionControl
 {
     class Program : IUIEvents
     {
-
-        ILogThread _logThread;
+    
         IIOThread _ioThread;
         IUserInterface _ui;
 
-        public Program(ILogThread logThread, IIOThread ioThread, IUserInterface ui) 
+        public Program(IDataStore dataStore, IIOThread ioThread, IUserInterface ui) 
         {
-            _logThread =  logThread;
             _ioThread = ioThread;
             _ui = ui;
             //_logThread.StartThread();
@@ -26,7 +24,7 @@ namespace MissionControl
             _ui.StartUI(new TestStandMapping());
 
             // When UserInterface loops stop so should other threads
-            _logThread.StopThread();
+            //_logThread.StopThread();
             _ioThread.StopThread();
         }
 
@@ -43,7 +41,12 @@ namespace MissionControl
 
         public static void Main(string[] args)
         {
-            Program p = new Program(new LogThread(), new IOThread(), new UserInterface());
+            TestStandMapping mapping = new TestStandMapping();
+            Session session = new Session(null, mapping);
+            DataStore dataStore = new DataStore(session);
+            IOThread ioThread = new IOThread(dataStore, null);
+            UserInterface ui = new UserInterface();
+            Program p = new Program(dataStore, ioThread, ui);
         }
     }
 }

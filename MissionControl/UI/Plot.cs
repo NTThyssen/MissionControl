@@ -94,6 +94,8 @@ namespace MissionControl.UI
             int xTicks = xAxisWidth / PixelsPerTick;
             int yTicks = yAxisHeight / PixelsPerTick;
 
+
+
             Context cr = Gdk.CairoHelper.Create(this.GdkWindow);
 
             // Draw background

@@ -3,9 +3,13 @@ namespace MissionControl.Data
 {
     public class DataPacket
     {
-        public long Time;
-        public DataPacket()
+        long Time;
+        byte[] Data;
+
+        public DataPacket(long time, byte[] data)
         {
+            Time = time;
+            Data = data;
         }
     }
 }

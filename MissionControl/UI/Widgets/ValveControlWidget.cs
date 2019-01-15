@@ -6,41 +6,50 @@ using Pango;
 
 namespace MissionControl.UI.Widgets
 {
+
+    public interface IValveControlListener
+    {
+        void OnServoPressed(ServoComponent servo, float value);
+        void OnSolenoidPressed(SolenoidComponent solenoid, bool active);
+        void OnControlEnter(ValveComponent component);
+        void OnControlLeave(ValveComponent component);
+    }
+
     [System.ComponentModel.ToolboxItem(true)]
     public partial class ValveControlWidget : Gtk.Bin
     {
-        public ValveControlWidget(List<Component> components, 
-            ServoControlWidget.ServoCallback servoCallback, 
-            SolenoidControlWidget.SolenoidCallback solenoidCallback)
+
+        public ValveControlWidget(List<Component> components, IValveControlListener listener)
         {
+            if (listener == null) throw new ArgumentNullException(nameof(listener), "A listener was not provided");
+
             Build();
+
             VBox controls = new VBox(false, 15);
 
-            Label title = new Label
-            {
-                Text = "Valves",
-                Xalign = 0
-            };
-
-            title.ModifyFg(StateType.Normal, new Gdk.Color(255, 255, 255));
-            title.ModifyFont(new FontDescription
-            {
-                Size = Convert.ToInt32(24 * Pango.Scale.PangoScale)
-            });
-
+            DSectionTitle title = new DSectionTitle("Valves");
+  
             controls.PackStart(title, false, false, 0);
 
             foreach (Component c in components)
             {
-                if (c is ServoComponent ser)
+                if (c is ServoComponent servo)
                 {
-                    ServoControlWidget servo = new ServoControlWidget(ser, servoCallback);
-                    controls.PackStart(servo, false, false, 0);
+                    ServoControlWidget servoWidget = new ServoControlWidget(servo, listener.OnServoPressed);
+
+                    servoWidget.EnterNotifyEvent += (o, args) => { listener.OnControlEnter(servo); args.RetVal = false; };
+                    servoWidget.LeaveNotifyEvent += (o, args) => { listener.OnControlLeave(servo); args.RetVal = false; };
+
+                    controls.PackStart(servoWidget, false, false, 0);
                 } 
-                else if (c is SolenoidComponent sol)
+                else if (c is SolenoidComponent solenoid)
                 {
-                    SolenoidControlWidget solenoid = new SolenoidControlWidget(sol, solenoidCallback);
-                    controls.PackStart(solenoid, false, false, 0);
+                    SolenoidControlWidget solWidget = new SolenoidControlWidget(solenoid, listener.OnSolenoidPressed);
+
+                    solWidget.EnterNotifyEvent += (o, args) => { listener.OnControlEnter(solenoid); args.RetVal = false; };
+                    solWidget.LeaveNotifyEvent += (o, args) => { listener.OnControlLeave(solenoid); args.RetVal = false; };
+
+                    controls.PackStart(solWidget, false, false, 0);
                 }
             }
 
@@ -48,5 +57,8 @@ namespace MissionControl.UI.Widgets
 
             ShowAll();
         }
+
+     
+
     }
 }

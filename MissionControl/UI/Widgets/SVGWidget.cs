@@ -20,15 +20,26 @@ namespace MissionControl.UI.Widgets
 
         private float _svgOriginalW, _svgOriginalH;
         private bool resized;
+        private bool exposed;
 
+        private bool _didRefresh;
 
         public SVGWidget(string filepath, ComponentMapping componentMapping)
         {
             this.Build();
 
-            imageView.SetSizeRequest(600, 600);
-            ModifyBg(StateType.Normal, new Gdk.Color(255, 0, 0));
-            imageView.ModifyBg(StateType.Normal, new Gdk.Color(255, 255, 0));
+            //imageView.SetSizeRequest(700, 700);
+            SetSizeRequest(700, 700);
+            imageView.ExposeEvent += (o, args) => {
+                if (!exposed)
+                {
+                    exposed = true;
+                    Refresh();
+                }
+                Console.WriteLine("SVG ExposeEvent!");
+            };
+
+
 
             _componentMapping = componentMapping;
             _svg = LoadSVG(filepath);
@@ -36,6 +47,7 @@ namespace MissionControl.UI.Widgets
             _svgOriginalH = _svg.Height.Value;
             _svgElements = new Dictionary<string, SvgElement>();
             PopulateElementsDictionary();
+
 
         }
 
@@ -56,12 +68,27 @@ namespace MissionControl.UI.Widgets
                         _svgElements.Add(component.GraphicID, _svg.GetElementById(component.GraphicID).Children[0]);
                         _svgElements.Add(tank.GraphicIDGradient, _svg.GetElementById(tank.GraphicIDGradient));
                         break;
-                    case ServoComponent v:
+                    case ValveComponent v:
                         _svgElements.Add(component.GraphicID, _svg.GetElementById(component.GraphicID).Children[0]);
+                        _svgElements.Add(v.GraphicIDSymbol, _svg.GetElementById(v.GraphicIDSymbol));
                         ((SvgTextSpan)_svg.GetElementById(component.GraphicID + "_NAME").Children[0]).Text = component.Name;
                         break;
                 }
             }
+        }
+
+        public void MarkValve(ValveComponent component) 
+        {
+            _svgElements[component.GraphicIDSymbol].Stroke = new SvgColourServer(System.Drawing.Color.FromArgb(255, 0, 0));
+            _didRefresh = true;
+            UpdateImage();
+        }
+
+        public void UnmarkValve(ValveComponent component)
+        {
+            _svgElements[component.GraphicIDSymbol].Stroke = new SvgColourServer(System.Drawing.Color.FromArgb(255, 255, 255));
+            _didRefresh = true;
+            UpdateImage();
         }
 
         public void Refresh() {
@@ -90,12 +117,15 @@ namespace MissionControl.UI.Widgets
                         gradient.Stops[2].Offset = gradientStop;
                         gradient.Stops[3].Offset = 1.0f;
                         break;
-                    case ServoComponent v:
-                        ((SvgTextSpan)_svgElements[component.GraphicID]).Text = String.Format("{0} %", v.Percentage());
+                    case ServoComponent servo:
+                        ((SvgTextSpan)_svgElements[component.GraphicID]).Text = String.Format("{0} %", servo.Percentage());
+                        break;
+                    case SolenoidComponent solenoid:
+                        ((SvgTextSpan)_svgElements[component.GraphicID]).Text = String.Format(solenoid.State().ToString());
                         break;
                 }
             }
-
+            _didRefresh = true;
             UpdateImage();
 
         }
@@ -104,7 +134,8 @@ namespace MissionControl.UI.Widgets
         // Inspired by: https://stackoverflow.com/questions/20469706/loading-pixbuf-to-image-widget-in-gtk
         protected override void OnSizeAllocated(Rectangle allocation)
         {
-            Console.WriteLine("SizeAllocated {0} {1}", allocation.Width, allocation.Height);
+            if(_didRefresh) { _didRefresh = false;  return; }
+
             if (resized)
             {
                 resized = false;
@@ -112,40 +143,35 @@ namespace MissionControl.UI.Widgets
             }
             else
             {
+                Console.WriteLine("SVG Widget Redrawn form Size Allocate {0} {1}", allocation.Width, allocation.Height);
                 float widthRatio = allocation.Width / _svgOriginalW;
                 float heigthRatio = allocation.Height / _svgOriginalH;
-                float ratio = Math.Min(widthRatio, heigthRatio);
-                float resultWidth = _svgOriginalW * ratio;
-                float resultHeight = _svgOriginalH * ratio;
+                float ratio = heigthRatio;
+                int resultWidth = (int) (_svgOriginalW * ratio);
+                int resultHeight = (int) (_svgOriginalH * ratio);
 
-                imageView.Pixbuf = svgPixbuf(resultWidth, resultHeight);
+                UpdateImage(resultWidth, resultHeight);
+                //UpdateImage();
                 resized = true;
 
             }
         }
 
-        private void UpdateImage()
+        private void UpdateImage(int width, int height)
         {
             using (MemoryStream ms = new MemoryStream())
             {
-                _svg.Draw().Save(ms, ImageFormat.Png);
-
-                imageView.Pixbuf =  new Pixbuf(ms.ToArray()).ScaleSimple((int)_svg.Width.Value, (int)_svg.Height.Value, InterpType.Bilinear);
+                _svg.Draw(Allocation.Width, Allocation.Height).Save(ms, ImageFormat.Png);
+                imageView.Pixbuf = new Pixbuf(ms.ToArray());
             }
         }
 
-        private Pixbuf svgPixbuf(float width, float height) 
+        private void UpdateImage()
         {
-            using (MemoryStream ms = new MemoryStream())
-            {
-                _svg.Width = new SvgUnit(SvgUnitType.Pixel, width);
-                _svg.Height = new SvgUnit(SvgUnitType.Pixel, height);
-                _svg.Draw().Save(ms, ImageFormat.Png);
+            UpdateImage(Allocation.Width, Allocation.Height);
+        }
 
-                return new Pixbuf(ms.ToArray()).ScaleSimple((int)_svg.Width.Value, (int)_svg.Height.Value, InterpType.Bilinear);
-            }
-       }
-     
+    
         public void SaveImage() {
             MemoryStream ms = new MemoryStream();
             _svg.Draw().Save(ms, ImageFormat.Png);
