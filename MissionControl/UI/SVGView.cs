@@ -25,13 +25,20 @@ namespace MissionControl.UI.Widgets
 
         bool _didRefresh;
 
+        SvgColourServer nominalColor = new SvgColourServer(System.Drawing.Color.FromArgb(255, 255, 255));
+        SvgColourServer warningColor = new SvgColourServer(System.Drawing.Color.FromArgb(255, 0, 0));
+        SvgColourServer disabledColor = new SvgColourServer(System.Drawing.Color.FromArgb(150, 150, 150));
 
+
+        Cairo.Color cNominalColor = new Cairo.Color(1, 1, 1);
+        Cairo.Color cWarningColor = new Cairo.Color(1, 0, 0);
+        Cairo.Color cDisabledColor = new Cairo.Color(150 / 255.0, 150 / 255.0, 150 / 255.0);
 
         public SVGView(string filepath, ref Session session)
         {
 
             _session = session;
-
+           
             _svgElements = new Dictionary<string, SvgElement>();
             _svgTexts = new List<SvgText>();
 
@@ -48,10 +55,6 @@ namespace MissionControl.UI.Widgets
                 UpdateImage();
                 Console.WriteLine("SVG ExposeEvent!");
             };
-
-          
-
-
         }
 
         private void PopulateElementsDictionary()
@@ -99,22 +102,42 @@ namespace MissionControl.UI.Widgets
         {
             foreach (Component component in _session.Mapping.Components())
             {
+                SvgText text = (SvgText)_svgElements[component.GraphicID];
+
+                if (!component.Enabled)
+                {
+                    FindTextByID(component.GraphicID + "_NAME").Color = disabledColor;
+                    text.Text = "N/A";
+                    text.Color = disabledColor;
+                    continue;
+                }
+                else
+                {
+                    FindTextByID(component.GraphicID + "_NAME").Color = nominalColor;
+                }
+
                 switch (component)
                 {
                     case PressureComponent pt:
-                        ((SvgText)_svgElements[component.GraphicID]).Text = string.Format("{0} barR", pt.Relative());
+                        float relative = pt.Relative();
+                        text.Text = string.Format("{0} barR", relative);
+                        text.Color = pt.IsNominal(relative) ? nominalColor : warningColor;
                         break;
                     case TemperatureComponent tc:
-                        ((SvgText)_svgElements[component.GraphicID]).Text = string.Format("{0} °C", tc.Celcius());
+                        float celcius = tc.Celcius();
+                        text.Text = string.Format("{0} °C", celcius);
+                        text.Color = tc.IsNominal(celcius) ? nominalColor : warningColor;
                         break;
                     case LoadComponent load:
-                        ((SvgText)_svgElements[component.GraphicID]).Text = string.Format("{0} N", load.Newtons());
+                        float newtons = load.Newtons();
+                        text.Text = string.Format("{0} N", newtons);
+                        text.Color = load.IsNominal(newtons) ? nominalColor : warningColor;
                         break;
                     case TankComponent tank:
 
                         float percent = tank.PercentageFull();
 
-                        ((SvgText)_svgElements[component.GraphicID]).Text = string.Format("{0} %", percent);
+                        text.Text = string.Format("{0} %", percent);
 
                         float gradientStop = 1 - (percent / 100.0f);
                         SvgLinearGradientServer gradient = (SvgLinearGradientServer)_svgElements[tank.GraphicIDGradient];
@@ -124,13 +147,15 @@ namespace MissionControl.UI.Widgets
                         gradient.Stops[3].Offset = 1.0f;
                         break;
                     case ServoComponent servo:
-                        ((SvgText)_svgElements[component.GraphicID]).Text = string.Format("{0} %", servo.Percentage());
+                        text.Text = string.Format("{0} %", servo.Percentage());
                         break;
                     case SolenoidComponent solenoid:
-                        ((SvgText)_svgElements[component.GraphicID]).Text = solenoid.State().ToString();
+                        text.Text = solenoid.State().ToString();
                         break;
-                    case VoltageComponent battery:
-                        ((SvgText)_svgElements[component.GraphicID]).Text = string.Format("{0} V / {1} %", battery.Volts(), Math.Floor(battery.Percentage() * 100) / 100);
+                    case VoltageComponent voltage:
+                        float volts = voltage.Volts();
+                        text.Text = string.Format("{0} N", string.Format("{0} V / {1} %", volts, Math.Floor(voltage.Percentage() * 100) / 100));
+                        text.Color = voltage.IsNominal(volts) ? nominalColor : warningColor;
                         break;
                 }
             }
@@ -193,10 +218,21 @@ namespace MissionControl.UI.Widgets
             {
                 if (text.Text == null) continue;
 
-                float dx = (text.X[0].Value / _svgOriginalW) * width;
-                float dy = (text.Y[0].Value / _svgOriginalH) * height;
+                float dx = text.X[0].Value / _svgOriginalW * width;
+                float dy = text.Y[0].Value / _svgOriginalH * height;
                 cr.MoveTo(dx, dy);
 
+                if (text.Color == warningColor) 
+                {
+                    cr.SetSourceColor(cWarningColor);
+                } 
+                else if (text.Color == disabledColor)
+                {
+                    cr.SetSourceColor(cDisabledColor);
+                }
+                else {
+                    cr.SetSourceColor(cNominalColor);
+                }
 
                 if (text.FontSize.Value is float size)
                 {

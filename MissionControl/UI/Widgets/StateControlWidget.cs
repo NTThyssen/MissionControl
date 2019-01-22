@@ -9,7 +9,7 @@ namespace MissionControl.UI.Widgets
 
     public interface IStateControlListener
     {
-        void OnStatePressed(StateCommand command);
+        void OnStatePressed(State command);
     }
 
     [System.ComponentModel.ToolboxItem(true)]
@@ -51,8 +51,7 @@ namespace MissionControl.UI.Widgets
 
         void StateButton_Pressed(object sender, EventArgs e)
         {
-            StateCommand command = new StateCommand(_stateButtons[(DToggleButton)sender].StateID);
-            _listener.OnStatePressed(command);
+            _listener.OnStatePressed(_stateButtons[(DToggleButton)sender]);
         }
 
 

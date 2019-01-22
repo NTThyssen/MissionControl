@@ -60,7 +60,10 @@ namespace MissionControl.Data
 
         public void Remove(string key)
         {
-            _preferences.Remove(key);
+            if (_preferences.ContainsKey(key))
+            {
+                _preferences.Remove(key);
+            }
         }
 
         public void Save()

@@ -33,6 +33,46 @@ namespace MissionControl.Tests
         }
 
         [Test]
+        public void Single_Component_Is_Updated_By_DataPacket_Verify_Sign_Extension()
+        {
+            byte ID = 0;
+            // Value = 250 = 0x00FA
+            byte valMSB = 0x00;
+            byte valLSB = 0xFA;
+
+            LoadComponent expectedResult = new LoadComponent(0, 2, "", "", x => x);
+            expectedResult.Set(250);
+
+            TestStandMapping mapping = new TestStandMapping();
+            Session session = new Session(mapping);
+
+            byte[] buffer = { ID, valMSB, valLSB };
+            session.UpdateComponents(buffer);
+
+            Assert.AreEqual(expectedResult.Newtons(), ((LoadComponent)mapping.ComponentByIDs()[ID]).Newtons());
+        }
+
+        [Test]
+        public void Single_Component_Is_Updated_By_DataPacket_With_Negative_Value()
+        {
+            byte ID = 0;
+            // Value = -1337 = 0xFAC7
+            byte valMSB = 0xFA;
+            byte valLSB = 0xC7;
+
+            LoadComponent expectedResult = new LoadComponent(0, 2, "", "", x => x);
+            expectedResult.Set(-1337);
+
+            TestStandMapping mapping = new TestStandMapping();
+            Session session = new Session(mapping);
+
+            byte[] buffer = { ID, valMSB, valLSB };
+            session.UpdateComponents(buffer);
+
+            Assert.AreEqual(expectedResult.Newtons(), ((LoadComponent)mapping.ComponentByIDs()[ID]).Newtons());
+        }
+
+        [Test]
         public void Single_Component_Is_Updated_After_Incoming_Data_Without_Logging() 
         {
             byte ID = 0;
@@ -67,26 +107,20 @@ namespace MissionControl.Tests
 
             bool wait = true;
 
-            IOThread conn = new IOThread(dataMock.Object, ref session, serialMock.Object);
+            IOThread conn = new IOThread(dataMock.Object, ref session);
             dataMock.Setup(x => x.Enqueue(It.IsAny<DataPacket>())).Callback((DataPacket dp) => {
                 session.UpdateComponents(dp.Bytes);
-                conn.StopThread();
+                conn.StopConnection();
                 wait = false;
             });
-            conn.StartThread();
+            conn.StartConnection(serialMock.Object);
             Console.WriteLine("Thread started");
             while (wait)
             {
                 Thread.Sleep(100);
             }
             Assert.AreEqual(expectedResult.Newtons(), ((LoadComponent)mapping.ComponentByIDs()[ID]).Newtons());
-            //conn.StopThread();
-            //dataMock.Verify(x => x.Enqueue(It.IsAny<DataPacket>()), Times.AtLeastOnce);
-
 
         }
-
-     
-
     }
 }

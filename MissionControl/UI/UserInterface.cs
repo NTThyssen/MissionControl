@@ -24,6 +24,10 @@ namespace MissionControl.UI
         private IUIEvents _listener;
         Session _session;
 
+        private const uint UPDATE_FREQ_FOREGROUND = 500;
+        private const uint UPDATE_FREQ_BACKGROUND = 2500;
+        uint _updateSVGTimer;
+
         public UserInterface(ref Session session)
         {
             _session = session;
@@ -40,19 +44,35 @@ namespace MissionControl.UI
             Application.Run();
         }
 
-        public bool Update() {
+        public bool UpdateControls() {
             if(_testStandView != null)
             {
-                // Should refresh SVGWidget
-                _testStandView.Update();
-                Console.WriteLine("Update call");
+                _testStandView.UpdateControls();
+            }
+            return true;
+        }
+
+        public bool UpdateSVG()
+        {
+            if (_testStandView != null)
+            {
+                _testStandView.UpdateSVG();
             }
             return true;
         }
 
         public void ShowSessionSettings(bool initialWindow)
         {
-            _newSessionView = new SessionSettingsView(this, _session);
+            if (_newSessionView == null)
+            {
+                _newSessionView = new SessionSettingsView(this, _session);
+            }
+            else
+            {
+                _newSessionView.Destroy();
+                _newSessionView = new SessionSettingsView(this, _session);
+            }
+
             if (initialWindow)
             {
                 _newSessionView.DeleteEvent += (o, args) => Application.Quit();
@@ -61,13 +81,24 @@ namespace MissionControl.UI
 
         public void ShowTestStandView()
         {
-            //GLib.Timeout.Add(500, new GLib.TimeoutHandler(Update));
+            _updateSVGTimer = SetUpdateSVGFrequency(_updateSVGTimer, UPDATE_FREQ_FOREGROUND);
+            GLib.Timeout.Add(200, new GLib.TimeoutHandler(UpdateControls));
             _testStandView = new TestStandView(this, ref _session);
         }
 
         public void ShowPlotViewer()
         {
-            _plotView = new PlotView();
+            if (_plotView == null)
+            {
+                _plotView = new PlotView();
+            }
+            else
+            {
+                _plotView.Destroy();
+                _plotView = new PlotView();
+            }
+            _plotView.DeleteEvent += (object o, DeleteEventArgs args) => _updateSVGTimer = SetUpdateSVGFrequency(_updateSVGTimer, UPDATE_FREQ_FOREGROUND);
+            _updateSVGTimer = SetUpdateSVGFrequency(_updateSVGTimer, UPDATE_FREQ_BACKGROUND);
         }
 
         public void OnMenuSettingsPressed()
@@ -80,20 +111,22 @@ namespace MissionControl.UI
             ShowPlotViewer();
         }
 
-        public void OnStatePressed(StateCommand state)
+        public void OnStatePressed(State state)
         {
-            _listener.OnStatePressed(state);
-            Console.WriteLine("State pressed: {0}", state.CommandValue());
+            StateCommand command = new StateCommand(state.StateID);
+            _listener.OnCommand(command);
         }
 
         public void OnServoPressed(ServoComponent servo, float value)
         {
-            Console.WriteLine("{0}: {1}", servo.Name, value);
+            ServoCommand command = new ServoCommand(servo.BoardID, value);
+            _listener.OnCommand(command);
         }
 
         public void OnSolenoidPressed(SolenoidComponent solenoid, bool open)
         {
-            Console.WriteLine("{0}: {1}", solenoid.Name, open);
+            SolenoidCommand command = new SolenoidCommand(solenoid.BoardID, open);
+            _listener.OnCommand(command);
         }
 
         public void OnSave(Session session)
@@ -102,9 +135,18 @@ namespace MissionControl.UI
             {
                 _listener.OnSessionSettingsUpdated(session);
             }
-            if (_newSessionView != null) _newSessionView.Destroy();
-            ShowTestStandView();
 
+            if (_newSessionView != null) _newSessionView.Destroy();
+
+            if (_testStandView == null)
+            {
+                ShowTestStandView();
+            }
+            else
+            {
+                _testStandView.UpdateSVG();
+                _testStandView.UpdateControls();
+            }
         }
 
         public void OnLogStartPressed()
@@ -126,6 +168,17 @@ namespace MissionControl.UI
         public void OnEmergencyCombinationPressed()
         {
             _listener.OnEmergencyState();
+        }
+
+        public uint SetUpdateSVGFrequency(uint oldTimer, uint ms)
+        {
+            GLib.Source.Remove(oldTimer);
+            return GLib.Timeout.Add(ms, new GLib.TimeoutHandler(UpdateSVG));
+        }
+
+        public void OnConnectPressed()
+        {
+            _listener.OnConnectPressed();
         }
     }
 }

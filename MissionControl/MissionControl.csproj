@@ -82,8 +82,7 @@
     <Compile Include="Data\TestStandMapping.cs" />
     <Compile Include="Data\Session.cs" />
     <Compile Include="Connection\Commands\Command.cs" />
-    <Compile Include="Connection\Commands\ActuatorCommand.cs" />
-    <Compile Include="Connection\Commands\StreamCommand.cs" />
+    <Compile Include="Connection\Commands\ValveCommand.cs" />
     <Compile Include="Connection\Commands\StateCommand.cs" />
     <Compile Include="Data\DataPacket.cs" />
     <Compile Include="Data\Components\Component.cs" />
@@ -125,6 +124,10 @@
     <Compile Include="Connection\SerialPort.cs" />
     <Compile Include="UI\Widgets\ComponentSettingWidget.cs" />
     <Compile Include="gtk-gui\MissionControl.UI.Widgets.ComponentSettingWidget.cs" />
+    <Compile Include="Data\Components\SensorComponent.cs" />
+    <Compile Include="Connection\SimSerialPort.cs" />
+    <Compile Include="Connection\Commands\SolenoidCommand.cs" />
+    <Compile Include="Connection\Commands\ServoCommand.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Connection\" />

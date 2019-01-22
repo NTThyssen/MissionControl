@@ -6,6 +6,7 @@ using MissionControl.Connection.Commands;
 using MissionControl.Data;
 using MissionControl.Data.Components;
 using System.Linq;
+using System.IO;
 
 namespace MissionControl.Connection
 {
@@ -14,8 +15,8 @@ namespace MissionControl.Connection
     {
         void SendCommand(Command cmd);
         void SendEmergency(Command cmd);
-        void StartThread();
-        void StopThread();
+        void StartConnection(ISerialPort port);
+        void StopConnection();
     }
 
     public class IOThread : IIOThread
@@ -27,30 +28,37 @@ namespace MissionControl.Connection
         ISerialPort _port;
         bool _shouldRun;
 
-        public IOThread(IDataLog dataLog, ref Session session, ISerialPort serialPort)
+        public IOThread(IDataLog dataLog, ref Session session)
         {
-            t = new Thread(RunMethod);
-            t.Name = "IO Thread";
             _dataLog = dataLog;
             _commands = new Queue<Command>();
             _session = session;
-            _port = serialPort;
         }
 
+        public void StartConnection(ISerialPort port) {
+            if (t != null && t.ThreadState == ThreadState.Running)
+            {
+                StopConnection();
+            }
 
-        public void StartThread() {
+            _port = port;
+            t = new Thread(RunMethod) { Name = "IO Thread" };
             _shouldRun = true;
             t.Start(); 
         }
 
-        public void StopThread() {
+        public void StopConnection() {
             _shouldRun = false;
-            Console.Write("Thread stopping");
-            t.Join(2000);
+            _session.Connected = false;
+            if (t != null && t.ThreadState == ThreadState.Running)
+            {
+                t.Join(2000);
+            }
          }
 
         public void SendCommand(Command cmd)
         {
+            Console.WriteLine("Command: \"{0}\" queued!", cmd);
             _commands.Enqueue(cmd);
         }
 
@@ -72,13 +80,12 @@ namespace MissionControl.Connection
         int highs, lows;
 
         //byte[] fakeBuffer = { 0xA, 0xFF, 0xC, 0xFF, 0x01, 0x14, 0x0B, 0xD0, 0xC8, 0x02, 0xC9, 0x00, 0x00, 0x27, 0x10, 0x01, 0xFF, 0xFF, 0xFF, 0xFF, 0xA };
-        //byte[] fakeBuffer = GenerateFakeBytes(t, _session.Mapping);
 
         public void RunMethod()
         {
-            Console.WriteLine("Thread run started");
             buffered = new List<byte>();
             Open();
+
             while (_shouldRun && _port.IsOpen)
             {
                 WriteAll();
@@ -89,14 +96,16 @@ namespace MissionControl.Connection
 
         private void Open()
         {
-
-            _port.BaudRate = 9600;
             try
             {
+                _port.BaudRate = 9600;
+                _port.PortName = _session.PortName;
                 _port.Open();
                 _port.DiscardInBuffer();
+                _session.Connected = true;
+                return;
             }
-            catch (System.IO.IOException e)
+            catch (IOException e)
             {
                 Console.WriteLine("Serial IO error: {0}", e.Message);
             }
@@ -104,121 +113,139 @@ namespace MissionControl.Connection
             {
                 Console.WriteLine("Serial invalid operation error: {0}", e.Message);
             }
-           
+            StopConnection();
         }
 
         private void WriteAll()
         {
             while (_commands.Count > 0)
             {
+                byte[] wbuffer = _commands.Dequeue().ToByteData();
+                try
+                {
+                    _port.Write(wbuffer, 0, wbuffer.Length);
+                } catch (IOException)
+                {
+                    Console.WriteLine("While writing an IOException occured");
+                    StopConnection();
+                    return;
+                }
 
-
-                Console.WriteLine("Command: {0}", _commands.Dequeue().CommandValue());
             }
         }
 
         private void ReadAll()
         {
-            //Console.Write("Read start");
-            //Thread.Sleep(10);
-            while (_port.BytesToRead >= bufsize && _shouldRun)
+            byte[] buf = new byte[0];
+            int bytesRead = 0;
+            try
             {
-                byte[] buf = new byte[bufsize];
-                int bytesRead = _port.Read(buf, 0, bufsize);
-                //Console.WriteLine("{0} bytes read", bytesRead);
-                for (int i = 0; i < bytesRead; i++)
+                if (_port.BytesToRead > 0 && _shouldRun)
                 {
-                    byte b = buf[i];
-                    // Search for starts and ends
-                    if (reading)
+                    int bytes = Math.Min(_port.BytesToRead, 8);
+                    buf = new byte[bytes];
+                    bytesRead = _port.Read(buf, 0, bytes);
+                }
+            } catch (IOException)
+            {
+                Console.WriteLine("While reading an IOException occured");
+                StopConnection();
+                return;
+            }
+
+            //Console.WriteLine("{0} bytes read", bytesRead);
+            for (int i = 0; i < bytesRead; i++)
+            {
+                byte b = buf[i];
+                // Search for starts and ends
+                if (reading)
+                {
+                    if (lows == 1)
                     {
-                        if (lows == 1)
+                        if (b == HIGH && highs == endHighs - 1)
                         {
-                            if (b == HIGH && highs == endHighs - 1)
-                            {
-                                // Stop reading. Previous data was stop code
-                                int outslice = endHighs - 1 + endLows;
-                                buffered.RemoveRange(buffered.Count - outslice, outslice);
-                                reading = false;
-                                lows = 0;
-                                highs = 0;
-                                PackageDone();
-                            }
-                            else if (b == HIGH && highs < endHighs - 1)
-                            {
-                                // Maybe inside stop code, add anyways
-                                buffered.Add(b);
-                                highs++;
-                                reading = true;
-                            }
-                            else
-                            {
-                                // Low was data, continue reading. 
-                                buffered.Add(b);
-                                reading = true;
-                                highs = 0;
-                                lows = 0;
-                            }
+                            // Stop reading. Previous data was stop code
+                            int outslice = endHighs - 1 + endLows;
+                            buffered.RemoveRange(buffered.Count - outslice, outslice);
+                            reading = false;
+                            lows = 0;
+                            highs = 0;
+                            PackageDone();
+                        }
+                        else if (b == HIGH && highs < endHighs - 1)
+                        {
+                            // Maybe inside stop code, add anyways
+                            buffered.Add(b);
+                            highs++;
+                            reading = true;
                         }
                         else
                         {
-                            if (b == LOW)
-                            {
-                                // Potential end, add anyways
-                                buffered.Add(b);
-                                reading = true;
-                                lows = 1;
-                                highs = 0;
-                            }
-                            else
-                            {
-                                // Was data, continue reading
-                                buffered.Add(b);
-                                reading = true;
-                                highs = 0;
-                                lows = 0;
-                            }
+                            // Low was data, continue reading. 
+                            buffered.Add(b);
+                            reading = true;
+                            highs = 0;
+                            lows = 0;
                         }
                     }
                     else
                     {
-                        if (highs == 1)
+                        if (b == LOW)
                         {
-                            if (b == LOW)
-                            {
-                                // Start reading
-                                reading = true;
-                                highs = 0;
-                                lows = 0;
-                            }
-                            else
-                            {
-                                // Reset search
-                                reading = false;
-                                highs = 0;
-                                lows = 0;
-                            }
+                            // Potential end, add anyways
+                            buffered.Add(b);
+                            reading = true;
+                            lows = 1;
+                            highs = 0;
                         }
                         else
                         {
-                            if (b == HIGH)
-                            {
-                                // Has potential start
-                                reading = false;
-                                highs = 1;
-                                lows = 0;
-                            }
-                            else
-                            {
-                                // Noise, reset search
-                                reading = false;
-                                highs = 0;
-                                lows = 0;
-                            }
+                            // Was data, continue reading
+                            buffered.Add(b);
+                            reading = true;
+                            highs = 0;
+                            lows = 0;
                         }
                     }
                 }
-
+                else
+                {
+                    if (highs == 1)
+                    {
+                        if (b == LOW)
+                        {
+                            // Start reading
+                            reading = true;
+                            highs = 0;
+                            lows = 0;
+                        }
+                        else
+                        {
+                            // Reset search
+                            reading = false;
+                            highs = 0;
+                            lows = 0;
+                        }
+                    }
+                    else
+                    {
+                        if (b == HIGH)
+                        {
+                            // Has potential start
+                            reading = false;
+                            highs = 1;
+                            lows = 0;
+                        }
+                        else
+                        {
+                            // Noise, reset search
+                            reading = false;
+                            highs = 0;
+                            lows = 0;
+                        }
+                    }
+                }
+                
             }
         }
 
@@ -236,79 +263,6 @@ namespace MissionControl.Connection
             buffered.Clear();
         }
 
-        public static byte[] GenerateFakeBytes(int time, ComponentMapping mapping) {
-            byte[] startNoise = { 0xA, 0xFF, 0xC };
-            byte[] startCode = { 0xFF, 0x01};
-            byte[] endCode = { 0x01, 0xFF, 0xFF, 0xFF, 0xFF };
-            byte[] endNoise = { 0x0B, 0x0C, 0x0D };
 
-            byte[] timeValue = BitConverter.GetBytes(time);
-            if(BitConverter.IsLittleEndian) { Array.Reverse(timeValue); }
-            byte[] btime = new byte[1 + timeValue.Length];
-            btime[0] = 0xC9;
-            Array.Copy(timeValue, 0, btime, 1, timeValue.Length);
-
-            byte stateValue = (byte)new Random().Next(0, 3);
-            byte[] bstate = { 0xC8, stateValue };
-
-            List<byte[]> data = new List<byte[]>
-            {
-                startNoise,
-                startCode,
-                btime,
-                bstate
-            };
-
-            Random random = new Random();
-
-            foreach (Component c in mapping.Components())
-            {
-                byte[] sensor = new byte[1 + c.ByteSize];
-
-                byte[] value = new byte[0];
-
-                switch (c)
-                {
-                    case PressureComponent pt:
-                        value = BitConverter.GetBytes((short)random.Next(0, 40));
-                        break;
-                    case TemperatureComponent tc:
-                        value = BitConverter.GetBytes((short)random.Next(-50, 300));
-                        break;
-                    case LoadComponent load:
-                        value = BitConverter.GetBytes((short)random.Next(0, 311));
-                        break;
-                    case TankComponent tank:
-                        value = BitConverter.GetBytes((short)random.Next(0, (int) tank.Full +1));
-                        break;
-                    case ServoComponent servo:
-                        value = BitConverter.GetBytes((short)random.Next(0, 101));
-                        break;
-                    case SolenoidComponent solenoid:
-                        value = BitConverter.GetBytes((short)random.Next(0, 2));
-                        break;
-                    case VoltageComponent battery:
-                        value = BitConverter.GetBytes((short)random.Next(12, 14));
-                        break;
-                }
-
-                if (BitConverter.IsLittleEndian)
-                {
-                    Array.Reverse(value);
-                }
-
-                sensor[0] = c.BoardID;
-                Array.Copy(value, 0, sensor, 1, value.Length);
-                data.Add(sensor);
-            }
-
-            data.Add(endCode);
-            data.Add(endNoise);
-
-            byte[] buffer = data.SelectMany((byte[] arg) => arg).ToArray();
-
-            return buffer;
-
-        }
     }
 }

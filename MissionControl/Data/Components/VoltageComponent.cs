@@ -1,7 +1,7 @@
 ﻿using System;
 namespace MissionControl.Data.Components
 {
-    public class VoltageComponent : Component, ILoggable
+    public class VoltageComponent : SensorComponent, ILoggable
     {
 
         private float _minVoltage;

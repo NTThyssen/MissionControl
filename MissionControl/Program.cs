@@ -1,8 +1,10 @@
 ﻿using System;
+using System.Globalization;
 using Gtk;
 using MissionControl.Connection;
 using MissionControl.Connection.Commands;
 using MissionControl.Data;
+using MissionControl.Data.Components;
 using MissionControl.UI;
 using Svg;
 
@@ -15,6 +17,8 @@ namespace MissionControl
         IIOThread _ioThread;
         IUserInterface _ui;
 
+        private static bool _isUsingSimulatedSerialPort = false;
+
         public Program(IDataStore dataStore, ILogThread logThread, IIOThread ioThread, IUserInterface ui) 
         {
             _dataStore = dataStore;
@@ -22,14 +26,14 @@ namespace MissionControl
             _ioThread = ioThread;
             _ui = ui;
             //_logThread.StartThread();
-            _ioThread.StartThread();
+            //_ioThread.StartThread();
 
             // Blocking call
             _ui.StartUI(this);
 
             // When UserInterface loops stop so should other threads
             _logThread.StopLogging();
-            _ioThread.StopThread();
+            _ioThread.StopConnection();
         }
 
         public static void Main(string[] args)
@@ -39,32 +43,39 @@ namespace MissionControl
             DataStore dataStore = new DataStore(session);
 
             LogThread logThread = new LogThread(dataStore);
+         
 
-            SerialPort port = new SerialPort();
-            IOThread ioThread = new IOThread(dataStore, ref session, port);
+            _isUsingSimulatedSerialPort = args.Length > 0 && args[0].ToLower().Equals("sim");
+
+
+            IOThread ioThread = new IOThread(dataStore, ref session);
 
             UserInterface ui = new UserInterface(ref session);
             Program p = new Program(dataStore, logThread, ioThread, ui);
         }
 
 
-        public void OnStatePressed(StateCommand command)
+        public void OnCommand(Command command)
         {
-            State state = _dataStore.GetCurrentSession().Mapping.States().Find((State obj) => obj.StateID == command.CommandValue());
-            _dataStore.GetCurrentSession().State = state;
+            _ioThread.SendCommand(command);
+
+            if (command is StateCommand sc)
+            {
+                // Fake response
+                State state = _dataStore.GetCurrentSession().Mapping.States().Find((State obj) => obj.StateID == sc.StateID);
+                if (state != null) _dataStore.GetCurrentSession().State = state;
+            }
+
         }
 
-        public void OnValvePressed()
+        public void OnValvePressed(ValveCommand command)
         {
-            throw new NotImplementedException();
+            _ioThread.SendCommand(command);
         }
 
         public void OnSessionSettingsUpdated(Session session)
         {
             _dataStore.UpdateSession(session);
-            PreferenceManager.Preferences[PreferenceManager.STD_LOGFOLDER] = session.LogFilePath;
-            PreferenceManager.Preferences[PreferenceManager.STD_PORTNAME] = session.PortName;
-            PreferenceManager.Preferences.Save();
         }
 
         public void OnEmergencyState()
@@ -83,6 +94,21 @@ namespace MissionControl
         {
             _dataStore.DisableLogging();
             _logThread.StopLogging();
+        }
+
+        public void OnConnectPressed()
+        {
+
+            ISerialPort port;
+            if (_isUsingSimulatedSerialPort)
+            {
+                port = new SimSerialPort(_dataStore.GetCurrentSession().Mapping);
+            }
+            else
+            {
+                port = new SerialPort();
+            }
+            _ioThread.StartConnection(port);
         }
     }
 }

@@ -1,7 +1,7 @@
 ﻿using System;
 namespace MissionControl.Data.Components
 {
-    public class TemperatureComponent : Component, ILoggable
+    public class TemperatureComponent : SensorComponent, ILoggable
     {
         private int _rawTemperature = 0;
         private Scaler _scaler;

@@ -12,6 +12,5 @@ namespace MissionControl.Connection
         void DiscardInBuffer();
         void Write(byte[] buffer, int offset, int count);
         int Read(byte[] buffer, int offset, int count);
-        int ReadByte();
     }
 }

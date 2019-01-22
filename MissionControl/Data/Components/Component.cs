@@ -12,14 +12,9 @@ namespace MissionControl.Data.Components
         public int ByteSize { get; }
         public byte BoardID { get; }
 
-        public int MaxLimit { get; set; }
-        public int MinLimit { get; set; }
-        public bool HasLimits { get { return MinLimit != MaxLimit; } }
         public bool Enabled { get; set; } = true;
 
-        public const string PREF_MAX_LIMIT = "_MAX_LIMIT";
-        public const string PREF_MIN_LIMIT = "_MIN_LIMIT";
-        public const string PREF_ENABLED = "_ENABLED";
+        public string PrefEnabledName { get { return BoardID + "_ENABLED"; } }
 
         public abstract string TypeName { get; }
 

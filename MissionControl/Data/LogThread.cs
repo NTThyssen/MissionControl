@@ -22,7 +22,6 @@ namespace MissionControl.Data
 
         public LogThread(IDataLog dataLog)
         {
-
             _dataLog = dataLog;
         }
 

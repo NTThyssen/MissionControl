@@ -88,11 +88,46 @@ namespace MissionControl.UI.Widgets
             }
             catch (Exception err)
             {
-                Console.WriteLine(err.Message);
+                if (Toplevel.IsTopLevel)
+                {
+                    Window top = (Window) Toplevel;
+                    MessageDialog errorDialog = new MessageDialog(top,
+                    DialogFlags.DestroyWithParent,
+                    MessageType.Error,
+                    ButtonsType.Close,
+                    "Value for Valve is not a number value"
+                    );
+                    errorDialog.Run();
+                    errorDialog.Destroy();
+                    return;
+                }
+
+                Console.WriteLine("Value for Valve is not a number value");
                 return;
             }
 
-            _callback(_component, value);
+            if (value <= 100.0f && value >= 0.0f)
+            {
+                _callback(_component, value);
+            }
+            else
+            {
+                if (Toplevel.IsTopLevel)
+                {
+                    Window top = (Window)Toplevel;
+                    MessageDialog errorDialog = new MessageDialog(top,
+                    DialogFlags.DestroyWithParent,
+                    MessageType.Error,
+                    ButtonsType.Close,
+                    "Value not between 0.0 and 100.0"
+                    );
+                    errorDialog.Run();
+                    errorDialog.Destroy();
+                    return;
+                }
+                Console.WriteLine("Value not between 0.0 and 100.0");
+                return;
+            }
         }
 
 

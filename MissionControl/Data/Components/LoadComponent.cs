@@ -1,7 +1,7 @@
 ﻿using System;
 namespace MissionControl.Data.Components
 {
-    public class LoadComponent : Component, ILoggable
+    public class LoadComponent : SensorComponent, ILoggable
     {
         private int _rawLoad;
         private Scaler _scaler;

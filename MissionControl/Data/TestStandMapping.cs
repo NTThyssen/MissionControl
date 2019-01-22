@@ -36,6 +36,7 @@ namespace MissionControl.Data
             TC_4 = new TemperatureComponent(13, 2, "TC_4", "TC-4", x => x);
             TC_5 = new TemperatureComponent(14, 2, "TC_5", "TC-5", x => x);
             TC_6 = new TemperatureComponent(15, 2, "TC_6", "TC-6", x => x);
+            TC_6.Set(-200);
 
             LOAD = new LoadComponent(0, 2, "LOAD", "Load cell", x => x);
 

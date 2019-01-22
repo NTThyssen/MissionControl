@@ -12,12 +12,13 @@ namespace MissionControl.UI
     {
         void OnMenuSettingsPressed();
         void OnMenuPlotViewerPressed();
-        void OnStatePressed(StateCommand state);
+        void OnStatePressed(State state);
         void OnServoPressed(ServoComponent servo, float value);
         void OnSolenoidPressed(SolenoidComponent solenoid, bool open);
         void OnLogStartPressed();
         void OnLogStopPressed();
         void OnEmergencyCombinationPressed();
+        void OnConnectPressed();
     }
 
     public partial class TestStandView : Window, ILockable, IValveControlListener, IStateControlListener
@@ -31,7 +32,9 @@ namespace MissionControl.UI
 
         Button _btnLogStart, _btnLogStop;
 
+        Button _btnConnect;
         Label _lastConnection;
+
         Gdk.Color _clrGoodConnection = new Gdk.Color(0, 255, 0);
         Gdk.Color _clrBadConnection = new Gdk.Color(255, 0, 0);
 
@@ -41,7 +44,6 @@ namespace MissionControl.UI
                 base(Gtk.WindowType.Toplevel)
         {
             Title = "Control Panel";
-            SetDefaultSize(800, 600);
             SetPosition(WindowPosition.Center);
 
             _listener = listener;
@@ -57,7 +59,6 @@ namespace MissionControl.UI
 
         public void Layout()
         {
-           this.Build();
 
             // Background color
             ModifyBg(StateType.Normal, new Gdk.Color(0, 0, 0));
@@ -69,6 +70,7 @@ namespace MissionControl.UI
 
             VBox controlPane1 = new VBox(false, 8);
 
+            // Logging
             VBox logButtonContainer = new VBox(false, 8);
             DSectionTitle logTitle = new DSectionTitle("Logging");
             HBox logButtons= new HBox(true, 8);
@@ -92,16 +94,41 @@ namespace MissionControl.UI
             logButtons.PackStart(_btnLogStart, false, true, 0);
             logButtons.PackStart(_btnLogStop, false, true, 0);
 
+            logButtonContainer.PackStart(logTitle, false, false, 0);
+            logButtonContainer.PackStart(logButtons, false, false, 0);
+
+            // Connection
+            VBox connectionContainer = new VBox(false, 8);
+            DSectionTitle connectionTitle = new DSectionTitle("Connection");
+            connectionContainer.PackStart(_lastConnection, false, false, 0);
+
+            _btnConnect = new Button
+            {
+                Label = "Connect",
+                HeightRequest = 40
+            };
+
+            _btnConnect.Pressed += (sender, e) =>
+            {
+                _listener.OnConnectPressed();
+                _btnConnect.Sensitive = false;
+                _btnConnect.Label = "Connecting...";
+            };
+
+            _btnConnect.ModifyBg(StateType.Insensitive, new Gdk.Color(70, 70, 70));
+
             _lastConnection = new Label { Text = "\n\n" };
             _lastConnection.ModifyFg(StateType.Normal, new Gdk.Color(255, 255, 255));
             _lastConnection.SetAlignment(0, 0.5f);
 
-            logButtonContainer.PackStart(logTitle, false, false, 0);
-            logButtonContainer.PackStart(logButtons, false, false, 0);
-            logButtonContainer.PackStart(_lastConnection, false, false, 0);
+            connectionContainer.PackStart(connectionTitle, false, false, 0);
+            connectionContainer.PackStart(_btnConnect, false, false, 0);
+            connectionContainer.PackStart(_lastConnection, false, false, 0);
 
+            // Control panl
             controlPane1.PackStart(_valveWidget, false, false, 0);
             controlPane1.PackStart(logButtonContainer, false, false, 20);
+            controlPane1.PackStart(connectionContainer, false, false, 20);
 
             // Horizonal layout
             HBox horizontalLayout = new HBox(false, 0);
@@ -136,9 +163,6 @@ namespace MissionControl.UI
 
             Add(verticalLayout);
 
-            SetPosition(WindowPosition.Center);
-
-            ShowAll();
         }
 
         void LogStartPressed(object sender, EventArgs e)
@@ -156,17 +180,34 @@ namespace MissionControl.UI
         }
 
 
-        public void Update() {
-            _svgWidget.Refresh();
+        public void UpdateControls() {
             _stateWidget.SetCurrentState(_session.State);
             UpdateLastConnectionLabel();
+            UpdateConnectButton();
+        }
+
+        public void UpdateSVG() {
+            _svgWidget.Refresh();
         }
 
         public void UpdateLastConnectionLabel ()
         {
-            double time = (DateTime.Now - _session.LastReceived).Milliseconds / 1000.0;
-            _lastConnection.Text = String.Format("Time since package:\n{0} s", time);
+            double time = Math.Floor(10 * (DateTime.Now - _session.LastReceived).TotalMilliseconds / 1000.0) / 10;
+            _lastConnection.Text = string.Format("Time since package:\n{0} s", time);
             _lastConnection.ModifyFg(StateType.Normal, (time < 4) ? _clrGoodConnection : _clrBadConnection);
+        }
+
+        public void UpdateConnectButton() { 
+            if (_session.Connected)
+            {
+                _btnConnect.Sensitive = false;
+                _btnConnect.Label = "Connected";
+            }
+            else
+            {
+                _btnConnect.Sensitive = true;
+                _btnConnect.Label = "Connect";
+            }
         }
 
         [GLib.ConnectBefore]
@@ -178,7 +219,6 @@ namespace MissionControl.UI
             if (_spaceDown && _escDown)
             {
                 _listener.OnEmergencyCombinationPressed();
-                Update();
             }
         }
 
@@ -206,12 +246,9 @@ namespace MissionControl.UI
             a.RetVal = true;
         }
 
-        public void OnStatePressed(StateCommand command)
+        public void OnStatePressed(State state)
         {
-            _listener.OnStatePressed(command);
-
-            // Fake response
-            _stateWidget.SetCurrentState(_session.State);
+            _listener.OnStatePressed(state);
         }
 
         public void OnServoPressed(ServoComponent servo, float value)

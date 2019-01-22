@@ -1,7 +1,7 @@
 ﻿using System;
 namespace MissionControl.Data.Components
 {
-    public class PressureComponent : Component, ILoggable
+    public class PressureComponent : SensorComponent, ILoggable
     {
         private int _rawPressure = 0;
         private Scaler _scaler;

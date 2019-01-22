@@ -3,16 +3,22 @@ namespace MissionControl.Connection.Commands
 {
     public class StateCommand : Command
     {
-        private readonly int _commandValue;
+        public readonly byte StateID;
+        private const byte ID = 0xC8;
 
-        public StateCommand(int commandValue)
+        public StateCommand(byte stateID)
         {
-            _commandValue = commandValue;
+            StateID = stateID;
         }
 
-        public override int CommandValue()
+        public override byte[] ToByteData()
         {
-            return _commandValue;
+            return new byte[]{ID, StateID };
+        }
+
+        public override string ToString()
+        {
+            return string.Format("StateCommand, StateID: {0}", StateID);
         }
     }
 }

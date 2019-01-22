@@ -11,6 +11,7 @@ namespace MissionControl.Data
         public State State { get; set; }
         public long SystemTime { get; set; }
         public DateTime LastReceived;
+        public bool Connected { get; set; }
 
         public Session(ComponentMapping map)
         {
@@ -70,6 +71,7 @@ namespace MissionControl.Data
                 }
 
                 // If sensor/component
+                // Sign extension with help from: https://stackoverflow.com/questions/3322788/best-practice-for-converting-24bit-little-endian-twos-complement-values-to-in
                 if (Mapping.ComponentByIDs().ContainsKey(bytes[i]))
                 {
                     Component component = Mapping.ComponentByIDs()[bytes[i]];
@@ -78,11 +80,17 @@ namespace MissionControl.Data
 
                     if (bytes.Length - 1 - i >= size)
                     {
+                      
                         if (size <= 4)
                         {
                             byte[] valBytes = new byte[4];
                             Array.Copy(bytes, i + 1, valBytes, 4 - size, size);
 
+                            byte sign = (byte) (((valBytes[4 - size] & 0b10000000) == 0) ? 0 : 0xFF);
+                            for (int j = 0; j < 4 - size; j++)
+                            {
+                                valBytes[j] = sign;
+                            }
 
                             if (BitConverter.IsLittleEndian)
                             {

@@ -1,12 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
+using MissionControl.Data.Components;
 
 namespace MissionControl.Data
 {
 
     public interface IDataStore
     {   
-        void GetCurrentState();
         Session GetCurrentSession();
         void UpdateSession(Session session);
         void EnableLogging();
@@ -32,6 +33,7 @@ namespace MissionControl.Data
         {
             _data = new Queue<DataPacket>();
             _session = session;
+            LoadSession();
         }
 
         public void Enqueue(DataPacket packet) {
@@ -55,21 +57,93 @@ namespace MissionControl.Data
             return _data.Count == 0;
         }
 
-        public void GetCurrentState()
-        {
-            throw new NotImplementedException();
-        }
-
         public Session GetCurrentSession()
         {
             return _session;
         }
 
+        private void LoadSession() {
+
+            _session.LogFilePath = PreferenceManager.Preferences[PreferenceManager.STD_LOGFOLDER] ?? _session.LogFilePath;
+            _session.PortName = PreferenceManager.Preferences[PreferenceManager.STD_PORTNAME] ?? _session.PortName;
+
+            foreach (Component c in _session.Mapping.Components())
+            {
+
+                string enabled = PreferenceManager.Preferences[c.PrefEnabledName];
+                if (enabled != null)
+                {
+                    try { c.Enabled = Convert.ToBoolean(enabled); }
+                    catch (Exception e) { Console.WriteLine("Setting enabled on {0} resulted in {1}", c.Name, e.Message); }
+                }
+
+                if (c is SensorComponent sc)
+                {
+                    string min = PreferenceManager.Preferences[sc.PrefMinName];
+                    if (min != null)
+                    {
+                        try { sc.MinLimit = Convert.ToSingle(min); }
+                        catch (Exception e) { Console.WriteLine("Setting min limit on {0} resulted in {1}", sc.Name, e.Message); }
+                    }
+
+                    string max = PreferenceManager.Preferences[sc.PrefMaxName];
+                    if (max != null)
+                    {
+                        try { sc.MaxLimit = Convert.ToSingle(max); }
+                        catch (Exception e) { Console.WriteLine("Setting max limit on {0} resulted in {1}", sc.Name, e.Message); }
+                    }
+                }
+            }
+        }
+
+
         public void UpdateSession(Session session)
         {
+            PreferenceManager.Preferences[PreferenceManager.STD_LOGFOLDER] = session.LogFilePath;
+            PreferenceManager.Preferences[PreferenceManager.STD_PORTNAME] = session.PortName;
+
             _session.LogFilePath = session.LogFilePath;
             _session.PortName = session.PortName;
-            // Might have trouble with mapping
+
+            // Update Old Component with settings from New Component
+            foreach (Component nc in session.Mapping.Components())
+            {
+
+                Component oc = _session.Mapping.ComponentByIDs()[nc.BoardID];
+
+                PreferenceManager.Preferences[nc.PrefEnabledName] = Convert.ToString(nc.Enabled);
+                oc.Enabled = nc.Enabled;
+
+                if (nc is SensorComponent nsc)
+                {
+                    if (!float.IsNaN(nsc.MinLimit))
+                    {
+                        PreferenceManager.Preferences[nsc.PrefMinName] = nsc.MinLimit.ToString(CultureInfo.InvariantCulture);
+                    }
+                    else
+                    {
+                        PreferenceManager.Preferences.Remove(nsc.PrefMinName);
+                    }
+                    if (!float.IsNaN(nsc.MaxLimit))
+                    {
+                        PreferenceManager.Preferences[nsc.PrefMaxName] = nsc.MaxLimit.ToString(CultureInfo.InvariantCulture);
+                    }
+                    else
+                    {
+                        PreferenceManager.Preferences.Remove(nsc.PrefMaxName);
+                    }
+
+                    if (oc is SensorComponent _sc)
+                    {
+                        _sc.MinLimit = nsc.MinLimit;
+                        _sc.MaxLimit = nsc.MaxLimit;
+                    }
+                }
+            }
+
+         
+            PreferenceManager.Preferences.Save();
+
         }
 
         public void EnableLogging()

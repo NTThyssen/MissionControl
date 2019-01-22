@@ -31,6 +31,9 @@ namespace MissionControl.UI
         private List<string> _portList;
         private Button _btnPortRefresh;
 
+        // Component limits
+        List<ComponentSettingWidget> _componentWidgets = new List<ComponentSettingWidget>();
+
         // Overall actions
         Button _btnSave;
 
@@ -38,7 +41,10 @@ namespace MissionControl.UI
         {
             _listener = handler;
             _session = session;
-            Build();
+            SetSizeRequest(400, 650);
+            SetPosition(WindowPosition.Center);
+
+           //Build();
             Title = "Session Settings";
 
 
@@ -49,11 +55,7 @@ namespace MissionControl.UI
             {
                 _chosenFilePath = session.LogFilePath;
             }
-            else if (PreferenceManager.Preferences[PreferenceManager.STD_LOGFOLDER] != null)
-            {
-                _chosenFilePath = PreferenceManager.Preferences[PreferenceManager.STD_LOGFOLDER];
-            }
-
+     
             HBox filepathContainer = new HBox(false, 0);
 
             _lblFilepath = new Label();
@@ -82,46 +84,35 @@ namespace MissionControl.UI
             {
                 _portDropdown.Active = _portList.IndexOf(session.PortName);
             }
-            else
-            {
-                string savedPort = PreferenceManager.Preferences[PreferenceManager.STD_PORTNAME];
-                if (savedPort != null && _portList.Contains(savedPort))
-                {
-                    _portDropdown.Active = _portList.IndexOf(savedPort);
-                }
-            }
-
+       
             _btnPortRefresh = new Button(Stock.Refresh);
             _btnPortRefresh.Pressed += PortRefreshPressed;
             portBox.PackStart(_portDropdown, false, false, 10);
             portBox.PackStart(_btnPortRefresh, false, false, 0);
 
             // Component limits
-            List<ComponentSettingWidget> pressures = new List<ComponentSettingWidget>();
-            List<ComponentSettingWidget> temperatures = new List<ComponentSettingWidget>();
-            List<ComponentSettingWidget> loads = new List<ComponentSettingWidget>();
-            List<ComponentSettingWidget> voltages = new List<ComponentSettingWidget>();
 
-            foreach (Component component in _session.Mapping.Components())
+            _session.Mapping.Components().ForEach((Component obj) =>
             {
-                switch (component)
+                if (obj is SensorComponent sc)
                 {
-                    case PressureComponent p: pressures.Add(new ComponentSettingWidget(p)); break;
-                    case TemperatureComponent t: temperatures.Add(new ComponentSettingWidget(t)); break;
-                    case LoadComponent l: loads.Add(new ComponentSettingWidget(l)); break;
-                    case VoltageComponent v: voltages.Add(new ComponentSettingWidget(v)); break;
+                    _componentWidgets.Add(new ComponentSettingWidget(sc));
                 }
-            }
-
+            });
+                
             VBox componentSections = new VBox(false, 20);
-            componentSections.PackStart(LayoutLimitsSection(pressures), false, false, 0);
-            componentSections.PackStart(LayoutLimitsSection(temperatures), false, false,0);
-            componentSections.PackStart(LayoutLimitsSection(loads), false, false, 0);
-            componentSections.PackStart(LayoutLimitsSection(voltages), false, false, 0);
+            componentSections.PackStart(LayoutLimitsSection(_componentWidgets.FindAll((ComponentSettingWidget obj) => obj.Component is PressureComponent)), false, false, 0);
+            componentSections.PackStart(LayoutLimitsSection(_componentWidgets.FindAll((ComponentSettingWidget obj) => obj.Component is TemperatureComponent)), false, false,0);
+            componentSections.PackStart(LayoutLimitsSection(_componentWidgets.FindAll((ComponentSettingWidget obj) => obj.Component is LoadComponent)), false, false, 0);
+            componentSections.PackStart(LayoutLimitsSection(_componentWidgets.FindAll((ComponentSettingWidget obj) => obj.Component is VoltageComponent)), false, false, 0);
 
             // Bottom save container
             HBox cancelSaveContainer = new HBox(false, 0);
-            _btnSave = new Button { Label = "Save" };
+            _btnSave = new Button {
+                Label = "Save",
+                WidthRequest = 60,
+                HeightRequest = 40
+            };
             _btnSave.Pressed += SavePressed;
             cancelSaveContainer.PackEnd(_btnSave, false, false, 10);
 
@@ -132,15 +123,12 @@ namespace MissionControl.UI
             container.PackStart(componentSections, false, false, 0);
             container.PackStart(cancelSaveContainer, false, false, 0);
 
-
             ScrolledWindow scrolledWindow = new ScrolledWindow();
             scrolledWindow.SetPolicy(PolicyType.Never, PolicyType.Automatic);
             scrolledWindow.AddWithViewport(container);
 
             Add(scrolledWindow);
 
-            SetSizeRequest(400, 650);
-            SetPosition(WindowPosition.Center);
             ShowAll();
         }
 
@@ -148,9 +136,9 @@ namespace MissionControl.UI
         {
             if (components.Count == 0) return new VBox(false, 0);
 
-            VBox section = new VBox(false, 0);
+            VBox section = new VBox(false, 10);
             Label typename = new Label { 
-                Text = components[0].Component.TypeName + " sensor limit warnings:"
+                Text = components[0].Component.TypeName + " sensors:"
             };
             section.PackStart(typename, false, false, 10);
 
@@ -254,6 +242,27 @@ namespace MissionControl.UI
                 newSession.PortName = _portDropdown.ActiveText;
             }
 
+
+            foreach (ComponentSettingWidget widget in _componentWidgets)
+            {
+                if (ValidateSensorLimits(widget, out float min, out float max, out string err))
+                {
+                    hasErrors = true;
+                    errorMessage += err;
+                }
+                else
+                {
+                    if (newSession.Mapping.ComponentByIDs()[widget.Component.BoardID] is SensorComponent sc)
+                    {
+                        sc.MinLimit = min;
+                        sc.MaxLimit = max;
+                    }
+                }
+
+                newSession.Mapping.ComponentByIDs()[widget.Component.BoardID].Enabled = widget.Enabled;
+            }
+
+
             if (!hasErrors)
             {
                 _listener.OnSave(newSession);
@@ -269,6 +278,43 @@ namespace MissionControl.UI
                 errorDialog.Run();
                 errorDialog.Destroy();
             }
+        }
+
+        bool ValidateSensorLimits(ComponentSettingWidget widget, out float min, out float max, out string errorMessage)
+        {
+            bool error = false;
+            errorMessage = "";
+            min = float.NaN;
+            max = float.NaN;
+
+            if (widget.Min.Length > 0)
+            {
+                try
+                {
+                    min = Convert.ToSingle(widget.Min);
+                } catch (Exception e)
+                {
+                    error = true;
+                    errorMessage += string.Format("Minimum is not a correct value for {0}\n", widget.Component.Name);
+                }
+            }
+         
+
+            if (widget.Max.Length > 0)
+            {
+                try
+                {
+                    max = Convert.ToSingle(widget.Max);
+                }
+                catch (Exception e)
+                {
+                    error = true;
+                    errorMessage += string.Format("Maximum is not a correct value for {0}\n", widget.Component.Name);
+                }
+            }
+
+
+            return error;
         }
 
 
