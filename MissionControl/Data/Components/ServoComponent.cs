@@ -1,22 +1,25 @@
 ﻿using System;
 namespace MissionControl.Data.Components
 {
-    public class ServoComponent : ValveComponent
+    public class ServoComponent : ValveComponent, ILoggable
     {
         private int _rawPosition;
-        private float _closePosition;
-        private float _openPosition;
 
-        public ServoComponent(int boardID, string graphicID, string name, float closePosition, float openPosition, string graphicIDSymbol) : base(boardID, graphicID, name, graphicIDSymbol)
+        public float ClosePosition { get; }
+        public float OpenPosition { get; }
+
+        public override string TypeName => "Servo";
+
+        public ServoComponent(byte boardID, int byteSize, string graphicID, string name, float closePosition, float openPosition, string graphicIDSymbol) : base(boardID, byteSize, graphicID, name, graphicIDSymbol)
         {
-            _closePosition = closePosition;
-            _openPosition = openPosition;
+            ClosePosition = closePosition;
+            OpenPosition = openPosition;
         }
 
-        public ServoComponent(int boardID, string graphicID, string name, string graphicIDSymbol) : base(boardID, graphicID, name, graphicIDSymbol)
+        public ServoComponent(byte boardID, int byteSize, string graphicID, string name, string graphicIDSymbol) : base(boardID, byteSize, graphicID, name, graphicIDSymbol)
         {
-            _closePosition = 100.0f;
-            _openPosition = 0.0f;
+            ClosePosition = 100.0f;
+            OpenPosition = 0.0f;
         }
 
         public override void Set(int val)
@@ -34,7 +37,14 @@ namespace MissionControl.Data.Components
             return _rawPosition;
         }
 
-        public float ClosePosition { get { return _closePosition; } }
-        public float OpenPosition { get { return _openPosition; } }
+        public string ToLog()
+        {
+            return "" + Percentage();
+        }
+
+        public string LogHeader()
+        {
+            return Name + " [%]";
+        }
     }
 }

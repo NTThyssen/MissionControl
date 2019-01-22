@@ -15,7 +15,7 @@ namespace MissionControl.UI.Widgets
     {
 
         private SvgDocument _svg;
-        private ComponentMapping _componentMapping;
+        private Session _session;
         private Dictionary<string, SvgElement> _svgElements;
 
         private float _svgOriginalW, _svgOriginalH;
@@ -24,12 +24,17 @@ namespace MissionControl.UI.Widgets
 
         private bool _didRefresh;
 
-        public SVGWidget(string filepath, ComponentMapping componentMapping)
+        public SVGWidget(string filepath, ref Session session)
         {
             this.Build();
+            _session = session;
+            _svg = LoadSVG(filepath);
+            _svgOriginalW = _svg.Width.Value;
+            _svgOriginalH = _svg.Height.Value;
+            _svgElements = new Dictionary<string, SvgElement>();
+            PopulateElementsDictionary();
 
-            //imageView.SetSizeRequest(700, 700);
-            SetSizeRequest(700, 700);
+            SetSizeRequest((int)_svgOriginalW, (int) _svgOriginalH);
             imageView.ExposeEvent += (o, args) => {
                 if (!exposed)
                 {
@@ -39,30 +44,23 @@ namespace MissionControl.UI.Widgets
                 Console.WriteLine("SVG ExposeEvent!");
             };
 
-
-
-            _componentMapping = componentMapping;
-            _svg = LoadSVG(filepath);
-            _svgOriginalW = _svg.Width.Value;
-            _svgOriginalH = _svg.Height.Value;
-            _svgElements = new Dictionary<string, SvgElement>();
-            PopulateElementsDictionary();
-
-
         }
 
         private void PopulateElementsDictionary()
         {
-            foreach (Component component in _componentMapping.Components())
+            foreach (Component component in _session.Mapping.Components())
             {
                 switch (component)
                 {
+                    case VoltageComponent vc:
                     case PressureComponent pt:
                     case TemperatureComponent tc:
                         _svgElements.Add(component.GraphicID, _svg.GetElementById(component.GraphicID).Children[0]);
                         ((SvgTextSpan)_svg.GetElementById(component.GraphicID + "_NAME").Children[0]).Text = component.Name;
                         break;
                     case LoadComponent load:
+                        _svgElements.Add(component.GraphicID, _svg.GetElementById(component.GraphicID).Children[0]);
+                        ((SvgTextSpan)_svg.GetElementById(component.GraphicID + "_NAME").Children[0]).Text = component.Name;
                         break;
                     case TankComponent tank:
                         _svgElements.Add(component.GraphicID, _svg.GetElementById(component.GraphicID).Children[0]);
@@ -92,7 +90,7 @@ namespace MissionControl.UI.Widgets
         }
 
         public void Refresh() {
-            foreach (Component component in _componentMapping.Components())
+            foreach (Component component in _session.Mapping.Components())
             {
                 switch (component)
                 {
@@ -103,6 +101,7 @@ namespace MissionControl.UI.Widgets
                         ((SvgTextSpan)_svgElements[component.GraphicID]).Text = String.Format("{0} °C", tc.Celcius());
                         break;
                     case LoadComponent load:
+                        ((SvgTextSpan)_svgElements[component.GraphicID]).Text = String.Format("{0} N", load.Newtons());
                         break;
                     case TankComponent tank:
 
@@ -121,7 +120,10 @@ namespace MissionControl.UI.Widgets
                         ((SvgTextSpan)_svgElements[component.GraphicID]).Text = String.Format("{0} %", servo.Percentage());
                         break;
                     case SolenoidComponent solenoid:
-                        ((SvgTextSpan)_svgElements[component.GraphicID]).Text = String.Format(solenoid.State().ToString());
+                        ((SvgTextSpan)_svgElements[component.GraphicID]).Text = solenoid.State().ToString();
+                        break;
+                    case VoltageComponent battery:
+                        ((SvgTextSpan)_svgElements[component.GraphicID]).Text = String.Format("{0} V / {1} %", battery.Volts(), Math.Floor(battery.Percentage() * 100) / 100);
                         break;
                 }
             }

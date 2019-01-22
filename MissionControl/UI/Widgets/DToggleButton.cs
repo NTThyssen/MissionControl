@@ -35,7 +35,7 @@ namespace MissionControl.UI.Widgets
             HeightRequest = height;
 
             Set(initial);
-  
+
         }
 
 
@@ -56,38 +56,24 @@ namespace MissionControl.UI.Widgets
             switch(state)
             {
                 case ToggleState.Active:
-                    SetActive();
+                    Label = _activeText;
+                    ModifyBg(StateType.Normal, _activeColor);
+                    ModifyBg(StateType.Insensitive, _activeColor);
+                    ModifyBg(StateType.Prelight, _activePrelight);
                     break;
                 case ToggleState.Inactive:
-                    SetInactive();
+                    Label = _inactiveText;
+                    ModifyBg(StateType.Normal, _inactiveColor);
+                    ModifyBg(StateType.Prelight, _inactivePrelight);
                     break;
                 case ToggleState.Intermediate:
-                    SetIntermediate();
+                    Label = _inactiveText;
+                    ModifyBg(StateType.Normal, _inactiveColor);
+                    ModifyBg(StateType.Prelight, _inactivePrelight);
                     break;
             }
             _state = state;
 
-        }
-
-        private void SetActive()
-        {
-            Label = _activeText;
-            ModifyBg(StateType.Normal, _activeColor);
-            ModifyBg(StateType.Prelight, _activePrelight);
-        }
-
-        private void SetInactive()
-        {
-            Label = _inactiveText;
-            ModifyBg(StateType.Normal, _inactiveColor);
-            ModifyBg(StateType.Prelight, _inactivePrelight);
-        }
-
-        private void SetIntermediate()
-        {
-            Label = "Intermediate";
-            ModifyBg(StateType.Normal, _activeColor);
-            ModifyBg(StateType.Prelight, _activePrelight);
         }
 
         public bool Active { get { return _state == ToggleState.Active; } }

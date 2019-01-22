@@ -15,12 +15,24 @@ namespace MissionControl.UI
             PointLinePlot
         }
 
-        public Point[] Points { get; set; }
+        Point[] _points;
 
-        public int Xmin { get; set; } = int.MinValue;
-        public int Xmax { get; set; } = int.MaxValue;
-        public int Ymin { get; set; } = int.MinValue;
-        public int Ymax { get; set; } = int.MaxValue;
+        public Point[] Points
+        {
+            get { return _points; }
+            set {
+                Xmin = float.NaN;
+                Xmax = float.NaN;
+                Ymin = float.NaN;
+                Ymax = float.NaN;
+                _points = value;
+            } 
+        }
+
+        public float Xmin { get; set; } = float.NaN;
+        public float Xmax { get; set; } = float.NaN;
+        public float Ymin { get; set; } = float.NaN;
+        public float Ymax { get; set; } = float.NaN;
         public PlotType Type { get; set; } = PlotType.PointPlot;
         public int PixelsPerTick { get; set; } = 60;
         public bool ShowCoordinates { get; set; } = false;
@@ -39,22 +51,25 @@ namespace MissionControl.UI
 
         void OnExpose(object sender, ExposeEventArgs args)
         {
-            if (Points != null)
-            {
-                Paint();
-            }
-
+            //Paint();
+            Console.WriteLine("Plot On Expose!");
         }
 
         public void Paint()
         {
-            Boundaries(Points, out int cXmin, out int cXmax, out int cYmin, out int cYmax);
-            int ypad = (int)(Math.Abs(((Ymax == int.MaxValue) ? cYmax : Ymax) - ((Ymin == int.MinValue) ? cYmin : Ymin)) * 0.15);
-            Xmin = (Xmin == int.MinValue) ? cXmin : Xmin;
-            Xmax = (Xmax == int.MaxValue) ? cXmax : Xmax;
-            Ymin = (Ymin == int.MinValue) ? cYmin - ypad : Ymin;
-            Ymax = (Ymax == int.MaxValue) ? cYmax + ypad : Ymax;
+            if (Points == null)
+            {
+                ModifyBg(StateType.Normal, new Gdk.Color(0,0,0));
+                return;
+            }
 
+            Boundaries(Points, out float cXmin, out float cXmax, out float cYmin, out float cYmax);
+            float ypad = Math.Abs((float.IsNaN(Ymax) ? cYmax : Ymax) - (float.IsNaN(Ymin) ? cYmin : Ymin)) * 0.15f;
+            Xmin = (float.IsNaN(Xmin)) ? cXmin : Xmin;
+            Xmax = (float.IsNaN(Xmax)) ? cXmax : Xmax;
+            Ymin = (float.IsNaN(Ymin)) ? cYmin - ypad : Ymin;
+            Ymax = (float.IsNaN(Ymax)) ? cYmax + ypad : Ymax;
+            
             if (Xmin == Xmax)
             {
                 Xmin -= 10;
@@ -82,8 +97,8 @@ namespace MissionControl.UI
             int xAxisWidth = width - paddingLeft - paddingRight;
             int yAxisHeight = height - paddingTop - paddingBottom;
 
-            int xSpan = Math.Abs(Xmax - Xmin);
-            int ySpan = Math.Abs(Ymax - Ymin);
+            int xSpan = (int) Math.Abs(Xmax - Xmin);
+            int ySpan = (int ) Math.Abs(Ymax - Ymin);
 
             float xRatio = (float)xAxisWidth / xSpan;
             float yRatio = (float)yAxisHeight / ySpan;
@@ -253,12 +268,12 @@ namespace MissionControl.UI
             ((IDisposable)cr).Dispose();
         }
 
-        public void Boundaries(Point[] points, out int xmin, out int xmax, out int ymin, out int ymax)
+        public void Boundaries(Point[] points, out float xmin, out float xmax, out float ymin, out float ymax)
         {
-            xmin = int.MaxValue;
-            xmax = int.MinValue;
-            ymin = int.MaxValue;
-            ymax = int.MinValue;
+            xmin = float.NaN;
+            xmax = float.NaN;
+            ymin = float.NaN;
+            ymax = float.NaN;
 
             foreach (Point p in points)
             {

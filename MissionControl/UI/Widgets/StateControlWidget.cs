@@ -17,9 +17,9 @@ namespace MissionControl.UI.Widgets
     {
 
         IStateControlListener _listener;
-        Dictionary<DToggleButton, StateCommand> _stateButtons;
+        Dictionary<DToggleButton, State> _stateButtons;
 
-        public StateControlWidget(List<StateCommand> states, IStateControlListener listener)
+        public StateControlWidget(List<State> states, IStateControlListener listener)
         {
             _listener = listener ?? throw new ArgumentNullException(nameof(listener), "A listener was not provided");
 
@@ -29,13 +29,14 @@ namespace MissionControl.UI.Widgets
             DSectionTitle title = new DSectionTitle("States");
             container.PackStart(title, false, false, 0);
 
-            _stateButtons = new Dictionary<DToggleButton, StateCommand>();
+            _stateButtons = new Dictionary<DToggleButton, State>();
 
             for (int i = 0; i < states.Count; i++)
             {
                 DToggleButton.ToggleState initialState = (i == 0) ? DToggleButton.ToggleState.Active : DToggleButton.ToggleState.Inactive;
                 DToggleButton stateButton = new DToggleButton(80, 40, states[i].StateName, states[i].StateName, initialState);
                 stateButton.Pressed += StateButton_Pressed;
+                stateButton.Sensitive = (i > 0);
 
                 _stateButtons.Add(stateButton, states[i]);
 
@@ -50,16 +51,16 @@ namespace MissionControl.UI.Widgets
 
         void StateButton_Pressed(object sender, EventArgs e)
         {
-            _listener.OnStatePressed(_stateButtons[(DToggleButton)sender]);
-            //((DToggleButton)sender).Set(DToggleButton.ToggleState.Intermediate);
+            StateCommand command = new StateCommand(_stateButtons[(DToggleButton)sender].StateID);
+            _listener.OnStatePressed(command);
         }
 
 
-        public void SetCurrentState(StateCommand state)
+        public void SetCurrentState(State state)
         {
-            foreach(KeyValuePair<DToggleButton, StateCommand> kv in _stateButtons)
+            foreach(KeyValuePair<DToggleButton, State> kv in _stateButtons)
             {
-                if (kv.Value == state)
+                if (kv.Value.StateID == state.StateID)
                 {
                     kv.Key.Set(DToggleButton.ToggleState.Active);
                     kv.Key.Sensitive = false;

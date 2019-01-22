@@ -1,12 +1,14 @@
 ﻿using System;
 namespace MissionControl.Data.Components
 {
-    public class TemperatureComponent : Component
+    public class TemperatureComponent : Component, ILoggable
     {
         private int _rawTemperature = 0;
         private Scaler _scaler;
 
-      public TemperatureComponent(int boardID, string graphicID, string name, Scaler scaler) : base(boardID, graphicID, name)
+        public override string TypeName => "Temperature";
+
+        public TemperatureComponent(byte boardID, int byteSize, string graphicID, string name, Scaler scaler) : base(boardID, byteSize, graphicID, name)
         {
             _scaler = scaler;
         }
@@ -25,5 +27,17 @@ namespace MissionControl.Data.Components
         {
             _rawTemperature = val;
         }
+
+        public string ToLog()
+        {
+            // Rounding to one decimal
+            return "" + Math.Floor(Celcius() * 10) / 10;
+        }
+
+        public string LogHeader()
+        {
+            return Name + " [°C]";
+        }
+    
     }
 }

@@ -1,7 +1,7 @@
 ﻿using System;
 namespace MissionControl.Data.Components
 {
-    public class TankComponent : Component
+    public class TankComponent : Component, ILoggable
     {
 
         private readonly float _full;
@@ -9,7 +9,7 @@ namespace MissionControl.Data.Components
         private int _rawVolume;
         private readonly string _graphicIDGradient;
 
-        public TankComponent(int boardID, string graphicID, string name, string graphicIDGradient, float full, float initial) : base(boardID, graphicID, name)
+        public TankComponent(byte boardID, int byteSize, string graphicID, string name, string graphicIDGradient, float full, float initial) : base(boardID, byteSize, graphicID, name)
         {
             _graphicIDGradient = graphicIDGradient;
             _full = full;
@@ -28,6 +28,10 @@ namespace MissionControl.Data.Components
         }
 
         public String GraphicIDGradient => _graphicIDGradient;
+        public float Full => _full;
+        public float Initial => _initial;
+
+        public override string TypeName => "Tank";
 
         public float PercentageInit() 
         {
@@ -37,11 +41,22 @@ namespace MissionControl.Data.Components
         public float PercentageFull()
         {
             return (_rawVolume / _full) * 100;
-        }
+         }
 
         public float Litres()
         {
-            return _rawVolume / 1000;
+            return _rawVolume / 1000.0f;
+        }
+
+        public string ToLog()
+        {
+            // Rounding to three decimals
+            return "" + _rawVolume;
+        }
+
+        public string LogHeader()
+        {
+            return Name + " [L]";
         }
     }
 }

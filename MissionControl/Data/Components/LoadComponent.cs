@@ -1,12 +1,14 @@
 ﻿using System;
 namespace MissionControl.Data.Components
 {
-    public class LoadComponent : Component
+    public class LoadComponent : Component, ILoggable
     {
         private int _rawLoad;
         private Scaler _scaler;
 
-        public LoadComponent(int boardID, string graphicID, string name, Scaler scaler) : base(boardID, graphicID, name)
+        public override string TypeName => "Load cell";
+
+        public LoadComponent(byte boardID, int byteSize, string graphicID, string name, Scaler scaler) : base(boardID, byteSize, graphicID, name)
         {
             _scaler = scaler;
         }
@@ -24,6 +26,16 @@ namespace MissionControl.Data.Components
         public float Kilos()
         {
             return _scaler(_rawLoad);
+        }
+
+        public string ToLog()
+        {
+            return Newtons() + "";
+        }
+
+        public string LogHeader()
+        {
+            return Name + " [N]";
         }
     }
 }

@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="..\packages\NUnit.3.11.0\build\NUnit.props" Condition="Exists('..\packages\NUnit.3.11.0\build\NUnit.props')" />
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">x86</Platform>
@@ -44,6 +45,22 @@
       <HintPath>..\packages\Svg.2.3.0\lib\net35\Svg.dll</HintPath>
     </Reference>
     <Reference Include="Mono.Cairo" />
+    <Reference Include="Castle.Core">
+      <HintPath>..\packages\Castle.Core.4.3.1\lib\net45\Castle.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Configuration" />
+    <Reference Include="System.Runtime.CompilerServices.Unsafe">
+      <HintPath>..\packages\System.Runtime.CompilerServices.Unsafe.4.5.0\lib\netstandard2.0\System.Runtime.CompilerServices.Unsafe.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Threading.Tasks.Extensions">
+      <HintPath>..\packages\System.Threading.Tasks.Extensions.4.5.1\lib\netstandard2.0\System.Threading.Tasks.Extensions.dll</HintPath>
+    </Reference>
+    <Reference Include="Moq">
+      <HintPath>..\packages\Moq.4.10.1\lib\net45\Moq.dll</HintPath>
+    </Reference>
+    <Reference Include="nunit.framework">
+      <HintPath>..\packages\NUnit.3.11.0\lib\net45\nunit.framework.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="gtk-gui\gui.stetic">
@@ -78,9 +95,7 @@
     <Compile Include="Data\Components\VoltageComponent.cs" />
     <Compile Include="Data\Components\LoadComponent.cs" />
     <Compile Include="Data\Components\SolenoidComponent.cs" />
-    <Compile Include="UI\Widgets\SVGWidget.cs" />
     <Compile Include="UI\Widgets\ValveControlWidget.cs" />
-    <Compile Include="gtk-gui\MissionControl.UI.Widgets.SVGWidget.cs" />
     <Compile Include="gtk-gui\MissionControl.UI.Widgets.ValveControlWidget.cs" />
     <Compile Include="gtk-gui\MissionControl.UI.SessionSettingsView.cs" />
     <Compile Include="UI\Widgets\ServoControlWidget.cs" />
@@ -96,6 +111,20 @@
     <Compile Include="UI\Widgets\DSectionTitle.cs" />
     <Compile Include="Data\Components\ValveComponent.cs" />
     <Compile Include="Connection\IOThread.cs" />
+    <Compile Include="Data\FormatWriter.cs" />
+    <Compile Include="Data\FormatReader.cs" />
+    <Compile Include="Data\Components\ILoggable.cs" />
+    <Compile Include="Data\State.cs" />
+    <Compile Include="Data\PreferenceManager.cs" />
+    <Compile Include="Data\PlotData.cs" />
+    <Compile Include="UI\SVGView.cs" />
+    <Compile Include="UI\Widgets\SVGWidget.cs" />
+    <Compile Include="gtk-gui\MissionControl.UI.Widgets.SVGWidget.cs" />
+    <Compile Include="Tests\ReadTests.cs" />
+    <Compile Include="Connection\ISerialPort.cs" />
+    <Compile Include="Connection\SerialPort.cs" />
+    <Compile Include="UI\Widgets\ComponentSettingWidget.cs" />
+    <Compile Include="gtk-gui\MissionControl.UI.Widgets.ComponentSettingWidget.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Connection\" />
@@ -105,9 +134,11 @@
     <Folder Include="Data\Components\" />
     <Folder Include="Resources\" />
     <Folder Include="UI\Widgets\" />
+    <Folder Include="Tests\" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
+    <None Include="ToDo.txt" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Resources\TestStand.svg">

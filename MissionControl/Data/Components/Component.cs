@@ -7,20 +7,31 @@ namespace MissionControl.Data.Components
     {
         public delegate float Scaler(float val);
 
-        private int _boardID;
-        private string _graphicID;
-        private string _name;
+        public string GraphicID { get; }
+        public string Name { get; }
+        public int ByteSize { get; }
+        public byte BoardID { get; }
 
-        protected Component(int boardID, string graphicID, string name)
+        public int MaxLimit { get; set; }
+        public int MinLimit { get; set; }
+        public bool HasLimits { get { return MinLimit != MaxLimit; } }
+        public bool Enabled { get; set; } = true;
+
+        public const string PREF_MAX_LIMIT = "_MAX_LIMIT";
+        public const string PREF_MIN_LIMIT = "_MIN_LIMIT";
+        public const string PREF_ENABLED = "_ENABLED";
+
+        public abstract string TypeName { get; }
+
+        protected Component(byte boardID, int byteSize, string graphicID, string name)
         {
-            _boardID = boardID;
-            _graphicID = graphicID;
-            _name = name;
+            BoardID = boardID;
+            ByteSize = byteSize;
+            GraphicID = graphicID;
+            Name = name;
         }
 
         abstract public void Set(int val);
 
-        public String GraphicID { get { return _graphicID; } }
-        public String Name { get { return _graphicID; } }
-    }
+      }
 }

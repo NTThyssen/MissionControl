@@ -5,7 +5,7 @@ namespace MissionControl.Data.Components
     {
         private readonly string _graphicIDSymbol;
 
-        protected ValveComponent(int boardID, string graphicID, string name, string graphicIDSymbol) : base(boardID, graphicID, name)
+        protected ValveComponent(byte boardID, int byteSize, string graphicID, string name, string graphicIDSymbol) : base(boardID, byteSize, graphicID, name)
         {
             _graphicIDSymbol = graphicIDSymbol;
         }

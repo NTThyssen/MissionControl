@@ -1,12 +1,14 @@
 ﻿using System;
 namespace MissionControl.Data.Components
 {
-    public class PressureComponent : Component
+    public class PressureComponent : Component, ILoggable
     {
         private int _rawPressure = 0;
         private Scaler _scaler;
 
-        public PressureComponent(int boardID, string graphicID, string name, Scaler scaler) : base(boardID, graphicID, name)
+        public override string TypeName => "Pressure";
+
+        public PressureComponent(byte boardID, int byteSize, string graphicID, string name, Scaler scaler) : base(boardID, byteSize, graphicID, name)
         {
             _scaler = scaler;
         }
@@ -24,6 +26,17 @@ namespace MissionControl.Data.Components
         public override void Set(int val)
         {
             _rawPressure = val;
+        }
+
+        public string ToLog()
+        {
+            // Rounding to two decimals
+            return "" + Math.Floor(Relative() * 100) / 100;
+        }
+
+        public string LogHeader()
+        {
+            return Name + " [barR]";
         }
     }
 }

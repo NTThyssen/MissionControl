@@ -8,6 +8,9 @@ namespace MissionControl.Data
     {   
         void GetCurrentState();
         Session GetCurrentSession();
+        void UpdateSession(Session session);
+        void EnableLogging();
+        void DisableLogging();
     }
 
     public interface IDataLog
@@ -15,25 +18,32 @@ namespace MissionControl.Data
         void Enqueue(DataPacket packet);
         DataPacket Dequeue();
         bool Empty();
+        Session GetCurrentSession();
     }
 
     public class DataStore : IDataStore, IDataLog
     {
         private Queue<DataPacket> _data;
         private Session _session;
-        private LogThread _logThread;
-
+       
         private bool _isLogging = false;
 
         public DataStore(Session session)
         {
             _data = new Queue<DataPacket>();
             _session = session;
-            _logThread = new LogThread(this);
         }
 
         public void Enqueue(DataPacket packet) {
-            _data.Enqueue(packet);
+            _session.LastReceived = packet.ReceivedTime;
+            if (_isLogging)
+            {
+                _data.Enqueue(packet);
+            }
+            else
+            {
+                _session.UpdateComponents(packet.Bytes);
+            }
         }
 
         public DataPacket Dequeue() {
@@ -55,6 +65,22 @@ namespace MissionControl.Data
             return _session;
         }
 
+        public void UpdateSession(Session session)
+        {
+            _session.LogFilePath = session.LogFilePath;
+            _session.PortName = session.PortName;
+            // Might have trouble with mapping
+        }
+
+        public void EnableLogging()
+        {
+            _isLogging = true;
+        }
+
+        public void DisableLogging()
+        {
+            _isLogging = false;
+        }
 
     }
 }
