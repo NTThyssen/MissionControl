@@ -5,7 +5,6 @@
     <target-gtk-version>2.12</target-gtk-version>
   </configuration>
   <import>
-    <widget-library name="../../../../../../Applications/Visual Studio.app/Contents/Resources/lib/monodevelop/AddIns/MonoDevelop.GtkCore/libstetic.dll" />
     <widget-library name="../bin/Debug/MissionControl.exe" internal="true" />
   </import>
   <widget class="Gtk.Window" id="MissionControl.UI.SessionSettingsView" design-size="400 300">

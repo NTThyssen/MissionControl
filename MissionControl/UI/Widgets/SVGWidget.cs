@@ -75,19 +75,7 @@ namespace MissionControl.UI.Widgets
             }
         }
 
-        public void MarkValve(ValveComponent component) 
-        {
-            _svgElements[component.GraphicIDSymbol].Stroke = new SvgColourServer(System.Drawing.Color.FromArgb(255, 0, 0));
-            _didRefresh = true;
-            UpdateImage();
-        }
-
-        public void UnmarkValve(ValveComponent component)
-        {
-            _svgElements[component.GraphicIDSymbol].Stroke = new SvgColourServer(System.Drawing.Color.FromArgb(255, 255, 255));
-            _didRefresh = true;
-            UpdateImage();
-        }
+   
 
         public void Refresh() {
             foreach (Component component in _session.Mapping.Components())
