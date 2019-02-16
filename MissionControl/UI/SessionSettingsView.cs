@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.IO.Ports;
+using System.Linq;
 using Gtk;
 using MissionControl.Data;
 using MissionControl.Data.Components;
@@ -25,14 +26,17 @@ namespace MissionControl.UI
         Button _btnChooseFilePath;
         string _chosenFilePath;
 
-        // Choose serial port
-        private ComboBox _portDropdown;
-        private ListStore _portStore;
-        private List<string> _portList;
+        // Serial port
+        private readonly int[] bauds = { 9600, 14400, 19200, 38400, 57600, 115200, 128000, 256000, 512000 };
+        private DropdownWidget _portDropdown;
+        private DropdownWidget _baudRateDropdown;
         private Button _btnPortRefresh;
 
         // Component limits
         List<ComponentSettingWidget> _componentWidgets = new List<ComponentSettingWidget>();
+
+        // Fluid controls
+        private 
 
         // Overall actions
         Button _btnSave;
@@ -51,7 +55,7 @@ namespace MissionControl.UI
              * ------------------------------------------- Machine Page 
              */
 
-            VBox machinePage = new VBox(false, 10);
+            VBox machinePage = new VBox(false, 20);
 
             // Log file path
             if (session.LogFilePath != null)
@@ -72,20 +76,11 @@ namespace MissionControl.UI
 
             // Select serial port
             HBox portBox = new HBox(false, 10);
-            _portStore = new ListStore(typeof(string));
-            _portList = new List<string>();
+            _portDropdown = new DropdownWidget(null);
             PortRefreshPressed(null, null);
-
-            CellRendererText nameCell = new CellRendererText();
-
-            _portDropdown = new ComboBox();
-            _portDropdown.PackStart(nameCell, false);
-            _portDropdown.AddAttribute(nameCell, "text", 0);
-            _portDropdown.Model = _portStore;
-
-            if (session.PortName != null && _portList.Contains(session.PortName))
+            if (session.PortName != null)
             {
-                _portDropdown.Active = _portList.IndexOf(session.PortName);
+                _portDropdown.Set(session.PortName);
             }
 
             _btnPortRefresh = new Button(Stock.Refresh);
@@ -93,8 +88,12 @@ namespace MissionControl.UI
             portBox.PackStart(_portDropdown, false, false, 10);
             portBox.PackStart(_btnPortRefresh, false, false, 0);
 
+            _baudRateDropdown = new DropdownWidget("Baud rate", bauds.Select(x => x.ToString()).ToArray());
+            _baudRateDropdown.Set(session.BaudRate.ToString());
+
             machinePage.PackStart(new Label("Serial port:"), false, false, 10);
             machinePage.PackStart(portBox, false, false, 0);
+            machinePage.PackStart(_baudRateDropdown, false, false, 10);
             machinePage.PackStart(new Label("Save path:"), false, false, 0);
             machinePage.PackStart(filepathContainer, false, false, 0);
 
@@ -120,7 +119,6 @@ namespace MissionControl.UI
             componentSections.PackStart(LayoutLimitsSection(_componentWidgets.FindAll((ComponentSettingWidget obj) => obj.Component is LoadComponent)), false, false, 0);
             componentSections.PackStart(LayoutLimitsSection(_componentWidgets.FindAll((ComponentSettingWidget obj) => obj.Component is VoltageComponent)), false, false, 0);
 
-
             ScrolledWindow scrolledWindow = new ScrolledWindow
             {
                 HeightRequest = 550
@@ -134,9 +132,18 @@ namespace MissionControl.UI
              * -------------------------------------------  Fluid Page
              */
 
-            VBox fluidPage = new VBox(false, 10);
+            VBox fluidPage = new VBox(false, 20);
 
+            LabelledEntryWidget oxidValveCoefficient = new LabelledEntryWidget("Oxidizer valve flow coef.");
+            LabelledEntryWidget fuelValveCoefficient = new LabelledEntryWidget("Fuel valve flow coef.");
+            LabelledEntryWidget todaysPressure = new LabelledEntryWidget("Today's pressure");
 
+            fluidPage.PackStart(new Label("Fluid system values"), false, false, 0);
+            fluidPage.PackStart(oxidValveCoefficient, false, false, 0);
+            fluidPage.PackStart(fuelValveCoefficient, false, false, 0);
+
+            fluidPage.PackStart(new Label("Other properties"), false, false, 0);
+            fluidPage.PackStart(todaysPressure, false, false, 0);
 
             /*
              * ------------------------------------------- Overall
@@ -207,15 +214,8 @@ namespace MissionControl.UI
 
         void PortRefreshPressed(object sender, EventArgs e)
         {
-            _portStore.Clear();
-            _portList.Clear();
-
             string[] ports = SerialPort.GetPortNames();
-            foreach (string port in ports)
-            {
-                _portList.Add(port);
-                _portStore.AppendValues(port);
-            }
+            _portDropdown.AddOnlyAll(ports);
         }
 
         void ChooseFilePathPressed(object sender, EventArgs e)
@@ -283,7 +283,19 @@ namespace MissionControl.UI
                 newSession.PortName = _portDropdown.ActiveText;
             }
 
+            // Save chosen baud rate
+            if (int.TryParse(_baudRateDropdown.ActiveText, out int baud))
+            {
+                newSession.BaudRate = baud;
+            }
+            else
+            {
+                hasErrors = true;
+                errorMessage += "- Conversion error in baud rate\n";
+            }
 
+
+            // Update sensor component settings
             foreach (ComponentSettingWidget widget in _componentWidgets)
             {
                 if (ValidateSensorLimits(widget, out float min, out float max, out string err))
@@ -333,7 +345,7 @@ namespace MissionControl.UI
                 try
                 {
                     min = Convert.ToSingle(widget.Min);
-                } catch (Exception e)
+                } catch (Exception)
                 {
                     error = true;
                     errorMessage += string.Format("Minimum is not a correct value for {0}\n", widget.Component.Name);
@@ -347,7 +359,7 @@ namespace MissionControl.UI
                 {
                     max = Convert.ToSingle(widget.Max);
                 }
-                catch (Exception e)
+                catch (Exception)
                 {
                     error = true;
                     errorMessage += string.Format("Maximum is not a correct value for {0}\n", widget.Component.Name);

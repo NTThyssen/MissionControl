@@ -7,6 +7,7 @@ namespace MissionControl.Data
     {
         public string LogFilePath { get; set; }
         public string PortName { get; set; }
+        public int BaudRate { get; set; } = 9600;
         public ComponentMapping Mapping { get; }
         public State State { get; set; }
         public long SystemTime { get; set; }

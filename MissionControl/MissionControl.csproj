@@ -128,6 +128,10 @@
     <Compile Include="Connection\SimSerialPort.cs" />
     <Compile Include="Connection\Commands\SolenoidCommand.cs" />
     <Compile Include="Connection\Commands\ServoCommand.cs" />
+    <Compile Include="UI\Widgets\LabelledEntryWidget.cs" />
+    <Compile Include="gtk-gui\MissionControl.UI.Widgets.LabelledEntryWidget.cs" />
+    <Compile Include="UI\Widgets\DropdownWidget.cs" />
+    <Compile Include="gtk-gui\MissionControl.UI.Widgets.DropdownWidget.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Connection\" />

@@ -98,7 +98,7 @@ namespace MissionControl.Connection
         {
             try
             {
-                _port.BaudRate = 9600;
+                _port.BaudRate = _session.BaudRate;
                 _port.PortName = _session.PortName;
                 _port.Open();
                 _port.DiscardInBuffer();

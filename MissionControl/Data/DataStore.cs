@@ -67,6 +67,15 @@ namespace MissionControl.Data
             _session.LogFilePath = PreferenceManager.Preferences[PreferenceManager.STD_LOGFOLDER] ?? _session.LogFilePath;
             _session.PortName = PreferenceManager.Preferences[PreferenceManager.STD_PORTNAME] ?? _session.PortName;
 
+            string savedBaudRate = PreferenceManager.Preferences[PreferenceManager.STD_BAUDRATE];
+            if (savedBaudRate != null)
+            {
+                if (int.TryParse(savedBaudRate, out int baud))
+                {
+                    _session.BaudRate = baud;
+                }
+            }
+
             foreach (Component c in _session.Mapping.Components())
             {
 
@@ -97,16 +106,18 @@ namespace MissionControl.Data
         }
 
 
-        public void UpdateSession(Session session)
+        public void UpdateSession(Session nsession)
         {
-            PreferenceManager.Preferences[PreferenceManager.STD_LOGFOLDER] = session.LogFilePath;
-            PreferenceManager.Preferences[PreferenceManager.STD_PORTNAME] = session.PortName;
+            PreferenceManager.Preferences[PreferenceManager.STD_LOGFOLDER] = nsession.LogFilePath;
+            PreferenceManager.Preferences[PreferenceManager.STD_PORTNAME] = nsession.PortName;
+            PreferenceManager.Preferences[PreferenceManager.STD_BAUDRATE] = nsession.BaudRate.ToString();
 
-            _session.LogFilePath = session.LogFilePath;
-            _session.PortName = session.PortName;
+            _session.LogFilePath = nsession.LogFilePath;
+            _session.PortName = nsession.PortName;
+            _session.BaudRate = nsession.BaudRate;
 
             // Update Old Component with settings from New Component
-            foreach (Component nc in session.Mapping.Components())
+            foreach (Component nc in nsession.Mapping.Components())
             {
 
                 Component oc = _session.Mapping.ComponentByIDs()[nc.BoardID];

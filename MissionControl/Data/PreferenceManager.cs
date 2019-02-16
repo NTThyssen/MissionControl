@@ -13,6 +13,7 @@ namespace MissionControl.Data
     {
 
         public const string STD_PORTNAME = "PortName";
+        public const string STD_BAUDRATE= "BaudRate";
         public const string STD_LOGFOLDER = "LogFolder";
 
         private string _filepath;
