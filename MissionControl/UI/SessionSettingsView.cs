@@ -47,15 +47,18 @@ namespace MissionControl.UI
            //Build();
             Title = "Session Settings";
 
+            /*
+             * ------------------------------------------- Machine Page 
+             */
 
-            VBox container = new VBox(false, 10);
+            VBox machinePage = new VBox(false, 10);
 
             // Log file path
             if (session.LogFilePath != null)
             {
                 _chosenFilePath = session.LogFilePath;
             }
-     
+
             HBox filepathContainer = new HBox(false, 0);
 
             _lblFilepath = new Label();
@@ -70,7 +73,7 @@ namespace MissionControl.UI
             // Select serial port
             HBox portBox = new HBox(false, 10);
             _portStore = new ListStore(typeof(string));
-            _portList = new List<string>(); 
+            _portList = new List<string>();
             PortRefreshPressed(null, null);
 
             CellRendererText nameCell = new CellRendererText();
@@ -84,11 +87,22 @@ namespace MissionControl.UI
             {
                 _portDropdown.Active = _portList.IndexOf(session.PortName);
             }
-       
+
             _btnPortRefresh = new Button(Stock.Refresh);
             _btnPortRefresh.Pressed += PortRefreshPressed;
             portBox.PackStart(_portDropdown, false, false, 10);
             portBox.PackStart(_btnPortRefresh, false, false, 0);
+
+            machinePage.PackStart(new Label("Serial port:"), false, false, 10);
+            machinePage.PackStart(portBox, false, false, 0);
+            machinePage.PackStart(new Label("Save path:"), false, false, 0);
+            machinePage.PackStart(filepathContainer, false, false, 0);
+
+            /*
+             * ------------------------------------------- Visual Page 
+             */
+
+            VBox visualPage = new VBox(false, 10);
 
             // Component limits
 
@@ -99,12 +113,46 @@ namespace MissionControl.UI
                     _componentWidgets.Add(new ComponentSettingWidget(sc));
                 }
             });
-                
+
             VBox componentSections = new VBox(false, 20);
             componentSections.PackStart(LayoutLimitsSection(_componentWidgets.FindAll((ComponentSettingWidget obj) => obj.Component is PressureComponent)), false, false, 0);
-            componentSections.PackStart(LayoutLimitsSection(_componentWidgets.FindAll((ComponentSettingWidget obj) => obj.Component is TemperatureComponent)), false, false,0);
+            componentSections.PackStart(LayoutLimitsSection(_componentWidgets.FindAll((ComponentSettingWidget obj) => obj.Component is TemperatureComponent)), false, false, 0);
             componentSections.PackStart(LayoutLimitsSection(_componentWidgets.FindAll((ComponentSettingWidget obj) => obj.Component is LoadComponent)), false, false, 0);
             componentSections.PackStart(LayoutLimitsSection(_componentWidgets.FindAll((ComponentSettingWidget obj) => obj.Component is VoltageComponent)), false, false, 0);
+
+
+            ScrolledWindow scrolledWindow = new ScrolledWindow
+            {
+                HeightRequest = 550
+            };
+            //scrolledWindow.SetPolicy(PolicyType.Never, PolicyType.Automatic);
+            scrolledWindow.AddWithViewport(componentSections);
+
+            visualPage.PackStart(scrolledWindow, false, false, 0);
+
+            /*
+             * -------------------------------------------  Fluid Page
+             */
+
+            VBox fluidPage = new VBox(false, 10);
+
+
+
+            /*
+             * ------------------------------------------- Overall
+             */
+
+            VBox container = new VBox(false, 10);
+
+            Notebook notebook = new Notebook
+            {
+                machinePage,
+                visualPage,
+                fluidPage
+            };
+            notebook.SetTabLabelText(machinePage, "Machine");
+            notebook.SetTabLabelText(visualPage, "Visuals");
+            notebook.SetTabLabelText(fluidPage, "Fluid system");
 
             // Bottom save container
             HBox cancelSaveContainer = new HBox(false, 0);
@@ -116,18 +164,11 @@ namespace MissionControl.UI
             _btnSave.Pressed += SavePressed;
             cancelSaveContainer.PackEnd(_btnSave, false, false, 10);
 
-            container.PackStart(new Label("Serial port:"), false, false, 10);
-            container.PackStart(portBox, false, false, 0);
-            container.PackStart(new Label("Save path:"), false, false, 0);
-            container.PackStart(filepathContainer, false, false, 0);
-            container.PackStart(componentSections, false, false, 0);
+            container.PackStart(notebook, false, false, 0);
             container.PackStart(cancelSaveContainer, false, false, 0);
 
-            ScrolledWindow scrolledWindow = new ScrolledWindow();
-            scrolledWindow.SetPolicy(PolicyType.Never, PolicyType.Automatic);
-            scrolledWindow.AddWithViewport(container);
-
-            Add(scrolledWindow);
+            Add(container);
+            Resizable = false;
 
             ShowAll();
         }
