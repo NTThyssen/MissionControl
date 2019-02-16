@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.IO.Ports;
 using System.Linq;
@@ -36,7 +37,12 @@ namespace MissionControl.UI
         List<ComponentSettingWidget> _componentWidgets = new List<ComponentSettingWidget>();
 
         // Fluid controls
-        private 
+        LabelledEntryWidget oxidValveCoefficient;
+        LabelledEntryWidget oxidSpecificGravity;
+        LabelledEntryWidget fuelValveCoefficient;
+        LabelledEntryWidget fuelSpecificGravity;
+        LabelledEntryWidget todaysPressure;
+        LabelledRadioWidget showAbsolutePressure;
 
         // Overall actions
         Button _btnSave;
@@ -58,10 +64,8 @@ namespace MissionControl.UI
             VBox machinePage = new VBox(false, 20);
 
             // Log file path
-            if (session.LogFilePath != null)
-            {
-                _chosenFilePath = session.LogFilePath;
-            }
+            _chosenFilePath = session.Setting.LogFilePath.Value ?? _chosenFilePath;
+            
 
             HBox filepathContainer = new HBox(false, 0);
 
@@ -78,9 +82,9 @@ namespace MissionControl.UI
             HBox portBox = new HBox(false, 10);
             _portDropdown = new DropdownWidget(null);
             PortRefreshPressed(null, null);
-            if (session.PortName != null)
+            if (session.Setting.PortName.Value != null)
             {
-                _portDropdown.Set(session.PortName);
+                _portDropdown.Set(session.Setting.PortName.Value);
             }
 
             _btnPortRefresh = new Button(Stock.Refresh);
@@ -89,7 +93,7 @@ namespace MissionControl.UI
             portBox.PackStart(_btnPortRefresh, false, false, 0);
 
             _baudRateDropdown = new DropdownWidget("Baud rate", bauds.Select(x => x.ToString()).ToArray());
-            _baudRateDropdown.Set(session.BaudRate.ToString());
+            _baudRateDropdown.Set(session.Setting.BaudRate.Value.ToString());
 
             machinePage.PackStart(new Label("Serial port:"), false, false, 10);
             machinePage.PackStart(portBox, false, false, 0);
@@ -134,16 +138,51 @@ namespace MissionControl.UI
 
             VBox fluidPage = new VBox(false, 20);
 
-            LabelledEntryWidget oxidValveCoefficient = new LabelledEntryWidget("Oxidizer valve flow coef.");
-            LabelledEntryWidget fuelValveCoefficient = new LabelledEntryWidget("Fuel valve flow coef.");
-            LabelledEntryWidget todaysPressure = new LabelledEntryWidget("Today's pressure");
+            oxidValveCoefficient = new LabelledEntryWidget()
+            {
+                LabelText = "Oxidizer valve flow coefficient (CV)",
+                EntryText = session.Setting.OxidCV.ToString() ?? ""
+            };
+
+            oxidSpecificGravity = new LabelledEntryWidget()
+            {
+                LabelText = "Oxidizer liquid specific gravity (GL)",
+                EntryText = session.Setting.OxidGL.ToString() ?? ""
+            };
+
+            fuelValveCoefficient = new LabelledEntryWidget()
+            {
+                LabelText = "Fuel valve flow coefficient (CV)",
+                EntryText = session.Setting.FuelCV.ToString() ?? ""
+            };
+
+            fuelSpecificGravity = new LabelledEntryWidget()
+            {
+                LabelText = "Fuel liquid specific gravity (GL)",
+                EntryText = session.Setting.FuelGL.ToString() ?? ""
+            };
+
+            todaysPressure = new LabelledEntryWidget()
+            {
+                LabelText = "Today's pressure [bar]",
+                EntryText = session.Setting.TodayPressure.ToString() ?? ""
+            };
+
+            showAbsolutePressure = new LabelledRadioWidget
+            {
+                LabelText = "Pressure measure: ",
+                ShowAbsolutePressure = session.Setting.ShowAbsolutePressure.Value
+            };
 
             fluidPage.PackStart(new Label("Fluid system values"), false, false, 0);
             fluidPage.PackStart(oxidValveCoefficient, false, false, 0);
+            fluidPage.PackStart(oxidSpecificGravity, false, false, 0);
             fluidPage.PackStart(fuelValveCoefficient, false, false, 0);
+            fluidPage.PackStart(fuelSpecificGravity, false, false, 0);
 
-            fluidPage.PackStart(new Label("Other properties"), false, false, 0);
+            fluidPage.PackStart(new Label("Pressure properties"), false, false, 0);
             fluidPage.PackStart(todaysPressure, false, false, 0);
+            fluidPage.PackStart(showAbsolutePressure, false, false, 0);
 
             /*
              * ------------------------------------------- Overall
@@ -268,7 +307,7 @@ namespace MissionControl.UI
             }
             else
             {
-                newSession.LogFilePath = _chosenFilePath;
+                newSession.Setting.LogFilePath.Value = _chosenFilePath;
 
             }
 
@@ -280,13 +319,13 @@ namespace MissionControl.UI
             }
             else
             {
-                newSession.PortName = _portDropdown.ActiveText;
+                newSession.Setting.PortName.Value = _portDropdown.ActiveText;
             }
 
             // Save chosen baud rate
             if (int.TryParse(_baudRateDropdown.ActiveText, out int baud))
             {
-                newSession.BaudRate = baud;
+                newSession.Setting.BaudRate.Value = baud;
             }
             else
             {
@@ -315,7 +354,16 @@ namespace MissionControl.UI
                 newSession.Mapping.ComponentByIDs()[widget.Component.BoardID].Enabled = widget.Enabled;
             }
 
+            // Fluid page's field validation
+            newSession.Setting.OxidCV.Value = ParseLabellelEntryAsFloat(oxidValveCoefficient, ref hasErrors, ref errorMessage, out float oxcv) ? oxcv : newSession.Setting.OxidCV.Value;
+            newSession.Setting.OxidGL.Value = ParseLabellelEntryAsFloat(oxidSpecificGravity, ref hasErrors, ref errorMessage, out float oxgl) ? oxgl : newSession.Setting.OxidCV.Value;
+            newSession.Setting.FuelCV.Value = ParseLabellelEntryAsFloat(fuelValveCoefficient, ref hasErrors, ref errorMessage, out float flcv) ? flcv : newSession.Setting.OxidCV.Value;
+            newSession.Setting.FuelGL.Value = ParseLabellelEntryAsFloat(fuelSpecificGravity, ref hasErrors, ref errorMessage, out float flgl) ? flgl : newSession.Setting.OxidCV.Value;
+            newSession.Setting.TodayPressure.Value = ParseLabellelEntryAsFloat(todaysPressure, ref hasErrors, ref errorMessage, out float tp) ? tp : newSession.Setting.OxidCV.Value;
 
+            newSession.Setting.ShowAbsolutePressure.Value = showAbsolutePressure.ShowAbsolutePressure;
+
+            // Save if no errors
             if (!hasErrors)
             {
                 _listener.OnSave(newSession);
@@ -370,7 +418,21 @@ namespace MissionControl.UI
             return error;
         }
 
-
+        public bool ParseLabellelEntryAsFloat(LabelledEntryWidget entry, ref bool errors, ref string errmsg, out float val)
+        {
+            if (float.TryParse(entry.EntryText, NumberStyles.Any, CultureInfo.InvariantCulture,  out float value))
+            {
+                val = value;
+                return true;
+            }
+            else
+            {
+                val = float.NaN;
+                errors = true;
+                errmsg += "- Could not parse \"" + entry.LabelText + "\" field\n";
+                return false;
+            }
+        }
 
         private string OpenFileDialog()
         {

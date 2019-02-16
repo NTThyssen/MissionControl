@@ -128,7 +128,7 @@ namespace MissionControl.UI
             // Control panl
             controlPane1.PackStart(_valveWidget, false, false, 0);
             controlPane1.PackStart(logButtonContainer, false, false, 20);
-            controlPane1.PackStart(connectionContainer, false, false, 20);
+            controlPane1.PackStart(connectionContainer, false, false, 0);
 
             // Horizonal layout
             HBox horizontalLayout = new HBox(false, 0);

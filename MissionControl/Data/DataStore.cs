@@ -63,44 +63,28 @@ namespace MissionControl.Data
         }
 
         private void LoadSession() {
+       
+            // System
+            _session.Setting.LogFilePath.Value = PreferenceManager.GetIfExists(_session.Setting.LogFilePath.PreferenceKey, _session.Setting.LogFilePath.Value);
+            _session.Setting.PortName.Value = PreferenceManager.GetIfExists(_session.Setting.PortName.PreferenceKey, _session.Setting.PortName.Value);
+            _session.Setting.BaudRate.Value = PreferenceManager.GetIfExists(_session.Setting.BaudRate.PreferenceKey, 9600);
 
-            _session.LogFilePath = PreferenceManager.Preferences[PreferenceManager.STD_LOGFOLDER] ?? _session.LogFilePath;
-            _session.PortName = PreferenceManager.Preferences[PreferenceManager.STD_PORTNAME] ?? _session.PortName;
-
-            string savedBaudRate = PreferenceManager.Preferences[PreferenceManager.STD_BAUDRATE];
-            if (savedBaudRate != null)
-            {
-                if (int.TryParse(savedBaudRate, out int baud))
-                {
-                    _session.BaudRate = baud;
-                }
-            }
+            // Fluid
+            _session.Setting.OxidCV.Value = PreferenceManager.GetIfExists(_session.Setting.OxidCV.PreferenceKey, 1.0f);
+            _session.Setting.OxidGL.Value = PreferenceManager.GetIfExists(_session.Setting.OxidGL.PreferenceKey, 1.0f);
+            _session.Setting.FuelCV.Value = PreferenceManager.GetIfExists(_session.Setting.FuelCV.PreferenceKey, 1.0f);
+            _session.Setting.FuelGL.Value = PreferenceManager.GetIfExists(_session.Setting.FuelGL.PreferenceKey, 1.0f);
+            _session.Setting.TodayPressure.Value = PreferenceManager.GetIfExists(_session.Setting.TodayPressure.PreferenceKey, 1.0f);
+            _session.Setting.ShowAbsolutePressure.Value = PreferenceManager.GetIfExists(_session.Setting.ShowAbsolutePressure.PreferenceKey, false);
 
             foreach (Component c in _session.Mapping.Components())
             {
-
-                string enabled = PreferenceManager.Preferences[c.PrefEnabledName];
-                if (enabled != null)
-                {
-                    try { c.Enabled = Convert.ToBoolean(enabled); }
-                    catch (Exception e) { Console.WriteLine("Setting enabled on {0} resulted in {1}", c.Name, e.Message); }
-                }
+                c.Enabled = PreferenceManager.GetIfExists(c.PrefEnabledName, c.Enabled);
 
                 if (c is SensorComponent sc)
                 {
-                    string min = PreferenceManager.Preferences[sc.PrefMinName];
-                    if (min != null)
-                    {
-                        try { sc.MinLimit = Convert.ToSingle(min); }
-                        catch (Exception e) { Console.WriteLine("Setting min limit on {0} resulted in {1}", sc.Name, e.Message); }
-                    }
-
-                    string max = PreferenceManager.Preferences[sc.PrefMaxName];
-                    if (max != null)
-                    {
-                        try { sc.MaxLimit = Convert.ToSingle(max); }
-                        catch (Exception e) { Console.WriteLine("Setting max limit on {0} resulted in {1}", sc.Name, e.Message); }
-                    }
+                    sc.MinLimit = PreferenceManager.GetIfExists(sc.PrefMinName, sc.MinLimit);
+                    sc.MaxLimit = PreferenceManager.GetIfExists(sc.PrefMinName, sc.MaxLimit);
                 }
             }
         }
@@ -108,28 +92,55 @@ namespace MissionControl.Data
 
         public void UpdateSession(Session nsession)
         {
-            PreferenceManager.Preferences[PreferenceManager.STD_LOGFOLDER] = nsession.LogFilePath;
-            PreferenceManager.Preferences[PreferenceManager.STD_PORTNAME] = nsession.PortName;
-            PreferenceManager.Preferences[PreferenceManager.STD_BAUDRATE] = nsession.BaudRate.ToString();
 
-            _session.LogFilePath = nsession.LogFilePath;
-            _session.PortName = nsession.PortName;
-            _session.BaudRate = nsession.BaudRate;
+            try
+            {
+                List<Property> oldProps = _session.Setting.Properties();
+                List<Property> newProps = nsession.Setting.Properties();
 
+                for (int i = 0; i < newProps.Count; i++)
+                {
+
+                    switch (oldProps[i])
+                    {
+                        case StringProperty p:
+                            PreferenceManager.Set(newProps[i].PreferenceKey, p.ToString());
+                            p.Value = (newProps[i] as StringProperty).Value;
+                            break;
+                        case IntegerProperty p:
+                            PreferenceManager.Set(newProps[i].PreferenceKey, p.ToString());
+                            p.Value = (newProps[i] as IntegerProperty).Value;
+                            break;
+                        case FloatProperty p:
+                            PreferenceManager.Set(newProps[i].PreferenceKey, p.ToString());
+                            p.Value = (newProps[i] as FloatProperty).Value;
+                            break;
+                        case BoolProperty p:
+                            PreferenceManager.Set(newProps[i].PreferenceKey, p.ToString());
+                            p.Value = (newProps[i] as BoolProperty).Value;
+                            break;
+                    }
+                }
+            } catch (IndexOutOfRangeException e)
+            {
+                Console.WriteLine("Old and new settings does not have the same length of properties");
+            }
+
+                  
             // Update Old Component with settings from New Component
             foreach (Component nc in nsession.Mapping.Components())
             {
 
                 Component oc = _session.Mapping.ComponentByIDs()[nc.BoardID];
 
-                PreferenceManager.Preferences[nc.PrefEnabledName] = Convert.ToString(nc.Enabled);
+                PreferenceManager.Set(nc.PrefEnabledName, nc.Enabled);
                 oc.Enabled = nc.Enabled;
 
                 if (nc is SensorComponent nsc)
                 {
                     if (!float.IsNaN(nsc.MinLimit))
                     {
-                        PreferenceManager.Preferences[nsc.PrefMinName] = nsc.MinLimit.ToString(CultureInfo.InvariantCulture);
+                        PreferenceManager.Set(nsc.PrefMinName, nsc.MinLimit);
                     }
                     else
                     {
@@ -137,7 +148,7 @@ namespace MissionControl.Data
                     }
                     if (!float.IsNaN(nsc.MaxLimit))
                     {
-                        PreferenceManager.Preferences[nsc.PrefMaxName] = nsc.MaxLimit.ToString(CultureInfo.InvariantCulture);
+                        PreferenceManager.Set(nsc.PrefMaxName, nsc.MaxLimit);
                     }
                     else
                     {
@@ -155,6 +166,12 @@ namespace MissionControl.Data
          
             PreferenceManager.Preferences.Save();
 
+        }
+
+        private void UpdateSetting(ref Property o, Property n)
+        {
+            PreferenceManager.Preferences[n.PreferenceKey] = n.ToString();
+            o = n;
         }
 
         public void EnableLogging()

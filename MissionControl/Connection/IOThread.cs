@@ -98,8 +98,8 @@ namespace MissionControl.Connection
         {
             try
             {
-                _port.BaudRate = _session.BaudRate;
-                _port.PortName = _session.PortName;
+                _port.BaudRate = _session.Setting.BaudRate.Value;
+                _port.PortName = _session.Setting.PortName.Value;
                 _port.Open();
                 _port.DiscardInBuffer();
                 _session.Connected = true;

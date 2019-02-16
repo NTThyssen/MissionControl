@@ -29,8 +29,9 @@ namespace MissionControl.Data
         public void StartLogging() 
         {
             t = new Thread(RunMethod) { Name = "Logger Thread" };
-            _rawFilename = _dataLog.GetCurrentSession().LogFilePath + "/" + "raw_" + DateTime.Now.ToString("ddMMyy_HHmmss_");
-            _prettyFilename = _dataLog.GetCurrentSession().LogFilePath + "/" + "pretty_" + DateTime.Now.ToString("ddMMyy_HHmmss_");
+            string logPath = _dataLog.GetCurrentSession().Setting.LogFilePath.Value;
+            _rawFilename = logPath + "/" + "raw_" + DateTime.Now.ToString("ddMMyy_HHmmss_");
+            _prettyFilename = logPath + "/" + "pretty_" + DateTime.Now.ToString("ddMMyy_HHmmss_");
             _isLogging = true;
             t.Start();
         }
@@ -56,7 +57,7 @@ namespace MissionControl.Data
 
         private void RunMethod() {
 
-            if (!Directory.Exists(_dataLog.GetCurrentSession().LogFilePath))
+            if (!Directory.Exists(_dataLog.GetCurrentSession().Setting.LogFilePath.Value))
             {
                 throw new Exception("Directory does not exist");
             }

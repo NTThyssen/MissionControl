@@ -5,19 +5,19 @@ namespace MissionControl.Data
 {
     public class Session
     {
-        public string LogFilePath { get; set; }
-        public string PortName { get; set; }
-        public int BaudRate { get; set; } = 9600;
+    
         public ComponentMapping Mapping { get; }
         public State State { get; set; }
         public long SystemTime { get; set; }
         public DateTime LastReceived;
         public bool Connected { get; set; }
+        public Settings Setting { get; set; }
 
         public Session(ComponentMapping map)
         {
             Mapping = map;
             State = map.States()[0];
+            Setting = new Settings();
         }
 
         public void UpdateComponents(byte[] bytes)

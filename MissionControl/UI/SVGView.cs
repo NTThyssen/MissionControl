@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Imaging;
+using System.Globalization;
 using System.IO;
 using Cairo;
 using Gdk;
@@ -22,6 +23,7 @@ namespace MissionControl.UI.Widgets
         private List<SvgText> _svgTexts;
 
         private float _svgOriginalW, _svgOriginalH;
+        private float _svgOriginalRatio;
 
         bool _didRefresh;
 
@@ -45,10 +47,11 @@ namespace MissionControl.UI.Widgets
             _svg = LoadSVG(filepath);
             _svgOriginalW = 900;
             _svgOriginalH = 717.54936f;
+            _svgOriginalRatio = _svgOriginalW / _svgOriginalH;
 
             PopulateElementsDictionary();
 
-            SetSizeRequest((int)_svgOriginalW, (int)_svgOriginalH);
+            SetSizeRequest((int) (_svgOriginalW * 0.9), (int) (_svgOriginalH * 0.9));
             ModifyBg(StateType.Normal, new Gdk.Color(0, 0, 0));
 
             ExposeEvent += (o, args) => {
@@ -119,25 +122,25 @@ namespace MissionControl.UI.Widgets
                 switch (component)
                 {
                     case PressureComponent pt:
-                        float relative = pt.Relative();
-                        text.Text = string.Format("{0} barR", relative);
-                        text.Color = pt.IsNominal(relative) ? nominalColor : warningColor;
+                        float bar = _session.Setting.ShowAbsolutePressure.Value ? pt.Absolute(_session.Setting.TodayPressure.Value) : pt.Relative();
+                        text.Text = string.Format(CultureInfo.InvariantCulture,"{0} bar{1}", bar, _session.Setting.ShowAbsolutePressure.Value ? "A" : "R");
+                        text.Color = pt.IsNominal(bar) ? nominalColor : warningColor;
                         break;
                     case TemperatureComponent tc:
                         float celcius = tc.Celcius();
-                        text.Text = string.Format("{0} °C", celcius);
+                        text.Text = string.Format(CultureInfo.InvariantCulture, "{0} °C", celcius);
                         text.Color = tc.IsNominal(celcius) ? nominalColor : warningColor;
                         break;
                     case LoadComponent load:
                         float newtons = load.Newtons();
-                        text.Text = string.Format("{0} N", newtons);
+                        text.Text = string.Format(CultureInfo.InvariantCulture, "{0} N", newtons);
                         text.Color = load.IsNominal(newtons) ? nominalColor : warningColor;
                         break;
                     case TankComponent tank:
 
                         float percent = tank.PercentageFull();
 
-                        text.Text = string.Format("{0} %", percent);
+                        text.Text = string.Format(CultureInfo.InvariantCulture, "{0} %", percent);
 
                         float gradientStop = 1 - (percent / 100.0f);
                         SvgLinearGradientServer gradient = (SvgLinearGradientServer)_svgElements[tank.GraphicIDGradient];
@@ -147,14 +150,14 @@ namespace MissionControl.UI.Widgets
                         gradient.Stops[3].Offset = 1.0f;
                         break;
                     case ServoComponent servo:
-                        text.Text = string.Format("{0} %", servo.Percentage());
+                        text.Text = string.Format(CultureInfo.InvariantCulture, "{0} %", servo.Percentage());
                         break;
                     case SolenoidComponent solenoid:
                         text.Text = solenoid.State().ToString();
                         break;
                     case VoltageComponent voltage:
                         float volts = voltage.Volts();
-                        text.Text = string.Format("{0} N", string.Format("{0} V / {1} %", volts, Math.Floor(voltage.Percentage() * 100) / 100));
+                        text.Text = string.Format(CultureInfo.InvariantCulture, "{0} N", string.Format(CultureInfo.InvariantCulture, "{0} V / {1} %", volts, Math.Floor(voltage.Percentage() * 100) / 100));
                         text.Color = voltage.IsNominal(volts) ? nominalColor : warningColor;
                         break;
                 }
@@ -193,9 +196,9 @@ namespace MissionControl.UI.Widgets
 
         private void UpdateImage()
         {
-
-            int width = Allocation.Width;
-            int height = Allocation.Height;
+            float scale = Math.Min(Allocation.Width / _svgOriginalW, Allocation.Height / _svgOriginalH);
+            int width = (int) (_svgOriginalW * scale);
+            int height =(int) (_svgOriginalH * scale);
             Context cr = Gdk.CairoHelper.Create(this.GdkWindow);
 
             cr.SetSourceRGB(0, 0, 0);
@@ -236,7 +239,7 @@ namespace MissionControl.UI.Widgets
 
                 if (text.FontSize.Value is float size)
                 {
-                    cr.SetFontSize(size);
+                    cr.SetFontSize(size * scale);
                 }
 
                 FontWeight weight = (text.FontWeight == SvgFontWeight.Bold) ? FontWeight.Bold : FontWeight.Normal;

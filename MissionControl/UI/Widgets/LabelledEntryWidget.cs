@@ -11,21 +11,24 @@ namespace MissionControl.UI.Widgets
         private Label _label;
         private Entry _text;
 
-        public string Text
+        public string LabelText
+        {
+            get { return _label.Text; }
+            set { _label.Text = value; }
+        }
+
+        public string EntryText
         {
             get { return _text.Text; }
             set { _text.Text = value; }
         }
 
-        public LabelledEntryWidget(string label)
+        public LabelledEntryWidget()
         {
             this.Build();
 
             _box = new HBox(false, 20);
-            _label = new Label
-            {
-                Text = label
-            };
+            _label = new Label();
             _text = new Entry
             {
                 WidthRequest = 60
@@ -35,6 +38,16 @@ namespace MissionControl.UI.Widgets
             _box.PackStart(_text, false, false, 60);
 
             Add(_box);
+        }
+
+        public LabelledEntryWidget(string label) : this()
+        {
+            _label.Text = label;
+        }
+
+        public LabelledEntryWidget(string label, string text) : this(label)
+        {
+            _text.Text = text;
         }
     }
 }

@@ -132,6 +132,9 @@
     <Compile Include="gtk-gui\MissionControl.UI.Widgets.LabelledEntryWidget.cs" />
     <Compile Include="UI\Widgets\DropdownWidget.cs" />
     <Compile Include="gtk-gui\MissionControl.UI.Widgets.DropdownWidget.cs" />
+    <Compile Include="Data\Settings.cs" />
+    <Compile Include="UI\LabelledRadioWidget.cs" />
+    <Compile Include="gtk-gui\MissionControl.UI.LabelledRadioWidget.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Connection\" />
