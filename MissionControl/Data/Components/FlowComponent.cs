@@ -51,7 +51,7 @@ namespace MissionControl.Data.Components
             float pDelta = Math.Abs(_pressure1.Relative() - _pressure2.Relative());
             float gl = density / 1000.0f;
             float volumeFlow = (float) (cv / (1.17 * Math.Sqrt(gl / pDelta)));
-            MassFlow = volumeFlow * gl / 3600;
+            MassFlow = volumeFlow * gl * 1000 / 3600f;
         }
 
         public override string ToDisplay()

@@ -74,7 +74,7 @@ namespace MissionControl.Connection
 
         const byte HIGH = 0xFF;
         const byte LOW = 0x01;
-        const int endHighs = 4;
+        const int endHighs = 3;
         const int endLows = 1;
         const int bufsize = 8;
         int highs, lows;

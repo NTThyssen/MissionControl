@@ -23,7 +23,7 @@ namespace MissionControl.Tests
             (mapping.ComponentsByID()[100] as FlowComponent).Compute(session.Setting.FuelCV.Value, session.Setting.FuelDensity.Value);
 
             float flow = (mapping.ComponentsByID()[100] as FlowComponent).MassFlow;
-            Assert.IsTrue(Math.Abs(flow - 0.00006213542364) < 0.0001);
+            Assert.IsTrue(Math.Abs(flow - 0.06213542364) < 0.0001);
         }
     }
 }
