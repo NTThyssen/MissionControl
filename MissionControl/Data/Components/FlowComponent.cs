@@ -56,7 +56,7 @@ namespace MissionControl.Data.Components
 
         public override string ToDisplay()
         {
-            return ToRounded(MassFlow, 6);
+            return ToRounded(MassFlow, 4);
         }
     }
 }

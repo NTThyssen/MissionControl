@@ -147,7 +147,7 @@ namespace MissionControl.UI
                        
             oxidDensity = new LabelledEntryWidget()
             {
-                LabelText = "Oxidizer density [g/L]",
+                LabelText = "Oxidizer density [kg/m^3]",
                 EntryText = session.Setting.OxidDensity.ToString() ?? ""
             };
 
@@ -159,7 +159,7 @@ namespace MissionControl.UI
 
             fuelDensity = new LabelledEntryWidget()
             {
-                LabelText = "Fuel density [g/L]",
+                LabelText = "Fuel density [kg/m^3]",
                 EntryText = session.Setting.FuelDensity.ToString() ?? ""
             };
 
