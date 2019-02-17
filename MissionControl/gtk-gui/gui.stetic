@@ -60,15 +60,6 @@
       <placeholder />
     </child>
   </widget>
-  <widget class="Gtk.Bin" id="MissionControl.UI.Widgets.SVGWidget" design-size="300 300">
-    <property name="MemberName" />
-    <property name="Visible">False</property>
-    <child>
-      <widget class="Gtk.Image" id="imageView">
-        <property name="MemberName" />
-      </widget>
-    </child>
-  </widget>
   <widget class="Gtk.Bin" id="MissionControl.UI.Widgets.ComponentSettingWidget" design-size="300 300">
     <property name="MemberName" />
     <property name="Visible">False</property>

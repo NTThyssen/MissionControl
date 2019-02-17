@@ -40,6 +40,11 @@ namespace MissionControl.Data.Components
             return Name + "[OPEN/CLOSE]";
         }
 
+        public override string ToDisplay()
+        {
+            return "" + BinaryValue();
+        }
+
         public bool Open { get { return _raw != 0; } }
 
         public override string TypeName => "Solenoid";

@@ -32,8 +32,12 @@ namespace MissionControl.Data.Components
 
         public string ToLog()
         {
-            // Rounding to two decimals
-            return (Math.Floor(Relative() * 100) / 100).ToString(CultureInfo.InvariantCulture);
+            return ToRounded(Relative(), 4);
+        }
+
+        public override string ToDisplay()
+        {
+            return ToRounded(Relative(), 2);
         }
 
         public string LogHeader()

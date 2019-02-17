@@ -36,13 +36,17 @@ namespace MissionControl.Data.Components
 
         public string ToLog()
         {
-            // Rounding to two decimals
-            return (Math.Floor(Volts() * 100) / 100).ToString(CultureInfo.InvariantCulture); ;
+            return ToRounded(Volts(), 2);
         }
 
         public string LogHeader()
         {
             return Name + " [V]";
+        }
+
+        public override string ToDisplay()
+        {
+            return ToRounded(Volts(), 2);
         }
     }
 }

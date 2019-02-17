@@ -123,27 +123,29 @@ namespace MissionControl.UI.Widgets
                 switch (component)
                 {
                     case PressureComponent pt:
-                        float bar = _session.Setting.ShowAbsolutePressure.Value ? pt.Absolute(_session.Setting.TodayPressure.Value) : pt.Relative();
-                        text.Text = string.Format(CultureInfo.InvariantCulture,"{0} bar{1}", bar, _session.Setting.ShowAbsolutePressure.Value ? "A" : "R");
-                        text.Color = pt.IsNominal(bar) ? nominalColor : warningColor;
+                        if (_session.Setting.ShowAbsolutePressure.Value)
+                        {
+                            text.Text = Component.ToRounded(pt.Absolute(_session.Setting.TodayPressure.Value), 2) + " barA";
+                            text.Color = pt.IsNominal(pt.Absolute(_session.Setting.TodayPressure.Value)) ? nominalColor : warningColor;
+                        }
+                        else
+                        {
+                            text.Text = Component.ToRounded(pt.Relative(), 2) + " barR";
+                            text.Color = pt.IsNominal(pt.Relative()) ? nominalColor : warningColor;
+                        }
                         break;
                     case TemperatureComponent tc:
-                        float celcius = tc.Celcius();
-                        text.Text = string.Format(CultureInfo.InvariantCulture, "{0} °C", celcius);
-                        text.Color = tc.IsNominal(celcius) ? nominalColor : warningColor;
+                        text.Text = tc.ToDisplay() + " °C";
+                        text.Color = tc.IsNominal(tc.Celcius()) ? nominalColor : warningColor;
                         break;
                     case LoadComponent load:
-                        float newtons = load.Newtons();
-                        text.Text = string.Format(CultureInfo.InvariantCulture, "{0} N", newtons);
-                        text.Color = load.IsNominal(newtons) ? nominalColor : warningColor;
+                        text.Text = load.ToDisplay() + " N";
+                        text.Color = load.IsNominal(load.Newtons()) ? nominalColor : warningColor;
                         break;
                     case TankComponent tank:
+                        text.Text = tank.ToDisplay() + " %";
 
-                        float percent = tank.PercentageFull();
-
-                        text.Text = string.Format(CultureInfo.InvariantCulture, "{0} %", percent);
-
-                        float gradientStop = 1 - (percent / 100.0f);
+                        float gradientStop = 1 - (tank.PercentageFull() / 100.0f);
                         SvgLinearGradientServer gradient = (SvgLinearGradientServer)_svgElements[tank.GraphicIDGradient];
                         gradient.Stops[0].Offset = 0.0f;
                         gradient.Stops[1].Offset = gradientStop;
@@ -151,7 +153,7 @@ namespace MissionControl.UI.Widgets
                         gradient.Stops[3].Offset = 1.0f;
                         break;
                     case ServoComponent servo:
-                        text.Text = string.Format(CultureInfo.InvariantCulture, "{0} %", servo.Percentage());
+                        text.Text = servo.ToDisplay() + " %";
                         break;
                     case SolenoidComponent solenoid:
                         text.Text = solenoid.State().ToString();
@@ -159,12 +161,11 @@ namespace MissionControl.UI.Widgets
                     case VoltageComponent voltage:
                         float volts = voltage.Volts();
                         text.Text = string.Format(CultureInfo.InvariantCulture, "{0} V / {1} %", volts, Math.Floor(voltage.Percentage() * 100) / 100);
-                        text.Color = voltage.IsNominal(volts) ? nominalColor : warningColor;
+                        text.Color = voltage.IsNominal(voltage.Volts()) ? nominalColor : warningColor;
                         break;
                     case FlowComponent flow:
-                        float massflow = flow.MassFlow;
-                        text.Text = string.Format(CultureInfo.InvariantCulture, "{0} kg/s", massflow);
-                        text.Color = flow.IsNominal(massflow) ? nominalColor : warningColor;
+                        text.Text = flow.ToDisplay() + " kg/s";
+                        text.Color = flow.IsNominal(flow.MassFlow) ? nominalColor : warningColor;
                         break;
                 }
             }

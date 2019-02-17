@@ -117,8 +117,6 @@
     <Compile Include="Data\PreferenceManager.cs" />
     <Compile Include="Data\PlotData.cs" />
     <Compile Include="UI\SVGView.cs" />
-    <Compile Include="UI\Widgets\SVGWidget.cs" />
-    <Compile Include="gtk-gui\MissionControl.UI.Widgets.SVGWidget.cs" />
     <Compile Include="Tests\ReadTests.cs" />
     <Compile Include="Connection\ISerialPort.cs" />
     <Compile Include="Connection\SerialPort.cs" />
@@ -139,6 +137,7 @@
     <Compile Include="Data\Components\MeasuredComponent.cs" />
     <Compile Include="Data\Components\ComputedComponent.cs" />
     <Compile Include="UI\Widgets\LabelledRadioWidget.cs" />
+    <Compile Include="Tests\CalcTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Connection\" />

@@ -126,8 +126,8 @@ namespace MissionControl.Data
                 {
                     case FlowComponent fc:
                         float cv = (Setting.PropertiesByID()[fc.SettingsConstantName + "FluidCV"] as FloatProperty).Value;
-                        float gl = (Setting.PropertiesByID()[fc.SettingsConstantName + "FluidGL"] as FloatProperty).Value;
-                        fc.Compute(cv, gl);
+                        float density = (Setting.PropertiesByID()[fc.SettingsConstantName + "FluidDensity"] as FloatProperty).Value;
+                        fc.Compute(cv, density);
                         break;
                 }
             }

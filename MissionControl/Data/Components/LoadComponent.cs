@@ -32,12 +32,17 @@ namespace MissionControl.Data.Components
 
         public string ToLog()
         {
-            return (Newtons()).ToString(CultureInfo.InvariantCulture);
+            return ToRounded(Newtons(), 6);
         }
 
         public string LogHeader()
         {
             return Name + " [N]";
+        }
+
+        public override string ToDisplay()
+        {
+            return ToRounded(Newtons(), 3);
         }
     }
 }

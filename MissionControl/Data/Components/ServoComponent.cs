@@ -46,5 +46,10 @@ namespace MissionControl.Data.Components
         {
             return Name + " [%]";
         }
+
+        public override string ToDisplay()
+        {
+            return ToRounded(Percentage(), 1);
+        }
     }
 }

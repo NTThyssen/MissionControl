@@ -31,6 +31,8 @@ namespace MissionControl.Data.Components
             return Name + " [kg/s]";
         }    
 
+   
+
         public string ToLog()
         {
             return (Math.Floor(MassFlow * 100) / 100).ToString(CultureInfo.InvariantCulture);
@@ -44,13 +46,17 @@ namespace MissionControl.Data.Components
             return !nonNominal;
         }
 
-        // m^3 / h * (1000 L / m^3) * (h / 3600 s) = 1000 L / 3600 s = 1 L / 3.6 s 
-        public void Compute(float cv, float density)
+      public void Compute(float cv, float density)
         {
             float pDelta = Math.Abs(_pressure1.Relative() - _pressure2.Relative());
             float gl = density / 1000.0f;
             float volumeFlow = (float) (cv / (1.17 * Math.Sqrt(gl / pDelta)));
             MassFlow = volumeFlow * gl / 3600;
+        }
+
+        public override string ToDisplay()
+        {
+            return ToRounded(MassFlow, 6);
         }
     }
 }

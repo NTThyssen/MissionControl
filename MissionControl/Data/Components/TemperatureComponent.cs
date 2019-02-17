@@ -40,6 +40,10 @@ namespace MissionControl.Data.Components
         {
             return Name + " [°C]";
         }
-    
+
+        public override string ToDisplay()
+        {
+            return ToRounded(Celcius(), 1);
+        }
     }
 }

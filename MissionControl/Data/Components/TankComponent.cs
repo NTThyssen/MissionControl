@@ -53,12 +53,17 @@ namespace MissionControl.Data.Components
         public string ToLog()
         {
             // Rounding to three decimals
-            return (_rawVolume).ToString(CultureInfo.InvariantCulture);
+            return ToRounded(Litres(), 4);
         }
 
         public string LogHeader()
         {
             return Name + " [L]";
+        }
+
+        public override string ToDisplay()
+        {
+            return ToRounded(Litres(), 2);
         }
     }
 }

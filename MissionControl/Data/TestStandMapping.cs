@@ -57,7 +57,7 @@ namespace MissionControl.Data
 
             BATTERY = new VoltageComponent(22, 2, "BATTERY", "BATTERY", 12.0f, 14.8f);
 
-            FLO_IPA = new FlowComponent(100, "FLO_IPA", "FLO-IPA", ref PT_IPA, ref PT_CHAM, "Fuel");
+            FLO_IPA = new FlowComponent(100, "FLO_IPA", "FLO-IPA", ref PT_FUEL, ref PT_CHAM, "Fuel");
             FLO_N2O = new FlowComponent(101, "FLO_N2O", "FLO-N2O", ref PT_N2O, ref PT_CHAM, "Oxid");
 
             _states = new List<State>
