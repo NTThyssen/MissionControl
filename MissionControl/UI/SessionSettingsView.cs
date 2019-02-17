@@ -38,10 +38,8 @@ namespace MissionControl.UI
 
         // Fluid controls
         LabelledEntryWidget oxidValveCoefficient;
-        LabelledEntryWidget oxidSpecificGravity;
         LabelledEntryWidget oxidDensity;
         LabelledEntryWidget fuelValveCoefficient;
-        LabelledEntryWidget fuelSpecificGravity;
         LabelledEntryWidget fuelDensity;
         LabelledEntryWidget todaysPressure;
         LabelledRadioWidget showAbsolutePressure;
@@ -113,9 +111,9 @@ namespace MissionControl.UI
 
             _session.Mapping.Components().ForEach((Component obj) =>
             {
-                if (obj is SensorComponent sc)
+                if (obj is IWarningLimits sc)
                 {
-                    _componentWidgets.Add(new ComponentSettingWidget(sc));
+                    _componentWidgets.Add(new ComponentSettingWidget(obj));
                 }
             });
 
@@ -124,6 +122,7 @@ namespace MissionControl.UI
             componentSections.PackStart(LayoutLimitsSection(_componentWidgets.FindAll((ComponentSettingWidget obj) => obj.Component is TemperatureComponent)), false, false, 0);
             componentSections.PackStart(LayoutLimitsSection(_componentWidgets.FindAll((ComponentSettingWidget obj) => obj.Component is LoadComponent)), false, false, 0);
             componentSections.PackStart(LayoutLimitsSection(_componentWidgets.FindAll((ComponentSettingWidget obj) => obj.Component is VoltageComponent)), false, false, 0);
+            componentSections.PackStart(LayoutLimitsSection(_componentWidgets.FindAll((ComponentSettingWidget obj) => obj.Component is FlowComponent)), false, false, 0);
 
             ScrolledWindow scrolledWindow = new ScrolledWindow
             {
@@ -145,16 +144,10 @@ namespace MissionControl.UI
                 LabelText = "Oxidizer valve flow coefficient (CV)",
                 EntryText = session.Setting.OxidCV.ToString() ?? ""
             };
-
-            oxidSpecificGravity = new LabelledEntryWidget()
-            {
-                LabelText = "Oxidizer liquid specific gravity (GL)",
-                EntryText = session.Setting.OxidGL.ToString() ?? ""
-            };
-
+                       
             oxidDensity = new LabelledEntryWidget()
             {
-                LabelText = "Oxidizer density [kg/L]",
+                LabelText = "Oxidizer density [g/L]",
                 EntryText = session.Setting.OxidDensity.ToString() ?? ""
             };
 
@@ -164,15 +157,9 @@ namespace MissionControl.UI
                 EntryText = session.Setting.FuelCV.ToString() ?? ""
             };
 
-            fuelSpecificGravity = new LabelledEntryWidget()
-            {
-                LabelText = "Fuel liquid specific gravity (GL)",
-                EntryText = session.Setting.FuelGL.ToString() ?? ""
-            };
-
             fuelDensity = new LabelledEntryWidget()
             {
-                LabelText = "Fuel density [kg/L]",
+                LabelText = "Fuel density [g/L]",
                 EntryText = session.Setting.FuelDensity.ToString() ?? ""
             };
 
@@ -191,11 +178,9 @@ namespace MissionControl.UI
             fluidPage.PackStart(new Label("Fluid system values"), false, false, 0);
 
             fluidPage.PackStart(oxidValveCoefficient, false, false, 0);
-            fluidPage.PackStart(oxidSpecificGravity, false, false, 0);
             fluidPage.PackStart(oxidDensity, false, false, 0);
 
             fluidPage.PackStart(fuelValveCoefficient, false, false, 0);
-            fluidPage.PackStart(fuelSpecificGravity, false, false, 0);
             fluidPage.PackStart(fuelDensity, false, false, 0);
 
             fluidPage.PackStart(new Label("Pressure properties"), false, false, 0);
@@ -363,7 +348,7 @@ namespace MissionControl.UI
                 }
                 else
                 {
-                    if (newSession.Mapping.ComponentsByID()[widget.Component.BoardID] is SensorComponent sc)
+                    if (newSession.Mapping.ComponentsByID()[widget.Component.BoardID] is IWarningLimits sc)
                     {
                         sc.MinLimit = min;
                         sc.MaxLimit = max;
@@ -375,11 +360,9 @@ namespace MissionControl.UI
 
             // Fluid page's field validation
             newSession.Setting.OxidCV.Value = ParseLabellelEntryAsFloat(oxidValveCoefficient, ref hasErrors, ref errorMessage, out float oxcv) ? oxcv : newSession.Setting.OxidCV.Value;
-            newSession.Setting.OxidGL.Value = ParseLabellelEntryAsFloat(oxidSpecificGravity, ref hasErrors, ref errorMessage, out float oxgl) ? oxgl : newSession.Setting.OxidCV.Value;
             newSession.Setting.OxidDensity.Value = ParseLabellelEntryAsFloat(oxidDensity, ref hasErrors, ref errorMessage, out float oxd) ? oxd : newSession.Setting.OxidDensity.Value;
 
             newSession.Setting.FuelCV.Value = ParseLabellelEntryAsFloat(fuelValveCoefficient, ref hasErrors, ref errorMessage, out float flcv) ? flcv : newSession.Setting.OxidCV.Value;
-            newSession.Setting.FuelGL.Value = ParseLabellelEntryAsFloat(fuelSpecificGravity, ref hasErrors, ref errorMessage, out float flgl) ? flgl : newSession.Setting.OxidCV.Value;
             newSession.Setting.FuelDensity.Value = ParseLabellelEntryAsFloat(fuelDensity, ref hasErrors, ref errorMessage, out float fld) ? fld : newSession.Setting.FuelDensity.Value;
 
             newSession.Setting.TodayPressure.Value = ParseLabellelEntryAsFloat(todaysPressure, ref hasErrors, ref errorMessage, out float tp) ? tp : newSession.Setting.OxidCV.Value;

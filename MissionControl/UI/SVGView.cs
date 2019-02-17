@@ -164,6 +164,7 @@ namespace MissionControl.UI.Widgets
                     case FlowComponent flow:
                         float massflow = flow.MassFlow;
                         text.Text = string.Format(CultureInfo.InvariantCulture, "{0} kg/s", massflow);
+                        text.Color = flow.IsNominal(massflow) ? nominalColor : warningColor;
                         break;
                 }
             }
@@ -171,33 +172,6 @@ namespace MissionControl.UI.Widgets
             UpdateImage();
 
         }
-
-
-        // Inspired by: https://stackoverflow.com/questions/20469706/loading-pixbuf-to-image-widget-in-gtk
-        /*protected override void OnSizeAllocated(Gdk.Rectangle allocation)
-        {
-            if (_didRefresh) { _didRefresh = false; return; }
-
-            if (resized)
-            {
-                resized = false;
-                base.OnSizeAllocated(allocation);
-            }
-            else
-            {
-                Console.WriteLine("SVG Widget Redrawn form Size Allocate {0} {1}", allocation.Width, allocation.Height);
-                float widthRatio = allocation.Width / _svgOriginalW;
-                float heigthRatio = allocation.Height / _svgOriginalH;
-                float ratio = heigthRatio;
-                int resultWidth = (int)(_svgOriginalW * ratio);
-                int resultHeight = (int)(_svgOriginalH * ratio);
-
-                UpdateImage(resultWidth, resultHeight);
-                //UpdateImage();
-                resized = true;
-
-            }
-        }*/
 
         private void UpdateImage()
         {

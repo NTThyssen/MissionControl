@@ -29,9 +29,9 @@ namespace MissionControl.UI.Widgets
             set { _max.Text = value; }
         }
 
-        public SensorComponent Component { get; }
+        public Component Component { get; }
 
-        public ComponentSettingWidget(SensorComponent component)
+        public ComponentSettingWidget(Component component)
         {
             this.Build();
 
@@ -54,9 +54,6 @@ namespace MissionControl.UI.Widgets
                 WidthRequest = 40
             };
 
-            _min.Text = (!float.IsNaN(component.MinLimit)) ? component.MinLimit.ToString() : string.Empty;
-            _max.Text = (!float.IsNaN(component.MaxLimit)) ? component.MaxLimit.ToString() : string.Empty;
-
             _enable = new CheckButton { 
                 Active = component.Enabled,
                 Label = "Enable sensor" 
@@ -65,12 +62,16 @@ namespace MissionControl.UI.Widgets
             top.PackStart(lblName, false, false, 0);
             top.PackStart(_enable, true, false, 0);
 
-
-            bottom.PackStart(lblMin, false, false,0);
-            bottom.PackStart(_min, false, false, 10);
-            bottom.PackStart(lblMax, false, false, 0);
-            bottom.PackStart(_max, false, false, 10);
-
+            if (component is IWarningLimits warn)
+            {
+                _min.Text = (!float.IsNaN(warn.MinLimit)) ? warn.MinLimit.ToString() : string.Empty;
+                _max.Text = (!float.IsNaN(warn.MaxLimit)) ? warn.MaxLimit.ToString() : string.Empty;
+                bottom.PackStart(lblMin, false, false, 0);
+                bottom.PackStart(_min, false, false, 10);
+                bottom.PackStart(lblMax, false, false, 0);
+                bottom.PackStart(_max, false, false, 10);
+            }
+         
             vertical.PackStart(top, false, false, 0);
             vertical.PackStart(bottom, false, false, 0);
 

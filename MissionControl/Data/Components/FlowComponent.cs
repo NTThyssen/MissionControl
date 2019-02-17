@@ -45,10 +45,12 @@ namespace MissionControl.Data.Components
         }
 
         // m^3 / h * (1000 L / m^3) * (h / 3600 s) = 1000 L / 3600 s = 1 L / 3.6 s 
-        public void Compute(float cv, float gl)
+        public void Compute(float cv, float density)
         {
-            float volumeFlow = (float)(cv / (1.17 * Math.Sqrt(gl / Math.Abs(_pressure1.Relative() - _pressure2.Relative()))));
-            MassFlow = volumeFlow / 3.6f;
+            float pDelta = Math.Abs(_pressure1.Relative() - _pressure2.Relative());
+            float gl = density / 1000.0f;
+            float volumeFlow = (float) (cv / (1.17 * Math.Sqrt(gl / pDelta)));
+            MassFlow = volumeFlow * gl / 3600;
         }
     }
 }

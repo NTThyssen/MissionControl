@@ -133,12 +133,12 @@
     <Compile Include="UI\Widgets\DropdownWidget.cs" />
     <Compile Include="gtk-gui\MissionControl.UI.Widgets.DropdownWidget.cs" />
     <Compile Include="Data\Settings.cs" />
-    <Compile Include="UI\LabelledRadioWidget.cs" />
     <Compile Include="gtk-gui\MissionControl.UI.LabelledRadioWidget.cs" />
     <Compile Include="Data\Components\FlowComponent.cs" />
     <Compile Include="Data\Components\IWarningLimits.cs" />
     <Compile Include="Data\Components\MeasuredComponent.cs" />
     <Compile Include="Data\Components\ComputedComponent.cs" />
+    <Compile Include="UI\Widgets\LabelledRadioWidget.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Connection\" />

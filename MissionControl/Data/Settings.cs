@@ -71,10 +71,8 @@ namespace MissionControl.Data
     {
         // Fluid
         public FloatProperty OxidCV { get; } = new FloatProperty("OxidFluidCV");
-        public FloatProperty OxidGL { get; } = new FloatProperty("OxidFluidGL");
         public FloatProperty OxidDensity { get; } = new FloatProperty("OxidFluidDensity");
         public FloatProperty FuelCV { get; } = new FloatProperty("FuelFluidCV");
-        public FloatProperty FuelGL { get; } = new FloatProperty("FuelFluidGL");
         public FloatProperty FuelDensity { get; } = new FloatProperty("FuelFluidDensity");
         public FloatProperty TodayPressure { get; } = new FloatProperty("TodayPressure");
 
@@ -88,7 +86,7 @@ namespace MissionControl.Data
 
         public List<Property> Properties()
         {
-            return new List<Property> { LogFilePath, PortName, BaudRate, OxidCV, OxidGL, OxidDensity, FuelCV, FuelGL, FuelDensity, TodayPressure, ShowAbsolutePressure };
+            return new List<Property> { LogFilePath, PortName, BaudRate, OxidCV, OxidDensity, FuelCV, FuelDensity, TodayPressure, ShowAbsolutePressure };
         }
 
         public Dictionary<string, Property> PropertiesByID()

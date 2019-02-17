@@ -71,29 +71,26 @@ namespace MissionControl.Data
 
             // Fluid
             _session.Setting.OxidCV.Value = PreferenceManager.GetIfExists(_session.Setting.OxidCV.PreferenceKey, 1.0f);
-            _session.Setting.OxidGL.Value = PreferenceManager.GetIfExists(_session.Setting.OxidGL.PreferenceKey, 1.0f);
             _session.Setting.OxidDensity.Value = PreferenceManager.GetIfExists(_session.Setting.OxidDensity.PreferenceKey, 1.0f);
-            _session.Setting.FuelGL.Value = PreferenceManager.GetIfExists(_session.Setting.FuelGL.PreferenceKey, 1.0f);
+
             _session.Setting.FuelCV.Value = PreferenceManager.GetIfExists(_session.Setting.FuelCV.PreferenceKey, 1.0f);
             _session.Setting.FuelDensity.Value = PreferenceManager.GetIfExists(_session.Setting.FuelDensity.PreferenceKey, 1.0f);
+
             _session.Setting.TodayPressure.Value = PreferenceManager.GetIfExists(_session.Setting.TodayPressure.PreferenceKey, 1.0f);
             _session.Setting.ShowAbsolutePressure.Value = PreferenceManager.GetIfExists(_session.Setting.ShowAbsolutePressure.PreferenceKey, false);
 
             foreach (Component c in _session.Mapping.Components())
             {
-                if (c is IWarningLimits)
-                {
-                    c.Enabled = PreferenceManager.GetIfExists(c.PrefEnabledName, c.Enabled);
 
-                    if (c is SensorComponent sc)
-                    {
-                        sc.MinLimit = PreferenceManager.GetIfExists(sc.PrefMinName, sc.MinLimit);
-                        sc.MaxLimit = PreferenceManager.GetIfExists(sc.PrefMinName, sc.MaxLimit);
-                    }
+                c.Enabled = PreferenceManager.GetIfExists(c.PrefEnabledName, c.Enabled);
+
+                if (c is IWarningLimits sc)
+                {
+                    sc.MinLimit = PreferenceManager.GetIfExists(sc.PrefMinName, sc.MinLimit);
+                    sc.MaxLimit = PreferenceManager.GetIfExists(sc.PrefMaxName, sc.MaxLimit);
                 }
             }
         }
-
 
         public void UpdateSession(Session nsession)
         {
@@ -141,7 +138,7 @@ namespace MissionControl.Data
                 PreferenceManager.Set(nc.PrefEnabledName, nc.Enabled);
                 oc.Enabled = nc.Enabled;
 
-                if (nc is SensorComponent nsc)
+                if (nc is IWarningLimits nsc)
                 {
                     if (!float.IsNaN(nsc.MinLimit))
                     {
@@ -160,7 +157,7 @@ namespace MissionControl.Data
                         PreferenceManager.Preferences.Remove(nsc.PrefMaxName);
                     }
 
-                    if (oc is SensorComponent _sc)
+                    if (oc is IWarningLimits _sc)
                     {
                         _sc.MinLimit = nsc.MinLimit;
                         _sc.MaxLimit = nsc.MaxLimit;
