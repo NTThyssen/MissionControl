@@ -17,6 +17,8 @@ namespace MissionControl.Data
         public const byte BC_TIME = 4;
 
         public abstract List<Component> Components();
+        public abstract List<MeasuredComponent> MeasuredComponents();
+        public abstract List<ComputedComponent> ComputedComponents();
         public abstract List<State> States();
 
         public State EmergencyState { get; set; }
@@ -34,7 +36,7 @@ namespace MissionControl.Data
             return loggables;
         }
 
-        public Dictionary<byte, Component> ComponentByIDs ()
+        public Dictionary<byte, Component> ComponentsByID ()
         {
             Dictionary<byte, Component> dict = new Dictionary<byte, Component>();
             foreach(Component c in Components())

@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Globalization;
+
 namespace MissionControl.Data.Components
 {
     public class LoadComponent : SensorComponent, ILoggable
@@ -30,7 +32,7 @@ namespace MissionControl.Data.Components
 
         public string ToLog()
         {
-            return Newtons() + "";
+            return (Newtons()).ToString(CultureInfo.InvariantCulture);
         }
 
         public string LogHeader()

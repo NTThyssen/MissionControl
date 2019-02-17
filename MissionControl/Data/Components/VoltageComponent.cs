@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Globalization;
+
 namespace MissionControl.Data.Components
 {
     public class VoltageComponent : SensorComponent, ILoggable
@@ -35,7 +37,7 @@ namespace MissionControl.Data.Components
         public string ToLog()
         {
             // Rounding to two decimals
-            return "" + Math.Floor(Volts() * 100) / 100;
+            return (Math.Floor(Volts() * 100) / 100).ToString(CultureInfo.InvariantCulture); ;
         }
 
         public string LogHeader()

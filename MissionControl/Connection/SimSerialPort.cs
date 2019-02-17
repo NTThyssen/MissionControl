@@ -109,7 +109,7 @@ namespace MissionControl.Connection
 
             Random random = new Random();
 
-            foreach (Component c in mapping.Components())
+            foreach (MeasuredComponent c in mapping.MeasuredComponents())
             {
                 byte[] sensor = new byte[1 + c.ByteSize];
 

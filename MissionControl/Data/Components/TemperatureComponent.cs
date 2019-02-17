@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Globalization;
+
 namespace MissionControl.Data.Components
 {
     public class TemperatureComponent : SensorComponent, ILoggable
@@ -31,7 +33,7 @@ namespace MissionControl.Data.Components
         public string ToLog()
         {
             // Rounding to one decimal
-            return "" + Math.Floor(Celcius() * 10) / 10;
+            return (Math.Floor(Celcius() * 10) / 10).ToString(CultureInfo.InvariantCulture); ;
         }
 
         public string LogHeader()

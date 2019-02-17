@@ -1,7 +1,9 @@
 ﻿using System;
+using System.Globalization;
+
 namespace MissionControl.Data.Components
 {
-    public class TankComponent : Component, ILoggable
+    public class TankComponent : MeasuredComponent, ILoggable
     {
 
         private readonly float _full;
@@ -51,7 +53,7 @@ namespace MissionControl.Data.Components
         public string ToLog()
         {
             // Rounding to three decimals
-            return "" + _rawVolume;
+            return (_rawVolume).ToString(CultureInfo.InvariantCulture);
         }
 
         public string LogHeader()

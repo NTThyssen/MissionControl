@@ -15,6 +15,7 @@ namespace MissionControl.Data
         SolenoidComponent SN_N2O_FILL, SN_FLUSH; 
         TankComponent T_IPA, T_N2O;
         VoltageComponent BATTERY;
+        FlowComponent FLO_IPA, FLO_N2O;
 
         List<State> _states;
 
@@ -56,10 +57,13 @@ namespace MissionControl.Data
 
             BATTERY = new VoltageComponent(22, 2, "BATTERY", "BATTERY", 12.0f, 14.8f);
 
+            FLO_IPA = new FlowComponent(100, "FLO_IPA", "FLO_IPA", ref PT_IPA, ref PT_CHAM, "Fuel");
+            FLO_N2O = new FlowComponent(101, "FLO_N2O", "FLO_N2O", ref PT_N2O, ref PT_CHAM, "Oxid");
+
             _states = new List<State>
             {
-                new State(0,"First"),
-                new State(1,  "Second"),
+                new State(0, "First"),
+                new State(1, "Second"),
                 new State(2, "Third")
             };
             EmergencyState = _states[1];
@@ -68,10 +72,21 @@ namespace MissionControl.Data
 
         public override List<Component> Components()
         {
-            return new List<Component> { PT_N2, PT_IPA, PT_N2O, PT_FUEL, PT_OX, PT_CHAM, TC_IPA, TC_N2O, TC_1, TC_2, TC_3, TC_4, TC_5, TC_6, LOAD, SV_IPA, SV_N2O, SN_FLUSH, SN_N2O_FILL, MV_IPA, MV_N2O, T_IPA, T_N2O, BATTERY };
+            List<Component> components = new List<Component>();
+            components.AddRange(MeasuredComponents());
+            components.AddRange(ComputedComponents());
+            return components;
         }
 
+        public override List<ComputedComponent> ComputedComponents()
+        {
+            return new List<ComputedComponent> { FLO_IPA, FLO_N2O };
+        }
 
+        public override List<MeasuredComponent> MeasuredComponents()
+        {
+            return new List<MeasuredComponent> { PT_N2, PT_IPA, PT_N2O, PT_FUEL, PT_OX, PT_CHAM, TC_IPA, TC_N2O, TC_1, TC_2, TC_3, TC_4, TC_5, TC_6, LOAD, SV_IPA, SV_N2O, SN_FLUSH, SN_N2O_FILL, MV_IPA, MV_N2O, T_IPA, T_N2O, BATTERY };
+        }
 
         public override List<State> States()
         {

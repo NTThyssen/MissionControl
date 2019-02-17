@@ -39,8 +39,10 @@ namespace MissionControl.UI
         // Fluid controls
         LabelledEntryWidget oxidValveCoefficient;
         LabelledEntryWidget oxidSpecificGravity;
+        LabelledEntryWidget oxidDensity;
         LabelledEntryWidget fuelValveCoefficient;
         LabelledEntryWidget fuelSpecificGravity;
+        LabelledEntryWidget fuelDensity;
         LabelledEntryWidget todaysPressure;
         LabelledRadioWidget showAbsolutePressure;
 
@@ -150,6 +152,12 @@ namespace MissionControl.UI
                 EntryText = session.Setting.OxidGL.ToString() ?? ""
             };
 
+            oxidDensity = new LabelledEntryWidget()
+            {
+                LabelText = "Oxidizer density [kg/L]",
+                EntryText = session.Setting.OxidDensity.ToString() ?? ""
+            };
+
             fuelValveCoefficient = new LabelledEntryWidget()
             {
                 LabelText = "Fuel valve flow coefficient (CV)",
@@ -160,6 +168,12 @@ namespace MissionControl.UI
             {
                 LabelText = "Fuel liquid specific gravity (GL)",
                 EntryText = session.Setting.FuelGL.ToString() ?? ""
+            };
+
+            fuelDensity = new LabelledEntryWidget()
+            {
+                LabelText = "Fuel density [kg/L]",
+                EntryText = session.Setting.FuelDensity.ToString() ?? ""
             };
 
             todaysPressure = new LabelledEntryWidget()
@@ -175,12 +189,17 @@ namespace MissionControl.UI
             };
 
             fluidPage.PackStart(new Label("Fluid system values"), false, false, 0);
+
             fluidPage.PackStart(oxidValveCoefficient, false, false, 0);
             fluidPage.PackStart(oxidSpecificGravity, false, false, 0);
+            fluidPage.PackStart(oxidDensity, false, false, 0);
+
             fluidPage.PackStart(fuelValveCoefficient, false, false, 0);
             fluidPage.PackStart(fuelSpecificGravity, false, false, 0);
+            fluidPage.PackStart(fuelDensity, false, false, 0);
 
             fluidPage.PackStart(new Label("Pressure properties"), false, false, 0);
+
             fluidPage.PackStart(todaysPressure, false, false, 0);
             fluidPage.PackStart(showAbsolutePressure, false, false, 0);
 
@@ -344,23 +363,26 @@ namespace MissionControl.UI
                 }
                 else
                 {
-                    if (newSession.Mapping.ComponentByIDs()[widget.Component.BoardID] is SensorComponent sc)
+                    if (newSession.Mapping.ComponentsByID()[widget.Component.BoardID] is SensorComponent sc)
                     {
                         sc.MinLimit = min;
                         sc.MaxLimit = max;
                     }
                 }
 
-                newSession.Mapping.ComponentByIDs()[widget.Component.BoardID].Enabled = widget.Enabled;
+                newSession.Mapping.ComponentsByID()[widget.Component.BoardID].Enabled = widget.Enabled;
             }
 
             // Fluid page's field validation
             newSession.Setting.OxidCV.Value = ParseLabellelEntryAsFloat(oxidValveCoefficient, ref hasErrors, ref errorMessage, out float oxcv) ? oxcv : newSession.Setting.OxidCV.Value;
             newSession.Setting.OxidGL.Value = ParseLabellelEntryAsFloat(oxidSpecificGravity, ref hasErrors, ref errorMessage, out float oxgl) ? oxgl : newSession.Setting.OxidCV.Value;
+            newSession.Setting.OxidDensity.Value = ParseLabellelEntryAsFloat(oxidDensity, ref hasErrors, ref errorMessage, out float oxd) ? oxd : newSession.Setting.OxidDensity.Value;
+
             newSession.Setting.FuelCV.Value = ParseLabellelEntryAsFloat(fuelValveCoefficient, ref hasErrors, ref errorMessage, out float flcv) ? flcv : newSession.Setting.OxidCV.Value;
             newSession.Setting.FuelGL.Value = ParseLabellelEntryAsFloat(fuelSpecificGravity, ref hasErrors, ref errorMessage, out float flgl) ? flgl : newSession.Setting.OxidCV.Value;
-            newSession.Setting.TodayPressure.Value = ParseLabellelEntryAsFloat(todaysPressure, ref hasErrors, ref errorMessage, out float tp) ? tp : newSession.Setting.OxidCV.Value;
+            newSession.Setting.FuelDensity.Value = ParseLabellelEntryAsFloat(fuelDensity, ref hasErrors, ref errorMessage, out float fld) ? fld : newSession.Setting.FuelDensity.Value;
 
+            newSession.Setting.TodayPressure.Value = ParseLabellelEntryAsFloat(todaysPressure, ref hasErrors, ref errorMessage, out float tp) ? tp : newSession.Setting.OxidCV.Value;
             newSession.Setting.ShowAbsolutePressure.Value = showAbsolutePressure.ShowAbsolutePressure;
 
             // Save if no errors

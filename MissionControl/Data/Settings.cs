@@ -70,10 +70,12 @@ namespace MissionControl.Data
     public class Settings
     {
         // Fluid
-        public FloatProperty OxidCV { get; } = new FloatProperty("FLU_OXID_CV");
-        public FloatProperty OxidGL { get; } = new FloatProperty("FLU_OXID_GL");
-        public FloatProperty FuelCV { get; } = new FloatProperty("FLU_FUEL_CV");
-        public FloatProperty FuelGL { get; } = new FloatProperty("FLU_FUEL_GL");
+        public FloatProperty OxidCV { get; } = new FloatProperty("OxidFluidCV");
+        public FloatProperty OxidGL { get; } = new FloatProperty("OxidFluidGL");
+        public FloatProperty OxidDensity { get; } = new FloatProperty("OxidFluidDensity");
+        public FloatProperty FuelCV { get; } = new FloatProperty("FuelFluidCV");
+        public FloatProperty FuelGL { get; } = new FloatProperty("FuelFluidGL");
+        public FloatProperty FuelDensity { get; } = new FloatProperty("FuelFluidDensity");
         public FloatProperty TodayPressure { get; } = new FloatProperty("TodayPressure");
 
         // System
@@ -86,10 +88,22 @@ namespace MissionControl.Data
 
         public List<Property> Properties()
         {
-            return new List<Property> { LogFilePath, PortName, BaudRate, OxidCV, OxidGL, FuelCV, FuelGL, TodayPressure, ShowAbsolutePressure };
+            return new List<Property> { LogFilePath, PortName, BaudRate, OxidCV, OxidGL, OxidDensity, FuelCV, FuelGL, FuelDensity, TodayPressure, ShowAbsolutePressure };
         }
 
-    }
+        public Dictionary<string, Property> PropertiesByID()
+        {
+            Dictionary<string, Property> dict = new Dictionary<string, Property>();
+            foreach (Property c in Properties())
+            {
+                dict.Add(c.PreferenceKey, c);
+            }
 
+            return dict;
+        }
+
+
+    }
+    
    
 }

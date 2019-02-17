@@ -25,8 +25,6 @@ namespace MissionControl
             _logThread = logThread;
             _ioThread = ioThread;
             _ui = ui;
-            //_logThread.StartThread();
-            //_ioThread.StartThread();
 
             // Blocking call
             _ui.StartUI(this);

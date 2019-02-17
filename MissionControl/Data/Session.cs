@@ -73,50 +73,63 @@ namespace MissionControl.Data
 
                 // If sensor/component
                 // Sign extension with help from: https://stackoverflow.com/questions/3322788/best-practice-for-converting-24bit-little-endian-twos-complement-values-to-in
-                if (Mapping.ComponentByIDs().ContainsKey(bytes[i]))
+                if (Mapping.ComponentsByID().ContainsKey(bytes[i]))
                 {
-                    Component component = Mapping.ComponentByIDs()[bytes[i]];
-
-                    int size = component.ByteSize;
-
-                    if (bytes.Length - 1 - i >= size)
+                    if (Mapping.ComponentsByID()[bytes[i]] is MeasuredComponent component)
                     {
-                      
-                        if (size <= 4)
-                        {
-                            byte[] valBytes = new byte[4];
-                            Array.Copy(bytes, i + 1, valBytes, 4 - size, size);
+                        int size = component.ByteSize;
 
-                            byte sign = (byte) (((valBytes[4 - size] & 0b10000000) == 0) ? 0 : 0xFF);
-                            for (int j = 0; j < 4 - size; j++)
+                        if (bytes.Length - 1 - i >= size)
+                        {
+
+                            if (size <= 4)
                             {
-                                valBytes[j] = sign;
+                                byte[] valBytes = new byte[4];
+                                Array.Copy(bytes, i + 1, valBytes, 4 - size, size);
+
+                                byte sign = (byte)(((valBytes[4 - size] & 0b10000000) == 0) ? 0 : 0xFF);
+                                for (int j = 0; j < 4 - size; j++)
+                                {
+                                    valBytes[j] = sign;
+                                }
+
+                                if (BitConverter.IsLittleEndian)
+                                {
+                                    Array.Reverse(valBytes);
+                                }
+                                int value = BitConverter.ToInt32(valBytes, 0);
+                                component.Set(value);
+                                //Console.WriteLine("{0} set to {1}", component.Name, value);
+                            }
+                            else
+                            {
+                                Console.WriteLine("Byte size is {0}. Can't handle", size);
                             }
 
-                            if (BitConverter.IsLittleEndian)
-                            {
-                                Array.Reverse(valBytes);
-                            }
-                            int value = BitConverter.ToInt32(valBytes, 0);
-                            component.Set(value);
-                            //Console.WriteLine("{0} set to {1}", component.Name, value);
+                            i += 1 + size;
+                            continue;
                         }
-                        else
-                        {
-                            Console.WriteLine("Byte size is {0}. Can't handle", size);
-                        }
-
-                        i += 1 + size;
-                        continue;
+                        // Error
+                        Console.WriteLine("Not enough value bytes for ID: {0}", bytes[i]);
+                        break;
                     }
-                    // Error
-                    Console.WriteLine("Not enough value bytes for ID: {0}", bytes[i]);
-                    break;
                 }
 
                 Console.WriteLine("Unknown ID: {0}", bytes[i]);
                 break;
 
+            }
+
+            foreach(ComputedComponent c in Mapping.ComputedComponents())
+            {
+                switch (c)
+                {
+                    case FlowComponent fc:
+                        float cv = (Setting.PropertiesByID()[fc.SettingsConstantName + "FluidCV"] as FloatProperty).Value;
+                        float gl = (Setting.PropertiesByID()[fc.SettingsConstantName + "FluidGL"] as FloatProperty).Value;
+                        fc.Compute(cv, gl);
+                        break;
+                }
             }
         }
 

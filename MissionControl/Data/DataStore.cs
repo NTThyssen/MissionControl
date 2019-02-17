@@ -72,19 +72,24 @@ namespace MissionControl.Data
             // Fluid
             _session.Setting.OxidCV.Value = PreferenceManager.GetIfExists(_session.Setting.OxidCV.PreferenceKey, 1.0f);
             _session.Setting.OxidGL.Value = PreferenceManager.GetIfExists(_session.Setting.OxidGL.PreferenceKey, 1.0f);
-            _session.Setting.FuelCV.Value = PreferenceManager.GetIfExists(_session.Setting.FuelCV.PreferenceKey, 1.0f);
+            _session.Setting.OxidDensity.Value = PreferenceManager.GetIfExists(_session.Setting.OxidDensity.PreferenceKey, 1.0f);
             _session.Setting.FuelGL.Value = PreferenceManager.GetIfExists(_session.Setting.FuelGL.PreferenceKey, 1.0f);
+            _session.Setting.FuelCV.Value = PreferenceManager.GetIfExists(_session.Setting.FuelCV.PreferenceKey, 1.0f);
+            _session.Setting.FuelDensity.Value = PreferenceManager.GetIfExists(_session.Setting.FuelDensity.PreferenceKey, 1.0f);
             _session.Setting.TodayPressure.Value = PreferenceManager.GetIfExists(_session.Setting.TodayPressure.PreferenceKey, 1.0f);
             _session.Setting.ShowAbsolutePressure.Value = PreferenceManager.GetIfExists(_session.Setting.ShowAbsolutePressure.PreferenceKey, false);
 
             foreach (Component c in _session.Mapping.Components())
             {
-                c.Enabled = PreferenceManager.GetIfExists(c.PrefEnabledName, c.Enabled);
-
-                if (c is SensorComponent sc)
+                if (c is IWarningLimits)
                 {
-                    sc.MinLimit = PreferenceManager.GetIfExists(sc.PrefMinName, sc.MinLimit);
-                    sc.MaxLimit = PreferenceManager.GetIfExists(sc.PrefMinName, sc.MaxLimit);
+                    c.Enabled = PreferenceManager.GetIfExists(c.PrefEnabledName, c.Enabled);
+
+                    if (c is SensorComponent sc)
+                    {
+                        sc.MinLimit = PreferenceManager.GetIfExists(sc.PrefMinName, sc.MinLimit);
+                        sc.MaxLimit = PreferenceManager.GetIfExists(sc.PrefMinName, sc.MaxLimit);
+                    }
                 }
             }
         }
@@ -104,20 +109,20 @@ namespace MissionControl.Data
                     switch (oldProps[i])
                     {
                         case StringProperty p:
-                            PreferenceManager.Set(newProps[i].PreferenceKey, p.ToString());
                             p.Value = (newProps[i] as StringProperty).Value;
+                            PreferenceManager.Set(newProps[i].PreferenceKey, p.ToString());
                             break;
                         case IntegerProperty p:
-                            PreferenceManager.Set(newProps[i].PreferenceKey, p.ToString());
                             p.Value = (newProps[i] as IntegerProperty).Value;
+                            PreferenceManager.Set(newProps[i].PreferenceKey, p.ToString());
                             break;
                         case FloatProperty p:
-                            PreferenceManager.Set(newProps[i].PreferenceKey, p.ToString());
                             p.Value = (newProps[i] as FloatProperty).Value;
+                            PreferenceManager.Set(newProps[i].PreferenceKey, p.ToString());
                             break;
                         case BoolProperty p:
-                            PreferenceManager.Set(newProps[i].PreferenceKey, p.ToString());
                             p.Value = (newProps[i] as BoolProperty).Value;
+                            PreferenceManager.Set(newProps[i].PreferenceKey, p.ToString());
                             break;
                     }
                 }
@@ -131,7 +136,7 @@ namespace MissionControl.Data
             foreach (Component nc in nsession.Mapping.Components())
             {
 
-                Component oc = _session.Mapping.ComponentByIDs()[nc.BoardID];
+                Component oc = _session.Mapping.ComponentsByID()[nc.BoardID];
 
                 PreferenceManager.Set(nc.PrefEnabledName, nc.Enabled);
                 oc.Enabled = nc.Enabled;
@@ -166,12 +171,6 @@ namespace MissionControl.Data
          
             PreferenceManager.Preferences.Save();
 
-        }
-
-        private void UpdateSetting(ref Property o, Property n)
-        {
-            PreferenceManager.Preferences[n.PreferenceKey] = n.ToString();
-            o = n;
         }
 
         public void EnableLogging()

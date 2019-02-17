@@ -70,6 +70,7 @@ namespace MissionControl.UI.Widgets
                     case PressureComponent pt:
                     case TemperatureComponent tc:
                     case LoadComponent load:
+                    case FlowComponent flow:
                         _svgElements.Add(component.GraphicID, FindTextByID(component.GraphicID));
                         FindTextByID(component.GraphicID + "_NAME").Text = component.Name;
                         break;
@@ -157,8 +158,12 @@ namespace MissionControl.UI.Widgets
                         break;
                     case VoltageComponent voltage:
                         float volts = voltage.Volts();
-                        text.Text = string.Format(CultureInfo.InvariantCulture, "{0} N", string.Format(CultureInfo.InvariantCulture, "{0} V / {1} %", volts, Math.Floor(voltage.Percentage() * 100) / 100));
+                        text.Text = string.Format(CultureInfo.InvariantCulture, "{0} V / {1} %", volts, Math.Floor(voltage.Percentage() * 100) / 100);
                         text.Color = voltage.IsNominal(volts) ? nominalColor : warningColor;
+                        break;
+                    case FlowComponent flow:
+                        float massflow = flow.MassFlow;
+                        text.Text = string.Format(CultureInfo.InvariantCulture, "{0} kg/s", massflow);
                         break;
                 }
             }

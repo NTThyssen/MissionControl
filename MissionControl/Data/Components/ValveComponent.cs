@@ -1,7 +1,7 @@
 ﻿using System;
 namespace MissionControl.Data.Components
 {
-    public abstract class ValveComponent : Component
+    public abstract class ValveComponent : MeasuredComponent
     {
         private readonly string _graphicIDSymbol;
 

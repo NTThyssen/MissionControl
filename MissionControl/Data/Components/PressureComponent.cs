@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Globalization;
+
 namespace MissionControl.Data.Components
 {
     public class PressureComponent : SensorComponent, ILoggable
@@ -31,7 +33,7 @@ namespace MissionControl.Data.Components
         public string ToLog()
         {
             // Rounding to two decimals
-            return "" + Math.Floor(Relative() * 100) / 100;
+            return (Math.Floor(Relative() * 100) / 100).ToString(CultureInfo.InvariantCulture);
         }
 
         public string LogHeader()

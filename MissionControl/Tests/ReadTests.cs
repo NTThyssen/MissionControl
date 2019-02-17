@@ -29,7 +29,7 @@ namespace MissionControl.Tests
             byte[] buffer = { ID, valMSB, valLSB };
             session.UpdateComponents(buffer);
 
-            Assert.AreEqual(expectedResult.Newtons(), ((LoadComponent)mapping.ComponentByIDs()[ID]).Newtons());
+            Assert.AreEqual(expectedResult.Newtons(), ((LoadComponent)mapping.ComponentsByID()[ID]).Newtons());
         }
 
         [Test]
@@ -49,7 +49,7 @@ namespace MissionControl.Tests
             byte[] buffer = { ID, valMSB, valLSB };
             session.UpdateComponents(buffer);
 
-            Assert.AreEqual(expectedResult.Newtons(), ((LoadComponent)mapping.ComponentByIDs()[ID]).Newtons());
+            Assert.AreEqual(expectedResult.Newtons(), ((LoadComponent)mapping.ComponentsByID()[ID]).Newtons());
         }
 
         [Test]
@@ -69,7 +69,7 @@ namespace MissionControl.Tests
             byte[] buffer = { ID, valMSB, valLSB };
             session.UpdateComponents(buffer);
 
-            Assert.AreEqual(expectedResult.Newtons(), ((LoadComponent)mapping.ComponentByIDs()[ID]).Newtons());
+            Assert.AreEqual(expectedResult.Newtons(), ((LoadComponent)mapping.ComponentsByID()[ID]).Newtons());
         }
 
         [Test]
@@ -119,7 +119,7 @@ namespace MissionControl.Tests
             {
                 Thread.Sleep(100);
             }
-            Assert.AreEqual(expectedResult.Newtons(), ((LoadComponent)mapping.ComponentByIDs()[ID]).Newtons());
+            Assert.AreEqual(expectedResult.Newtons(), ((LoadComponent)mapping.ComponentsByID()[ID]).Newtons());
 
         }
     }
