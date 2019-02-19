@@ -138,6 +138,8 @@
     <Compile Include="Data\Components\ComputedComponent.cs" />
     <Compile Include="UI\Widgets\LabelledRadioWidget.cs" />
     <Compile Include="Tests\CalcTests.cs" />
+    <Compile Include="UI\Colors.cs" />
+    <Compile Include="Connection\Commands\AutoSequenceCommand.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Connection\" />

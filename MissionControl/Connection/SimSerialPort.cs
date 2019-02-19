@@ -90,24 +90,26 @@ namespace MissionControl.Connection
             byte[] endCode = { 0x01, 0xFF, 0xFF, 0xFF, 0xFF };
             byte[] endNoise = { 0x0B, 0x0C, 0x0D };
 
+            Random random = new Random();
+
             byte[] timeValue = BitConverter.GetBytes(time);
             if (BitConverter.IsLittleEndian) { Array.Reverse(timeValue); }
             byte[] btime = new byte[1 + timeValue.Length];
             btime[0] = 0xC9;
             Array.Copy(timeValue, 0, btime, 1, timeValue.Length);
 
-            byte stateValue = (byte)new Random().Next(0, 3);
+            byte stateValue = (byte) random.Next(0, 3);
             byte[] bstate = { 0xC8, stateValue };
+            byte[] bauto = { 0xCA, (byte) random.Next(0, 2) };
 
             List<byte[]> data = new List<byte[]>
             {
                 startNoise,
                 startCode,
                 btime,
-                bstate
+                bstate,
+                bauto
             };
-
-            Random random = new Random();
 
             foreach (MeasuredComponent c in mapping.MeasuredComponents())
             {

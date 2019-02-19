@@ -17,7 +17,7 @@ namespace MissionControl.UI.Widgets
     {
 
         IStateControlListener _listener;
-        Dictionary<DToggleButton, State> _stateButtons;
+        Dictionary<Button, State> _stateButtons;
 
         public StateControlWidget(List<State> states, IStateControlListener listener)
         {
@@ -26,17 +26,18 @@ namespace MissionControl.UI.Widgets
             Build();
             VBox container = new VBox(false, 10);
 
-            DSectionTitle title = new DSectionTitle("States");
-            container.PackStart(title, false, false, 0);
-
-            _stateButtons = new Dictionary<DToggleButton, State>();
+            _stateButtons = new Dictionary<Button, State>();
 
             for (int i = 0; i < states.Count; i++)
             {
-                DToggleButton.ToggleState initialState = (i == 0) ? DToggleButton.ToggleState.Active : DToggleButton.ToggleState.Inactive;
-                DToggleButton stateButton = new DToggleButton(80, 40, states[i].StateName, states[i].StateName, initialState);
+                Button stateButton = new Button
+                {
+                    Label = states[i].StateName,
+                    WidthRequest = 80,
+                    HeightRequest = 40
+                };
                 stateButton.Pressed += StateButton_Pressed;
-                stateButton.Sensitive = (i > 0);
+
 
                 _stateButtons.Add(stateButton, states[i]);
 
@@ -51,25 +52,51 @@ namespace MissionControl.UI.Widgets
 
         void StateButton_Pressed(object sender, EventArgs e)
         {
-            _listener.OnStatePressed(_stateButtons[(DToggleButton)sender]);
+            _listener.OnStatePressed(_stateButtons[(Button)sender]);
         }
 
 
-        public void SetCurrentState(State state)
+        public void SetCurrentState(State state, bool isAuto)
         {
-            foreach(KeyValuePair<DToggleButton, State> kv in _stateButtons)
+            foreach(KeyValuePair<Button, State> kv in _stateButtons)
             {
-                if (kv.Value.StateID == state.StateID)
+
+                if (isAuto)
                 {
-                    kv.Key.Set(DToggleButton.ToggleState.Active);
+                    if (kv.Value.StateID == state.StateID)
+                    {
+                        kv.Key.ModifyBg(StateType.Normal, Colors.ButtonHighlight);
+                        kv.Key.ModifyBg(StateType.Prelight, Colors.ButtonHighlight);
+                        kv.Key.ModifyBg(StateType.Insensitive, Colors.ButtonHighlight);
+                    }
+                    else
+                    {
+                        kv.Key.ModifyBg(StateType.Normal, Colors.ButtonDim);
+                        kv.Key.ModifyBg(StateType.Prelight, Colors.ButtonDim);
+                        kv.Key.ModifyBg(StateType.Insensitive, Colors.ButtonDisabled);
+                    }
                     kv.Key.Sensitive = false;
                 }
                 else
                 {
-                    kv.Key.Set(DToggleButton.ToggleState.Inactive);
-                    kv.Key.Sensitive = true;
+                    if (kv.Value.StateID == state.StateID)
+                    {
+                        kv.Key.ModifyBg(StateType.Normal, Colors.ButtonHighlight);
+                        kv.Key.ModifyBg(StateType.Prelight, Colors.ButtonHighlight);
+                        kv.Key.ModifyBg(StateType.Insensitive, Colors.ButtonHighlight);
+                        kv.Key.Sensitive = false;
+                    }
+                    else
+                    {
+                        kv.Key.ModifyBg(StateType.Normal, Colors.ButtonNormal);
+                        kv.Key.ModifyBg(StateType.Prelight, Colors.ButtonNormal);
+                        kv.Key.ModifyBg(StateType.Insensitive, Colors.ButtonDisabled);
+                        kv.Key.Sensitive = true;
+                    }
                 }
             }
         }
+
+
     }
 }

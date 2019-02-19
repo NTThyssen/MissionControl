@@ -42,7 +42,7 @@ namespace MissionControl.Data.Components
 
         public override string ToDisplay()
         {
-            return ToRounded(Newtons(), 3);
+            return ToRounded(Newtons(), 2);
         }
     }
 }

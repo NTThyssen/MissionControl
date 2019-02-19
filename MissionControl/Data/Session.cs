@@ -12,6 +12,7 @@ namespace MissionControl.Data
         public DateTime LastReceived;
         public bool Connected { get; set; }
         public Settings Setting { get; set; }
+        public bool IsAutoSequence { get; set; } = false;
 
         public Session(ComponentMapping map)
         {
@@ -64,6 +65,20 @@ namespace MissionControl.Data
                             SystemTime = BitConverter.ToUInt32(timeBytes, 0);
 
                             i += 1 + ComponentMapping.BC_TIME;
+                            continue;
+                        }
+                        // Error
+                        Console.WriteLine("Not enough value bytes for time");
+                        break;
+
+                    case ComponentMapping.ID_AUTO:
+                        if (bytes.Length - 1 - i >= ComponentMapping.BC_AUTO)
+                        {
+                            byte isAuto = bytes[i + 1];
+
+                            IsAutoSequence = isAuto > 0; 
+
+                            i += 1 + ComponentMapping.BC_AUTO;
                             continue;
                         }
                         // Error

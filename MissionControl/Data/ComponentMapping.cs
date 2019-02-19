@@ -16,6 +16,9 @@ namespace MissionControl.Data
         public const byte ID_TIME = 201;
         public const byte BC_TIME = 4;
 
+        public const byte ID_AUTO = 202;
+        public const byte BC_AUTO = 1;
+
         public abstract List<Component> Components();
         public abstract List<MeasuredComponent> MeasuredComponents();
         public abstract List<ComputedComponent> ComputedComponents();
