@@ -22,6 +22,7 @@ namespace MissionControl.Data
 
         public TestStandMapping()
         {
+            
             PT_N2 = new PressureComponent(16, 2, "PT_N2", "PT-N2", x => x);
             PT_IPA = new PressureComponent(17, 2, "PT_IPA", "PT-IPA", x => x);
             PT_N2O = new PressureComponent(18, 2, "PT_N2O", "PT-N2O", x => x);

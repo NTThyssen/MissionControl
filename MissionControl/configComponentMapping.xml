@@ -1,1 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
+<componentMapping>
+    <componenets>
+        <messurebleComponenet>
+            <pressure>
+                <PT_N2 boardID = "16"  byteSize="2"  graphicID="PT_N2"  name="PT-N2"/>
+                <PT_IPA boardID = "17"  byteSize="2"  graphicID="PT_IPA"  name="PT-IPA"/>
+                <PT_N2O boardID = "18"  byteSize="2"  graphicID="PT_N2O"  name="PT-N2O"/>
+                <PT_FUEL boardID = "19"  byteSize="2"  graphicID="PT_FUEL"  name="PT-FUEL"/>
+                <PT_OX boardID = "20"  byteSize="2"  graphicID="PT_OX"  name="PT-OX"/>
+                <PT_CHAM boardID = "21"  byteSize="2"  graphicID="PT_CHAM"  name="PT-CHAM"/>
+            </pressure>
+        </messurebleComponenet>
+        <computedComponenet>
+            
+        </computedComponenet>
+    </componenets>
+</componentMapping>
