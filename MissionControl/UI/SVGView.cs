@@ -49,7 +49,7 @@ namespace MissionControl.UI.Widgets
 
             PopulateElementsDictionary();
 
-            SetSizeRequest((int) (_svgOriginalW * 0.9), (int) (_svgOriginalH * 0.9));
+            SetSizeRequest((int) (_svgOriginalW * 0.75), (int) (_svgOriginalH * 0.75));
             ModifyBg(StateType.Normal, new Gdk.Color(0, 0, 0));
 
             ExposeEvent += (o, args) => {

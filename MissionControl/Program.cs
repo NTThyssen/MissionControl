@@ -108,5 +108,15 @@ namespace MissionControl
             }
             _ioThread.StartConnection(port);
         }
+
+        public void OnRunAutoSequencePressed()
+        {
+
+            AutoSequenceCommand command = new AutoSequenceCommand(true);
+            _ioThread.SendCommand(command);
+
+            // Fake response
+            _dataStore.GetCurrentSession().IsAutoSequence = true;
+        }
     }
 }

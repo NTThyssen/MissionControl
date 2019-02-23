@@ -19,6 +19,7 @@ namespace MissionControl.UI
         void OnLogStopPressed();
         void OnEmergencyCombinationPressed();
         void OnConnectPressed();
+        void OnRunAutoSequencePressed();
     }
 
     public partial class TestStandView : Window, ILockable, IValveControlListener, IStateControlListener
@@ -30,10 +31,15 @@ namespace MissionControl.UI
         ITestStandViewListener _listener;
         Session _session;
 
+        bool _logRunning = false;
         Button _btnLogStart, _btnLogStop;
+
+        Button _btnRunSequence;
 
         Button _btnConnect;
         Label _lastConnection;
+
+        DToggleButton _btnLock;
 
         Gdk.Color _clrGoodConnection = new Gdk.Color(0, 255, 0);
         Gdk.Color _clrBadConnection = new Gdk.Color(255, 0, 0);
@@ -66,9 +72,10 @@ namespace MissionControl.UI
             _svgWidget = new SVGView(@"Resources/TestStand.svg", ref _session);
             _valveWidget = new ValveControlWidget(_session.Mapping.Components(), this);
             _stateWidget = new StateControlWidget(_session.Mapping.States(), this);
-            _stateWidget.SetCurrentState(_session.State);
+            _stateWidget.SetCurrentState(_session.State, false);
 
-            VBox controlPane1 = new VBox(false, 8);
+            VBox midPanel = new VBox(false, 8);
+            VBox rightPanel = new VBox(false, 8);
 
             // Logging
             VBox logButtonContainer = new VBox(false, 8);
@@ -99,7 +106,6 @@ namespace MissionControl.UI
 
             // Connection
             VBox connectionContainer = new VBox(false, 8);
-            DSectionTitle connectionTitle = new DSectionTitle("Connection");
             connectionContainer.PackStart(_lastConnection, false, false, 0);
 
             _btnConnect = new Button
@@ -121,20 +127,44 @@ namespace MissionControl.UI
             _lastConnection.ModifyFg(StateType.Normal, new Gdk.Color(255, 255, 255));
             _lastConnection.SetAlignment(0, 0.5f);
 
+            DSectionTitle connectionTitle = new DSectionTitle("Connection");
             connectionContainer.PackStart(connectionTitle, false, false, 0);
             connectionContainer.PackStart(_btnConnect, false, false, 0);
             connectionContainer.PackStart(_lastConnection, false, false, 0);
 
-            // Control panl
-            controlPane1.PackStart(_valveWidget, false, false, 0);
-            controlPane1.PackStart(logButtonContainer, false, false, 20);
-            controlPane1.PackStart(connectionContainer, false, false, 0);
+            _btnLock = new DToggleButton(100, 40, "Enable controls", "Disable controls", DToggleButton.ToggleState.Inactive);
+            _btnLock.Pressed += LockButtonPressed;
+            _btnLock.ModifyBg(StateType.Insensitive, new Gdk.Color(140, 140, 140));
+
+            _btnRunSequence = new Button
+            {
+                Label = "Run Auto Sequence",
+                HeightRequest = 40
+            };
+            _btnRunSequence.Pressed += RunSequenceButtonPressed;
+            _btnRunSequence.ModifyBg(StateType.Insensitive, new Gdk.Color(140, 140, 140));
+
+            // Mid panel
+            DSectionTitle valvesTitle = new DSectionTitle("Valves");
+            midPanel.PackStart(valvesTitle, false, false, 0);
+            midPanel.PackStart(_valveWidget, false, false, 0);
+            midPanel.PackStart(logButtonContainer, false, false, 20);
+            midPanel.PackStart(_btnLock, false, false, 20);
+
+            // Right panel
+            DSectionTitle statesTitle = new DSectionTitle("States");
+            DSectionTitle autoSequenceTitle = new DSectionTitle("Auto Sequence");
+            rightPanel.PackStart(statesTitle, false, false, 0);
+            rightPanel.PackStart(_stateWidget, false, false, 20);
+            rightPanel.PackStart(autoSequenceTitle, false, false, 0);
+            rightPanel.PackStart(_btnRunSequence, false, false, 0);
+            rightPanel.PackStart(connectionContainer, false, false, 20);
 
             // Horizonal layout
             HBox horizontalLayout = new HBox(false, 0);
             horizontalLayout.PackStart(_svgWidget, true, true, 0);
-            horizontalLayout.PackStart(controlPane1, false, false, 20);
-            horizontalLayout.PackStart(_stateWidget, false, false, 20);
+            horizontalLayout.PackStart(midPanel, false, false, 20);
+            horizontalLayout.PackStart(rightPanel, false, false, 20);
 
             // Window layout
             Alignment align = new Alignment(0.5f, 0.5f, 1, 1)
@@ -167,23 +197,41 @@ namespace MissionControl.UI
 
         void LogStartPressed(object sender, EventArgs e)
         {
-            _btnLogStart.Sensitive = false;
-            _btnLogStop.Sensitive = true;
             _listener.OnLogStartPressed();
+            _logRunning = true;
+            _btnLogStart.Sensitive = !_logRunning;
+            _btnLogStop.Sensitive = _logRunning;
         }
 
         void LogStopPressed(object sender, EventArgs e)
         {
-            _btnLogStart.Sensitive = true;
-            _btnLogStop.Sensitive = false;
             _listener.OnLogStopPressed();
+            _logRunning = false;
+            _btnLogStart.Sensitive = !_logRunning;
+            _btnLogStop.Sensitive = _logRunning;
+        }
+
+        void LockButtonPressed (object sender, EventArgs e)
+        {
+            _btnLock.Toggle();
+            UpdateControls();
+        }
+
+        void RunSequenceButtonPressed (object sender, EventArgs e)
+        {
+            _listener.OnRunAutoSequencePressed();
         }
 
 
         public void UpdateControls() {
-            _stateWidget.SetCurrentState(_session.State);
             UpdateLastConnectionLabel();
             UpdateConnectButton();
+
+            _stateWidget.SetCurrentState(_session.State, _session.IsAutoSequence);
+            _valveWidget.Sensitive = !_btnLock.Active && !_session.IsAutoSequence;
+            _stateWidget.Sensitive = !_btnLock.Active && !_session.IsAutoSequence;
+            _btnRunSequence.Sensitive = !_btnLock.Active && !_session.IsAutoSequence;
+            _btnLock.Sensitive = !_session.IsAutoSequence;
         }
 
         public void UpdateSVG() {

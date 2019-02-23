@@ -180,5 +180,10 @@ namespace MissionControl.UI
         {
             _listener.OnConnectPressed();
         }
+
+        public void OnRunAutoSequencePressed()
+        {
+            _listener.OnRunAutoSequencePressed();
+        }
     }
 }

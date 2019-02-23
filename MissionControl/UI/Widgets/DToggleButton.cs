@@ -14,12 +14,12 @@ namespace MissionControl.UI.Widgets
         Color _activePrelight = new Color(70, 148, 95);
         Color _inactiveColor = new Color(220, 220, 220);
         Color _inactivePrelight = new Color(230, 230, 230);
+        Color _insensitiveColor = new Color(140, 140, 140);
 
         public enum ToggleState
         {
             Inactive,
-            Active,
-            Intermediate
+            Active
         }
 
         ToggleState _state;
@@ -34,10 +34,11 @@ namespace MissionControl.UI.Widgets
             WidthRequest = width;
             HeightRequest = height;
 
+            ModifyBg(StateType.Insensitive, _insensitiveColor);
+
             Set(initial);
 
         }
-
 
         public void Toggle()
         {
@@ -58,7 +59,6 @@ namespace MissionControl.UI.Widgets
                 case ToggleState.Active:
                     Label = _activeText;
                     ModifyBg(StateType.Normal, _activeColor);
-                    ModifyBg(StateType.Insensitive, _activeColor);
                     ModifyBg(StateType.Prelight, _activePrelight);
                     break;
                 case ToggleState.Inactive:
@@ -66,12 +66,7 @@ namespace MissionControl.UI.Widgets
                     ModifyBg(StateType.Normal, _inactiveColor);
                     ModifyBg(StateType.Prelight, _inactivePrelight);
                     break;
-                case ToggleState.Intermediate:
-                    Label = _inactiveText;
-                    ModifyBg(StateType.Normal, _inactiveColor);
-                    ModifyBg(StateType.Prelight, _inactivePrelight);
-                    break;
-            }
+          }
             _state = state;
 
         }

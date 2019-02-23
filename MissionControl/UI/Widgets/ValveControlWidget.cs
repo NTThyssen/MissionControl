@@ -18,6 +18,7 @@ namespace MissionControl.UI.Widgets
     [System.ComponentModel.ToolboxItem(true)]
     public partial class ValveControlWidget : Gtk.Bin
     {
+        List<Widget> _widgets;
 
         public ValveControlWidget(List<Component> components, IValveControlListener listener)
         {
@@ -26,10 +27,6 @@ namespace MissionControl.UI.Widgets
             Build();
 
             VBox controls = new VBox(false, 15);
-
-            DSectionTitle title = new DSectionTitle("Valves");
-  
-            controls.PackStart(title, false, false, 0);
 
             foreach (Component c in components)
             {
@@ -58,7 +55,20 @@ namespace MissionControl.UI.Widgets
             ShowAll();
         }
 
-     
+        public void Sen ()
+        {
+            foreach(Widget w in _widgets)
+            {
+                w.Sensitive = false;
+            }
+        }
+
+        public void DisableAll ()
+        {
+
+        }
+
+
 
     }
 }

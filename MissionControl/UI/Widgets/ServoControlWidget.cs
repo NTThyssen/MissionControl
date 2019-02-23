@@ -15,6 +15,9 @@ namespace MissionControl.UI.Widgets
         private ServoCallback _callback;
         private ServoComponent _component;
 
+        private Button _openButton, _closeButton, _setButton;
+
+
         public ServoControlWidget(ServoComponent component, ServoCallback callback)
         {
             Build();
@@ -25,19 +28,19 @@ namespace MissionControl.UI.Widgets
             VisibleWindow = false;
             AboveChild = false;
 
-            Button openButton = new Button
+            _openButton = new Button
             {
                 Label = "Open",
                 HeightRequest = 40
             };
 
-            Button closeButton = new Button
+            _closeButton = new Button
             {
                 Label = "Close",
                 HeightRequest = 40
             };
 
-            Button setButton = new Button
+            _setButton = new Button
             {
                 Label = "Set",
                 HeightRequest = 15
@@ -48,15 +51,21 @@ namespace MissionControl.UI.Widgets
                 HeightRequest = 40,
             };
 
-            openButton.Pressed += OpenButton_Pressed;
-            closeButton.Pressed += CloseButton_Pressed;
-            setButton.Pressed += SetButton_Pressed;
+            _openButton.Pressed += OpenButton_Pressed;
+            _closeButton.Pressed += CloseButton_Pressed;
+            _setButton.Pressed += SetButton_Pressed;
+
+            Gdk.Color insensitiveColor = new Gdk.Color(140, 140, 140);
+            _openButton.ModifyBg(StateType.Insensitive, insensitiveColor);
+            _closeButton.ModifyBg(StateType.Insensitive, insensitiveColor);
+            _setButton.ModifyBg(StateType.Insensitive, insensitiveColor);
+            _setInput.ModifyBase(StateType.Insensitive, insensitiveColor);
 
             HBox controls = new HBox(false, 5);
-            controls.PackStart(openButton, false, false, 0);
-            controls.PackStart(closeButton, false, false, 0);
+            controls.PackStart(_openButton, false, false, 0);
+            controls.PackStart(_closeButton, false, false, 0);
             controls.PackStart(_setInput, false, false, 0);
-            controls.PackStart(setButton, false, false, 0);
+            controls.PackStart(_setButton, false, false, 0);
 
             VBox container = new VBox(false, 5);
 
@@ -130,6 +139,13 @@ namespace MissionControl.UI.Widgets
             }
         }
 
+        /*public void Sensitive(bool sensitive)
+        {
+            _setInput.Sensitive = sensitive;
+            _openButton.Sensitive = sensitive;
+            _closeButton.Sensitive = sensitive;
+            _setButton.Sensitive = sensitive;
+        }*/
 
         void OpenButton_Pressed(object sender, EventArgs e)
         {
