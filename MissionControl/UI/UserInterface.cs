@@ -20,6 +20,7 @@ namespace MissionControl.UI
         SessionSettingsView _newSessionView;
         TestStandView _testStandView;
         PlotView _plotView;
+        AutoRunConfig _autoRunConfig;
 
         private IUIEvents _listener;
         Session _session;
@@ -100,6 +101,21 @@ namespace MissionControl.UI
             _plotView.DeleteEvent += (object o, DeleteEventArgs args) => _updateSVGTimer = SetUpdateSVGFrequency(_updateSVGTimer, UPDATE_FREQ_FOREGROUND);
             _updateSVGTimer = SetUpdateSVGFrequency(_updateSVGTimer, UPDATE_FREQ_BACKGROUND);
         }
+        
+        public void ShowAutoConfig()
+        {
+            if (_plotView == null)
+            {
+                _autoRunConfig = new AutoRunConfig();
+            }
+            else
+            {
+                _autoRunConfig.Destroy();
+                _autoRunConfig = new AutoRunConfig();
+            }
+            _autoRunConfig.DeleteEvent += (object o, DeleteEventArgs args) => _updateSVGTimer = SetUpdateSVGFrequency(_updateSVGTimer, UPDATE_FREQ_FOREGROUND);
+            _updateSVGTimer = SetUpdateSVGFrequency(_updateSVGTimer, UPDATE_FREQ_BACKGROUND);
+        }
 
         public void OnMenuSettingsPressed()
         {
@@ -110,6 +126,13 @@ namespace MissionControl.UI
         {
             ShowPlotViewer();
         }
+        
+        public void OnMenuAutoRunConfigPressed()
+        {
+            ShowAutoConfig();
+            Console.WriteLine("hello autoconfig");
+        }
+
 
         public void OnStatePressed(State state)
         {

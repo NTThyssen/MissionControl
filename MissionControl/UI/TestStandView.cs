@@ -20,11 +20,12 @@ namespace MissionControl.UI
         void OnEmergencyCombinationPressed();
         void OnConnectPressed();
         void OnRunAutoSequencePressed();
+        void OnMenuAutoRunConfigPressed();
     }
 
     public partial class TestStandView : Window, ILockable, IValveControlListener, IStateControlListener
     {
-
+        
         SVGView _svgWidget;
         ValveControlWidget _valveWidget;
         StateControlWidget _stateWidget;
@@ -35,6 +36,8 @@ namespace MissionControl.UI
         Button _btnLogStart, _btnLogStop;
 
         Button _btnRunSequence;
+
+        Button _btnEmergency;
 
         Button _btnConnect;
         Label _lastConnection;
@@ -141,8 +144,17 @@ namespace MissionControl.UI
                 Label = "Run Auto Sequence",
                 HeightRequest = 40
             };
+            
             _btnRunSequence.Pressed += RunSequenceButtonPressed;
             _btnRunSequence.ModifyBg(StateType.Insensitive, new Gdk.Color(140, 140, 140));
+            
+            _btnEmergency = new Button
+            {
+                Label = "Emergency Stop",
+                HeightRequest = 40
+            };
+            
+            _btnEmergency.ModifyBg(StateType.Insensitive, new Gdk.Color(140, 140, 140));
 
             // Mid panel
             DSectionTitle valvesTitle = new DSectionTitle("Valves");
@@ -158,7 +170,9 @@ namespace MissionControl.UI
             rightPanel.PackStart(_stateWidget, false, false, 20);
             rightPanel.PackStart(autoSequenceTitle, false, false, 0);
             rightPanel.PackStart(_btnRunSequence, false, false, 0);
+            rightPanel.PackStart(_btnEmergency, false,false, 20);
             rightPanel.PackStart(connectionContainer, false, false, 20);
+           
 
             // Horizonal layout
             HBox horizontalLayout = new HBox(false, 0);
@@ -187,6 +201,10 @@ namespace MissionControl.UI
             MenuItem plotItem = new MenuItem("Plot Viewer");
             plotItem.Activated += (sender, e) => _listener.OnMenuPlotViewerPressed();
             menu.Append(plotItem);
+            
+            MenuItem autoRunItem = new MenuItem("AutoRun Config");
+            autoRunItem.Activated += (sender, e) => _listener.OnMenuAutoRunConfigPressed();
+            menu.Append(autoRunItem);
 
             verticalLayout.PackStart(menu, false, false, 0);
             verticalLayout.PackStart(align, true, true, 0);

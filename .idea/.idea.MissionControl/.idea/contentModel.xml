@@ -7,6 +7,7 @@
       <e p="MissionControl" t="IncludeRecursive">
         <e p="Connection" t="Include">
           <e p="Commands" t="Include">
+            <e p="AutoSequenceCommand.cs" t="Include" />
             <e p="Command.cs" t="Include" />
             <e p="ServoCommand.cs" t="Include" />
             <e p="SolenoidCommand.cs" t="Include" />
@@ -63,6 +64,8 @@
         </e>
         <e p="ToDo.txt" t="Include" />
         <e p="UI" t="Include">
+          <e p="AutoRunConfig.cs" t="Include" />
+          <e p="Colors.cs" t="Include" />
           <e p="ILockable.cs" t="Include" />
           <e p="IUIEvents.cs" t="Include" />
           <e p="Plot.cs" t="Include" />

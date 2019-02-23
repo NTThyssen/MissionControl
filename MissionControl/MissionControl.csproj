@@ -72,6 +72,7 @@
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Data\LogThread.cs" />
+    <Compile Include="UI\AutoRunConfig.cs" />
     <Compile Include="UI\IUIEvents.cs" />
     <Compile Include="UI\UserInterface.cs" />
     <Compile Include="UI\SessionSettingsView.cs" />
