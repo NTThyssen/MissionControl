@@ -9,8 +9,10 @@ namespace MissionControl.Data.Components
         private Scaler _scaler;
 
         public override string TypeName => "Pressure";
+        public override int ByteSize => 2;
+        public override bool Signed => false;
 
-        public PressureComponent(byte boardID, int byteSize, string graphicID, string name, Scaler scaler) : base(boardID, byteSize, graphicID, name)
+        public PressureComponent(byte boardID, string graphicID, string name, Scaler scaler) : base(boardID, graphicID, name)
         {
             _scaler = scaler;
         }

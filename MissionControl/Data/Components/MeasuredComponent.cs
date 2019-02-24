@@ -4,12 +4,11 @@ namespace MissionControl.Data.Components
     public abstract class MeasuredComponent : Component
     {
         public delegate float Scaler(float val);
-        public int ByteSize { get; }
+        public abstract int ByteSize { get; }
+        public abstract bool Signed { get; }
 
-
-        protected MeasuredComponent(byte boardID, int byteSize, string graphicID, string name ) : base(boardID, graphicID, name)
+        protected MeasuredComponent(byte boardID, string graphicID, string name ) : base(boardID, graphicID, name)
         {
-            ByteSize = byteSize;
         }
 
         abstract public void Set(int val);
