@@ -91,6 +91,7 @@
         <e p="componentMappingSchema.xml" t="Include" />
         <e p="configComponentMapping.xml" t="Include" />
         <e p="gtk-gui" t="Include">
+          <e p="MissionControl.UI.AutoRunConfig.cs" t="Include" />
           <e p="MissionControl.UI.LabelledRadioWidget.cs" t="Include" />
           <e p="MissionControl.UI.PlotView.cs" t="Include" />
           <e p="MissionControl.UI.SessionSettingsView.cs" t="Include" />

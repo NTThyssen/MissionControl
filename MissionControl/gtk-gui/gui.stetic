@@ -53,6 +53,14 @@
       <placeholder />
     </child>
   </widget>
+  <widget class="Gtk.Window" id="MissionControl.UI.AutoRunConfig" design-size="400 300">
+      <property name="MemberName" />
+      <property name="Title" translatable="yes">AutoRunConfig</property>
+      <property name="WindowPosition">CenterOnParent</property>
+      <child>
+        <placeholder />
+      </child> 
+    </widget>
   <widget class="Gtk.Bin" id="MissionControl.UI.Widgets.StateControlWidget" design-size="300 300">
     <property name="MemberName" />
     <property name="Visible">False</property>

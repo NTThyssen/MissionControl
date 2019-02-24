@@ -2,12 +2,13 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="44f6f7e8-a321-457b-88a3-c04ec64c9c83" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/MissionControl/UI/AutoRunConfig.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/MissionControl/gtk-gui/MissionControl.UI.AutoRunConfig.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/.idea.MissionControl/.idea/contentModel.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.MissionControl/.idea/contentModel.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/.idea.MissionControl/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.MissionControl/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/MissionControl/MissionControl.csproj" beforeDir="false" afterPath="$PROJECT_DIR$/MissionControl/MissionControl.csproj" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/MissionControl/UI/TestStandView.cs" beforeDir="false" afterPath="$PROJECT_DIR$/MissionControl/UI/TestStandView.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/MissionControl/UI/AutoRunConfig.cs" beforeDir="false" afterPath="$PROJECT_DIR$/MissionControl/UI/AutoRunConfig.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/MissionControl/UI/UserInterface.cs" beforeDir="false" afterPath="$PROJECT_DIR$/MissionControl/UI/UserInterface.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/MissionControl/gtk-gui/gui.stetic" beforeDir="false" afterPath="$PROJECT_DIR$/MissionControl/gtk-gui/gui.stetic" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -20,27 +21,22 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/MissionControl/gtk-gui/gui.stetic">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-651">
-              <caret line="13" column="61" lean-forward="true" selection-start-line="13" selection-start-column="61" selection-end-line="13" selection-end-column="61" />
+            <state relative-caret-position="399">
+              <caret line="59" column="13" lean-forward="true" selection-start-line="59" selection-start-column="13" selection-end-line="59" selection-end-column="13" />
             </state>
           </provider>
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/MissionControl/Data/ComponentMapping.cs">
+        <entry file="file://$PROJECT_DIR$/MissionControl/gtk-gui/MissionControl.UI.PlotView.cs">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="375">
-              <caret line="36" column="9" selection-start-line="36" selection-start-column="9" selection-end-line="36" selection-end-column="9" />
+            <state relative-caret-position="330">
+              <caret line="22" column="1" lean-forward="true" selection-start-line="2" selection-end-line="22" selection-end-column="1" />
               <folding>
-                <marker date="1550928886410" expanded="false" signature="6:153" ph="..." />
-                <marker date="1550928886410" expanded="true" signature="184:1498" ph="{...}" />
-                <marker date="1550928886410" expanded="true" signature="229:1496" ph="{...}" />
-                <marker date="1550928886410" expanded="true" signature="244:298" ph="/* ID = similiar to BoardID ... */" />
-                <marker date="1550928886410" expanded="true" signature="878:1183" ph="{...}" />
-                <marker date="1550928886410" expanded="true" signature="1001:1143" ph="{...}" />
-                <marker date="1550928886410" expanded="true" signature="1054:1129" ph="{...}" />
-                <marker date="1550928886410" expanded="true" signature="1245:1490" ph="{...}" />
-                <marker date="1550928886410" expanded="true" signature="1386:1454" ph="{...}" />
+                <marker date="1550506206176" expanded="true" signature="96:566" ph="{...}" />
+                <marker date="1550506206176" expanded="true" signature="129:564" ph="{...}" />
+                <marker date="1550506206176" expanded="true" signature="165:561" ph="{...}" />
+                <marker date="1550506206176" expanded="true" signature="448:484" ph="{...}" />
               </folding>
             </state>
           </provider>
@@ -49,10 +45,10 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/MissionControl/UI/SessionSettingsView.cs">
           <provider selected="true" editor-type-id="text-editor">
-            <state>
-              <caret line="18" column="53" lean-forward="true" selection-start-line="18" selection-start-column="53" selection-end-line="18" selection-end-column="53" />
+            <state relative-caret-position="-2340">
+              <caret line="18" column="53" selection-start-line="18" selection-start-column="53" selection-end-line="18" selection-end-column="53" />
               <folding>
-                <marker date="1550926761233" expanded="true" signature="6:243" ph="..." />
+                <marker date="1550926761233" expanded="false" signature="6:243" ph="..." />
                 <marker date="1550926761233" expanded="true" signature="272:16694" ph="{...}" />
                 <marker date="1550926761233" expanded="true" signature="324:374" ph="{...}" />
                 <marker date="1550926761233" expanded="true" signature="429:16692" ph="{...}" />
@@ -119,10 +115,10 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/MissionControl/Program.cs">
           <provider selected="true" editor-type-id="text-editor">
-            <state>
-              <caret line="8" column="10" lean-forward="true" selection-start-line="8" selection-start-column="10" selection-end-line="8" selection-end-column="10" />
+            <state relative-caret-position="120">
+              <caret line="8" column="10" selection-start-line="8" selection-start-column="10" selection-end-line="8" selection-end-column="10" />
               <folding>
-                <marker date="1550928886414" expanded="false" signature="6:228" ph="..." />
+                <marker date="1550928886414" expanded="true" signature="6:228" ph="..." />
                 <marker date="1550928886414" expanded="true" signature="254:3405" ph="{...}" />
                 <marker date="1550928886414" expanded="true" signature="286:3403" ph="{...}" />
                 <marker date="1550928886414" expanded="true" signature="585:942" ph="{...}" />
@@ -146,13 +142,42 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/MissionControl/UI/AutoRunConfig.cs">
           <provider selected="true" editor-type-id="text-editor">
-            <state>
-              <caret column="13" lean-forward="true" selection-start-column="13" selection-end-column="13" />
+            <state relative-caret-position="345">
+              <caret line="23" column="22" selection-start-line="23" selection-start-column="22" selection-end-line="23" selection-end-column="22" />
               <folding>
-                <marker date="1550937452858" expanded="true" signature="6:243" ph="..." />
-                <marker date="1550937452858" expanded="true" signature="272:546" ph="{...}" />
-                <marker date="1550937452858" expanded="true" signature="322:544" ph="{...}" />
-                <marker date="1550937452858" expanded="true" signature="388:538" ph="{...}" />
+                <marker date="1551018942429" expanded="true" signature="6:243" ph="..." />
+                <marker date="1551018942429" expanded="true" signature="272:641" ph="{...}" />
+                <marker date="1551018942429" expanded="true" signature="322:639" ph="{...}" />
+                <marker date="1551018942429" expanded="true" signature="396:633" ph="{...}" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/MissionControl/gtk-gui/generated.cs">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="9">
+              <caret line="4" column="19" selection-start-line="4" selection-start-column="19" selection-end-line="4" selection-end-column="19" />
+              <folding>
+                <marker date="1550506206176" expanded="true" signature="85:1893" ph="{...}" />
+                <marker date="1550506206176" expanded="true" signature="107:303" ph="{...}" />
+                <marker date="1550506206176" expanded="true" signature="205:300" ph="{...}" />
+                <marker date="1550506206176" expanded="true" signature="251:296" ph="{...}" />
+                <marker date="1550506206176" expanded="true" signature="333:1636" ph="{...}" />
+                <marker date="1550506206176" expanded="true" signature="450:711" ph="{...}" />
+                <marker date="1550506206176" expanded="true" signature="786:882" ph="{...}" />
+                <marker date="1550506206176" expanded="true" signature="819:878" ph="{...}" />
+                <marker date="1550506206176" expanded="true" signature="957:1049" ph="{...}" />
+                <marker date="1550506206176" expanded="true" signature="990:1045" ph="{...}" />
+                <marker date="1550506206176" expanded="true" signature="1108:1145" ph="{...}" />
+                <marker date="1550506206176" expanded="true" signature="1192:1293" ph="{...}" />
+                <marker date="1550506206176" expanded="true" signature="1358:1633" ph="{...}" />
+                <marker date="1550506206176" expanded="true" signature="1395:1629" ph="{...}" />
+                <marker date="1550506206176" expanded="true" signature="1519:1624" ph="{...}" />
+                <marker date="1550506206176" expanded="true" signature="1666:1891" ph="{...}" />
+                <marker date="1550506206176" expanded="true" signature="1734:1803" ph="{...}" />
+                <marker date="1550506206176" expanded="true" signature="1864:1888" ph="{...}" />
               </folding>
             </state>
           </provider>
@@ -161,8 +186,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/MissionControl/UI/PlotView.cs">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="105">
-              <caret line="24" column="27" lean-forward="true" selection-start-line="24" selection-start-column="27" selection-end-line="24" selection-end-column="27" />
+            <state relative-caret-position="345">
+              <caret line="115" column="12" selection-start-line="115" selection-start-column="12" selection-end-line="115" selection-end-column="22" />
               <folding>
                 <marker date="1550506206172" expanded="false" signature="6:113" ph="..." />
                 <marker date="1550506206172" expanded="true" signature="142:11070" ph="{...}" />
@@ -205,49 +230,49 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/MissionControl/UI/UserInterface.cs">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-15">
-              <caret line="132" column="50" lean-forward="true" selection-start-line="132" selection-start-column="50" selection-end-line="132" selection-end-column="50" />
+            <state relative-caret-position="618">
+              <caret line="131" column="16" selection-start-line="131" selection-start-column="16" selection-end-line="131" selection-end-column="16" />
               <folding>
-                <marker date="1550939781114" expanded="false" signature="6:131" ph="..." />
-                <marker date="1550939781114" expanded="true" signature="160:5902" ph="{...}" />
-                <marker date="1550939781114" expanded="true" signature="198:375" ph="{...}" />
-                <marker date="1550939781114" expanded="true" signature="478:5900" ph="{...}" />
-                <marker date="1550939781114" expanded="true" signature="895:948" ph="{...}" />
-                <marker date="1550939781114" expanded="true" signature="998:1213" ph="{...}" />
-                <marker date="1550939781114" expanded="true" signature="1118:1172" ph="/* ShowTestStandView(); ... */" />
-                <marker date="1550939781114" expanded="true" signature="1252:1404" ph="{...}" />
-                <marker date="1550939781114" expanded="true" signature="1292:1369" ph="{...}" />
-                <marker date="1550939781114" expanded="true" signature="1437:1594" ph="{...}" />
-                <marker date="1550939781114" expanded="true" signature="1487:1559" ph="{...}" />
-                <marker date="1550939781114" expanded="true" signature="1655:2122" ph="{...}" />
-                <marker date="1550939781114" expanded="true" signature="1706:1809" ph="{...}" />
-                <marker date="1550939781114" expanded="true" signature="1826:1972" ph="{...}" />
-                <marker date="1550939781114" expanded="true" signature="2004:2112" ph="{...}" />
-                <marker date="1550939781114" expanded="true" signature="2163:2421" ph="{...}" />
-                <marker date="1550939781114" expanded="true" signature="2459:2961" ph="{...}" />
-                <marker date="1550939781114" expanded="true" signature="2504:2576" ph="{...}" />
-                <marker date="1550939781114" expanded="true" signature="2593:2702" ph="{...}" />
-                <marker date="1550939781114" expanded="true" signature="3007:3539" ph="{...}" />
-                <marker date="1550939781114" expanded="true" signature="3052:3134" ph="{...}" />
-                <marker date="1550939781114" expanded="true" signature="3151:3275" ph="{...}" />
-                <marker date="1550939781114" expanded="true" signature="3584:3644" ph="{...}" />
-                <marker date="1550939781114" expanded="true" signature="3691:3741" ph="{...}" />
-                <marker date="1550939781114" expanded="true" signature="3799:3900" ph="{...}" />
-                <marker date="1550939781114" expanded="true" signature="3950:4080" ph="{...}" />
-                <marker date="1550939781114" expanded="true" signature="4151:4288" ph="{...}" />
-                <marker date="1550939781114" expanded="true" signature="4366:4511" ph="{...}" />
-                <marker date="1550939781114" expanded="true" signature="4556:5013" ph="{...}" />
-                <marker date="1550939781114" expanded="true" signature="4601:4690" ph="{...}" />
-                <marker date="1550939781114" expanded="true" signature="4800:4865" ph="{...}" />
-                <marker date="1550939781114" expanded="true" signature="4882:5003" ph="{...}" />
-                <marker date="1550939781114" expanded="true" signature="5054:5184" ph="{...}" />
-                <marker date="1550939781114" expanded="true" signature="5099:5174" ph="{...}" />
-                <marker date="1550939781114" expanded="true" signature="5224:5353" ph="{...}" />
-                <marker date="1550939781114" expanded="true" signature="5269:5343" ph="{...}" />
-                <marker date="1550939781114" expanded="true" signature="5406:5468" ph="{...}" />
-                <marker date="1550939781114" expanded="true" signature="5535:5674" ph="{...}" />
-                <marker date="1550939781114" expanded="true" signature="5714:5776" ph="{...}" />
-                <marker date="1550939781114" expanded="true" signature="5824:5894" ph="{...}" />
+                <marker date="1551017960023" expanded="false" signature="6:131" ph="..." />
+                <marker date="1551017960023" expanded="true" signature="160:5864" ph="{...}" />
+                <marker date="1551017960023" expanded="true" signature="198:375" ph="{...}" />
+                <marker date="1551017960023" expanded="true" signature="478:5862" ph="{...}" />
+                <marker date="1551017960023" expanded="true" signature="895:948" ph="{...}" />
+                <marker date="1551017960023" expanded="true" signature="998:1213" ph="{...}" />
+                <marker date="1551017960023" expanded="true" signature="1118:1172" ph="/* ShowTestStandView(); ... */" />
+                <marker date="1551017960023" expanded="true" signature="1252:1404" ph="{...}" />
+                <marker date="1551017960023" expanded="true" signature="1292:1369" ph="{...}" />
+                <marker date="1551017960023" expanded="true" signature="1437:1594" ph="{...}" />
+                <marker date="1551017960023" expanded="true" signature="1487:1559" ph="{...}" />
+                <marker date="1551017960023" expanded="true" signature="1655:2122" ph="{...}" />
+                <marker date="1551017960023" expanded="true" signature="1706:1809" ph="{...}" />
+                <marker date="1551017960023" expanded="true" signature="1826:1972" ph="{...}" />
+                <marker date="1551017960023" expanded="true" signature="2004:2112" ph="{...}" />
+                <marker date="1551017960023" expanded="true" signature="2163:2421" ph="{...}" />
+                <marker date="1551017960023" expanded="true" signature="2459:2961" ph="{...}" />
+                <marker date="1551017960023" expanded="true" signature="2504:2576" ph="{...}" />
+                <marker date="1551017960023" expanded="true" signature="2593:2702" ph="{...}" />
+                <marker date="1551017960023" expanded="true" signature="3007:3539" ph="{...}" />
+                <marker date="1551017960023" expanded="true" signature="3052:3134" ph="{...}" />
+                <marker date="1551017960023" expanded="true" signature="3151:3275" ph="{...}" />
+                <marker date="1551017960023" expanded="true" signature="3584:3644" ph="{...}" />
+                <marker date="1551017960023" expanded="true" signature="3691:3741" ph="{...}" />
+                <marker date="1551017960023" expanded="true" signature="3799:3862" ph="{...}" />
+                <marker date="1551017960023" expanded="true" signature="3912:4042" ph="{...}" />
+                <marker date="1551017960023" expanded="true" signature="4113:4250" ph="{...}" />
+                <marker date="1551017960023" expanded="true" signature="4328:4473" ph="{...}" />
+                <marker date="1551017960023" expanded="true" signature="4518:4975" ph="{...}" />
+                <marker date="1551017960023" expanded="true" signature="4563:4652" ph="{...}" />
+                <marker date="1551017960023" expanded="true" signature="4762:4827" ph="{...}" />
+                <marker date="1551017960023" expanded="true" signature="4844:4965" ph="{...}" />
+                <marker date="1551017960023" expanded="true" signature="5016:5146" ph="{...}" />
+                <marker date="1551017960023" expanded="true" signature="5061:5136" ph="{...}" />
+                <marker date="1551017960023" expanded="true" signature="5186:5315" ph="{...}" />
+                <marker date="1551017960023" expanded="true" signature="5231:5305" ph="{...}" />
+                <marker date="1551017960023" expanded="true" signature="5368:5430" ph="{...}" />
+                <marker date="1551017960023" expanded="true" signature="5497:5636" ph="{...}" />
+                <marker date="1551017960023" expanded="true" signature="5676:5738" ph="{...}" />
+                <marker date="1551017960023" expanded="true" signature="5786:5856" ph="{...}" />
               </folding>
             </state>
           </provider>
@@ -257,7 +282,7 @@
         <entry file="file://$PROJECT_DIR$/MissionControl/UI/TestStandView.cs">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="30">
-              <caret line="190" column="40" lean-forward="true" selection-start-line="190" selection-start-column="40" selection-end-line="190" selection-end-column="40" />
+              <caret line="190" column="40" selection-start-line="190" selection-start-column="40" selection-end-line="190" selection-end-column="40" />
               <folding>
                 <marker date="1550936876377" expanded="false" signature="6:164" ph="..." />
                 <marker date="1550936876377" expanded="true" signature="193:11666" ph="{...}" />
@@ -314,31 +339,34 @@
       <find>OnMenu</find>
       <find>OnmenuSettingsPr</find>
       <find>OnMenuSettings</find>
+      <find>AutoCon</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
   <component name="HighlightingSettingsPerFile">
-    <setting file="file://$PROJECT_DIR$/MissionControl/packages.config" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/MissionControl/Data/TestStandMapping.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/MissionControl/Data/ComponentMapping.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/MissionControl/Data/LogThread.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/MissionControl/gtk-gui/MissionControl.UI.AutoRunConfig.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/MissionControl/Data/Session.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/MissionControl/UI/AutoRunConfig.cs" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/MissionControl/gtk-gui/MissionControl.UI.LabelledRadioWidget.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/MissionControl/gtk-gui/MissionControl.UI.Widgets.ServoControlWidget.cs" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/MissionControl/gtk-gui/MissionControl.UI.Widgets.LabelledEntryWidget.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/MissionControl/gtk-gui/MissionControl.UI.PlotView.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/MissionControl/gtk-gui/MissionControl.UI.Widgets.StateControlWidget.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/MissionControl/gtk-gui/MissionControl.UI.Widgets.ValveControlWidget.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/MissionControl/gtk-gui/MissionControl.UI.TestStandView.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/MissionControl/gtk-gui/MissionControl.UI.SessionSettingsView.cs" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/MissionControl/UI/Plot.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/MissionControl/gtk-gui/generated.cs" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/MissionControl/UI/SessionSettingsView.cs" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/MissionControl/UI/UserInterface.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/MissionControl/gtk-gui/MissionControl.UI.Widgets.SolenoidControlWidget.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/MissionControl/Program.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/MissionControl/packages.config" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/MissionControl/gtk-gui/MissionControl.UI.LabelledRadioWidget.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/MissionControl/gtk-gui/MissionControl.UI.Widgets.LabelledEntryWidget.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/MissionControl/UI/Plot.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/MissionControl/UI/SessionSettingsView.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/MissionControl/UI/UserInterface.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/MissionControl/UI/TestStandView.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/MissionControl/UI/PlotView.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/MissionControl/UI/SVGView.cs" root0="FORCE_HIGHLIGHTING" />
@@ -352,8 +380,10 @@
         <option value="$PROJECT_DIR$/MissionControl/componentMappingSchema.xml" />
         <option value="$PROJECT_DIR$/MissionControl/configComponentMapping.xml" />
         <option value="$PROJECT_DIR$/MissionControl/UI/TestStandView.cs" />
-        <option value="$PROJECT_DIR$/MissionControl/UI/AutoRunConfig.cs" />
         <option value="$PROJECT_DIR$/MissionControl/UI/UserInterface.cs" />
+        <option value="$PROJECT_DIR$/MissionControl/gtk-gui/gui.stetic" />
+        <option value="$PROJECT_DIR$/MissionControl/gtk-gui/MissionControl.UI.AutoRunConfig.cs" />
+        <option value="$PROJECT_DIR$/MissionControl/UI/AutoRunConfig.cs" />
       </list>
     </option>
   </component>
@@ -460,11 +490,12 @@
       <updated>1550506207887</updated>
       <workItem from="1550506211490" duration="9006000" />
       <workItem from="1550664244495" duration="5493000" />
+      <workItem from="1551017903633" duration="1043000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="23944000" />
+    <option name="totallyTimeSpent" value="24987000" />
   </component>
   <component name="TodoView">
     <todo-panel id="selected-file">
@@ -477,9 +508,8 @@
   </component>
   <component name="ToolWindowManager">
     <frame x="67" y="25" width="1853" height="1055" extended-state="6" />
-    <editor active="true" />
     <layout>
-      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.257886" />
+      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.26065302" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info id="Image Layers" order="2" />
       <window_info id="Capture Tool" order="3" />
@@ -598,33 +628,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/MissionControl/gtk-gui/generated.cs">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="60">
-          <caret line="4" column="19" selection-start-line="4" selection-start-column="19" selection-end-line="4" selection-end-column="19" />
-          <folding>
-            <marker date="1550506206176" expanded="true" signature="85:1893" ph="{...}" />
-            <marker date="1550506206176" expanded="true" signature="107:303" ph="{...}" />
-            <marker date="1550506206176" expanded="true" signature="205:300" ph="{...}" />
-            <marker date="1550506206176" expanded="true" signature="251:296" ph="{...}" />
-            <marker date="1550506206176" expanded="true" signature="333:1636" ph="{...}" />
-            <marker date="1550506206176" expanded="true" signature="450:711" ph="{...}" />
-            <marker date="1550506206176" expanded="true" signature="786:882" ph="{...}" />
-            <marker date="1550506206176" expanded="true" signature="819:878" ph="{...}" />
-            <marker date="1550506206176" expanded="true" signature="957:1049" ph="{...}" />
-            <marker date="1550506206176" expanded="true" signature="990:1045" ph="{...}" />
-            <marker date="1550506206176" expanded="true" signature="1108:1145" ph="{...}" />
-            <marker date="1550506206176" expanded="true" signature="1192:1293" ph="{...}" />
-            <marker date="1550506206176" expanded="true" signature="1358:1633" ph="{...}" />
-            <marker date="1550506206176" expanded="true" signature="1395:1629" ph="{...}" />
-            <marker date="1550506206176" expanded="true" signature="1519:1624" ph="{...}" />
-            <marker date="1550506206176" expanded="true" signature="1666:1891" ph="{...}" />
-            <marker date="1550506206176" expanded="true" signature="1734:1803" ph="{...}" />
-            <marker date="1550506206176" expanded="true" signature="1864:1888" ph="{...}" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/MissionControl/gtk-gui/MissionControl.UI.Widgets.ServoControlWidget.cs">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="60">
@@ -661,13 +664,6 @@
             <marker date="1550506206176" expanded="true" signature="170:581" ph="{...}" />
             <marker date="1550506206176" expanded="true" signature="468:504" ph="{...}" />
           </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/MissionControl/gtk-gui/gui.stetic">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-651">
-          <caret line="13" column="61" lean-forward="true" selection-start-line="13" selection-start-column="61" selection-end-line="13" selection-end-column="61" />
         </state>
       </provider>
     </entry>
@@ -749,24 +745,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/MissionControl/Data/ComponentMapping.cs">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="375">
-          <caret line="36" column="9" selection-start-line="36" selection-start-column="9" selection-end-line="36" selection-end-column="9" />
-          <folding>
-            <marker date="1550928886410" expanded="false" signature="6:153" ph="..." />
-            <marker date="1550928886410" expanded="true" signature="184:1498" ph="{...}" />
-            <marker date="1550928886410" expanded="true" signature="229:1496" ph="{...}" />
-            <marker date="1550928886410" expanded="true" signature="244:298" ph="/* ID = similiar to BoardID ... */" />
-            <marker date="1550928886410" expanded="true" signature="878:1183" ph="{...}" />
-            <marker date="1550928886410" expanded="true" signature="1001:1143" ph="{...}" />
-            <marker date="1550928886410" expanded="true" signature="1054:1129" ph="{...}" />
-            <marker date="1550928886410" expanded="true" signature="1245:1490" ph="{...}" />
-            <marker date="1550928886410" expanded="true" signature="1386:1454" ph="{...}" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/MissionControl/Data/TestStandMapping.cs">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="360">
@@ -798,12 +776,30 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/MissionControl/Data/ComponentMapping.cs">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="375">
+          <caret line="36" column="9" selection-start-line="36" selection-start-column="9" selection-end-line="36" selection-end-column="9" />
+          <folding>
+            <marker date="1550928886410" expanded="false" signature="6:153" ph="..." />
+            <marker date="1550928886410" expanded="true" signature="184:1498" ph="{...}" />
+            <marker date="1550928886410" expanded="true" signature="229:1496" ph="{...}" />
+            <marker date="1550928886410" expanded="true" signature="244:298" ph="/* ID = similiar to BoardID ... */" />
+            <marker date="1550928886410" expanded="true" signature="878:1183" ph="{...}" />
+            <marker date="1550928886410" expanded="true" signature="1001:1143" ph="{...}" />
+            <marker date="1550928886410" expanded="true" signature="1054:1129" ph="{...}" />
+            <marker date="1550928886410" expanded="true" signature="1245:1490" ph="{...}" />
+            <marker date="1550928886410" expanded="true" signature="1386:1454" ph="{...}" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/MissionControl/Program.cs">
       <provider selected="true" editor-type-id="text-editor">
-        <state>
-          <caret line="8" column="10" lean-forward="true" selection-start-line="8" selection-start-column="10" selection-end-line="8" selection-end-column="10" />
+        <state relative-caret-position="120">
+          <caret line="8" column="10" selection-start-line="8" selection-start-column="10" selection-end-line="8" selection-end-column="10" />
           <folding>
-            <marker date="1550928886414" expanded="false" signature="6:228" ph="..." />
+            <marker date="1550928886414" expanded="true" signature="6:228" ph="..." />
             <marker date="1550928886414" expanded="true" signature="254:3405" ph="{...}" />
             <marker date="1550928886414" expanded="true" signature="286:3403" ph="{...}" />
             <marker date="1550928886414" expanded="true" signature="585:942" ph="{...}" />
@@ -823,12 +819,72 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/MissionControl/gtk-gui/generated.cs">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="9">
+          <caret line="4" column="19" selection-start-line="4" selection-start-column="19" selection-end-line="4" selection-end-column="19" />
+          <folding>
+            <marker date="1550506206176" expanded="true" signature="85:1893" ph="{...}" />
+            <marker date="1550506206176" expanded="true" signature="107:303" ph="{...}" />
+            <marker date="1550506206176" expanded="true" signature="205:300" ph="{...}" />
+            <marker date="1550506206176" expanded="true" signature="251:296" ph="{...}" />
+            <marker date="1550506206176" expanded="true" signature="333:1636" ph="{...}" />
+            <marker date="1550506206176" expanded="true" signature="450:711" ph="{...}" />
+            <marker date="1550506206176" expanded="true" signature="786:882" ph="{...}" />
+            <marker date="1550506206176" expanded="true" signature="819:878" ph="{...}" />
+            <marker date="1550506206176" expanded="true" signature="957:1049" ph="{...}" />
+            <marker date="1550506206176" expanded="true" signature="990:1045" ph="{...}" />
+            <marker date="1550506206176" expanded="true" signature="1108:1145" ph="{...}" />
+            <marker date="1550506206176" expanded="true" signature="1192:1293" ph="{...}" />
+            <marker date="1550506206176" expanded="true" signature="1358:1633" ph="{...}" />
+            <marker date="1550506206176" expanded="true" signature="1395:1629" ph="{...}" />
+            <marker date="1550506206176" expanded="true" signature="1519:1624" ph="{...}" />
+            <marker date="1550506206176" expanded="true" signature="1666:1891" ph="{...}" />
+            <marker date="1550506206176" expanded="true" signature="1734:1803" ph="{...}" />
+            <marker date="1550506206176" expanded="true" signature="1864:1888" ph="{...}" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/MissionControl/gtk-gui/gui.stetic">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="399">
+          <caret line="59" column="13" lean-forward="true" selection-start-line="59" selection-start-column="13" selection-end-line="59" selection-end-column="13" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/MissionControl/gtk-gui/MissionControl.UI.PlotView.cs">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="330">
+          <caret line="22" column="1" lean-forward="true" selection-start-line="2" selection-end-line="22" selection-end-column="1" />
+          <folding>
+            <marker date="1550506206176" expanded="true" signature="96:566" ph="{...}" />
+            <marker date="1550506206176" expanded="true" signature="129:564" ph="{...}" />
+            <marker date="1550506206176" expanded="true" signature="165:561" ph="{...}" />
+            <marker date="1550506206176" expanded="true" signature="448:484" ph="{...}" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/MissionControl/gtk-gui/MissionControl.UI.AutoRunConfig.cs">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="300">
+          <caret line="20" column="1" lean-forward="true" selection-start-line="20" selection-start-column="1" selection-end-line="20" selection-end-column="1" />
+          <folding>
+            <marker date="1551018790247" expanded="true" signature="27:650" ph="{...}" />
+            <marker date="1551018790247" expanded="true" signature="68:648" ph="{...}" />
+            <marker date="1551018790247" expanded="true" signature="113:642" ph="{...}" />
+            <marker date="1551018790247" expanded="true" signature="466:532" ph="{...}" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/MissionControl/UI/SessionSettingsView.cs">
       <provider selected="true" editor-type-id="text-editor">
-        <state>
-          <caret line="18" column="53" lean-forward="true" selection-start-line="18" selection-start-column="53" selection-end-line="18" selection-end-column="53" />
+        <state relative-caret-position="-2340">
+          <caret line="18" column="53" selection-start-line="18" selection-start-column="53" selection-end-line="18" selection-end-column="53" />
           <folding>
-            <marker date="1550926761233" expanded="true" signature="6:243" ph="..." />
+            <marker date="1550926761233" expanded="false" signature="6:243" ph="..." />
             <marker date="1550926761233" expanded="true" signature="272:16694" ph="{...}" />
             <marker date="1550926761233" expanded="true" signature="324:374" ph="{...}" />
             <marker date="1550926761233" expanded="true" signature="429:16692" ph="{...}" />
@@ -891,10 +947,59 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/MissionControl/UI/UserInterface.cs">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="618">
+          <caret line="131" column="16" selection-start-line="131" selection-start-column="16" selection-end-line="131" selection-end-column="16" />
+          <folding>
+            <marker date="1551017960023" expanded="false" signature="6:131" ph="..." />
+            <marker date="1551017960023" expanded="true" signature="160:5864" ph="{...}" />
+            <marker date="1551017960023" expanded="true" signature="198:375" ph="{...}" />
+            <marker date="1551017960023" expanded="true" signature="478:5862" ph="{...}" />
+            <marker date="1551017960023" expanded="true" signature="895:948" ph="{...}" />
+            <marker date="1551017960023" expanded="true" signature="998:1213" ph="{...}" />
+            <marker date="1551017960023" expanded="true" signature="1118:1172" ph="/* ShowTestStandView(); ... */" />
+            <marker date="1551017960023" expanded="true" signature="1252:1404" ph="{...}" />
+            <marker date="1551017960023" expanded="true" signature="1292:1369" ph="{...}" />
+            <marker date="1551017960023" expanded="true" signature="1437:1594" ph="{...}" />
+            <marker date="1551017960023" expanded="true" signature="1487:1559" ph="{...}" />
+            <marker date="1551017960023" expanded="true" signature="1655:2122" ph="{...}" />
+            <marker date="1551017960023" expanded="true" signature="1706:1809" ph="{...}" />
+            <marker date="1551017960023" expanded="true" signature="1826:1972" ph="{...}" />
+            <marker date="1551017960023" expanded="true" signature="2004:2112" ph="{...}" />
+            <marker date="1551017960023" expanded="true" signature="2163:2421" ph="{...}" />
+            <marker date="1551017960023" expanded="true" signature="2459:2961" ph="{...}" />
+            <marker date="1551017960023" expanded="true" signature="2504:2576" ph="{...}" />
+            <marker date="1551017960023" expanded="true" signature="2593:2702" ph="{...}" />
+            <marker date="1551017960023" expanded="true" signature="3007:3539" ph="{...}" />
+            <marker date="1551017960023" expanded="true" signature="3052:3134" ph="{...}" />
+            <marker date="1551017960023" expanded="true" signature="3151:3275" ph="{...}" />
+            <marker date="1551017960023" expanded="true" signature="3584:3644" ph="{...}" />
+            <marker date="1551017960023" expanded="true" signature="3691:3741" ph="{...}" />
+            <marker date="1551017960023" expanded="true" signature="3799:3862" ph="{...}" />
+            <marker date="1551017960023" expanded="true" signature="3912:4042" ph="{...}" />
+            <marker date="1551017960023" expanded="true" signature="4113:4250" ph="{...}" />
+            <marker date="1551017960023" expanded="true" signature="4328:4473" ph="{...}" />
+            <marker date="1551017960023" expanded="true" signature="4518:4975" ph="{...}" />
+            <marker date="1551017960023" expanded="true" signature="4563:4652" ph="{...}" />
+            <marker date="1551017960023" expanded="true" signature="4762:4827" ph="{...}" />
+            <marker date="1551017960023" expanded="true" signature="4844:4965" ph="{...}" />
+            <marker date="1551017960023" expanded="true" signature="5016:5146" ph="{...}" />
+            <marker date="1551017960023" expanded="true" signature="5061:5136" ph="{...}" />
+            <marker date="1551017960023" expanded="true" signature="5186:5315" ph="{...}" />
+            <marker date="1551017960023" expanded="true" signature="5231:5305" ph="{...}" />
+            <marker date="1551017960023" expanded="true" signature="5368:5430" ph="{...}" />
+            <marker date="1551017960023" expanded="true" signature="5497:5636" ph="{...}" />
+            <marker date="1551017960023" expanded="true" signature="5676:5738" ph="{...}" />
+            <marker date="1551017960023" expanded="true" signature="5786:5856" ph="{...}" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/MissionControl/UI/PlotView.cs">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="105">
-          <caret line="24" column="27" lean-forward="true" selection-start-line="24" selection-start-column="27" selection-end-line="24" selection-end-column="27" />
+        <state relative-caret-position="345">
+          <caret line="115" column="12" selection-start-line="115" selection-start-column="12" selection-end-line="115" selection-end-column="22" />
           <folding>
             <marker date="1550506206172" expanded="false" signature="6:113" ph="..." />
             <marker date="1550506206172" expanded="true" signature="142:11070" ph="{...}" />
@@ -936,7 +1041,7 @@
     <entry file="file://$PROJECT_DIR$/MissionControl/UI/TestStandView.cs">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="30">
-          <caret line="190" column="40" lean-forward="true" selection-start-line="190" selection-start-column="40" selection-end-line="190" selection-end-column="40" />
+          <caret line="190" column="40" selection-start-line="190" selection-start-column="40" selection-end-line="190" selection-end-column="40" />
           <folding>
             <marker date="1550936876377" expanded="false" signature="6:164" ph="..." />
             <marker date="1550936876377" expanded="true" signature="193:11666" ph="{...}" />
@@ -976,64 +1081,15 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/MissionControl/UI/UserInterface.cs">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-15">
-          <caret line="132" column="50" lean-forward="true" selection-start-line="132" selection-start-column="50" selection-end-line="132" selection-end-column="50" />
-          <folding>
-            <marker date="1550939781114" expanded="false" signature="6:131" ph="..." />
-            <marker date="1550939781114" expanded="true" signature="160:5902" ph="{...}" />
-            <marker date="1550939781114" expanded="true" signature="198:375" ph="{...}" />
-            <marker date="1550939781114" expanded="true" signature="478:5900" ph="{...}" />
-            <marker date="1550939781114" expanded="true" signature="895:948" ph="{...}" />
-            <marker date="1550939781114" expanded="true" signature="998:1213" ph="{...}" />
-            <marker date="1550939781114" expanded="true" signature="1118:1172" ph="/* ShowTestStandView(); ... */" />
-            <marker date="1550939781114" expanded="true" signature="1252:1404" ph="{...}" />
-            <marker date="1550939781114" expanded="true" signature="1292:1369" ph="{...}" />
-            <marker date="1550939781114" expanded="true" signature="1437:1594" ph="{...}" />
-            <marker date="1550939781114" expanded="true" signature="1487:1559" ph="{...}" />
-            <marker date="1550939781114" expanded="true" signature="1655:2122" ph="{...}" />
-            <marker date="1550939781114" expanded="true" signature="1706:1809" ph="{...}" />
-            <marker date="1550939781114" expanded="true" signature="1826:1972" ph="{...}" />
-            <marker date="1550939781114" expanded="true" signature="2004:2112" ph="{...}" />
-            <marker date="1550939781114" expanded="true" signature="2163:2421" ph="{...}" />
-            <marker date="1550939781114" expanded="true" signature="2459:2961" ph="{...}" />
-            <marker date="1550939781114" expanded="true" signature="2504:2576" ph="{...}" />
-            <marker date="1550939781114" expanded="true" signature="2593:2702" ph="{...}" />
-            <marker date="1550939781114" expanded="true" signature="3007:3539" ph="{...}" />
-            <marker date="1550939781114" expanded="true" signature="3052:3134" ph="{...}" />
-            <marker date="1550939781114" expanded="true" signature="3151:3275" ph="{...}" />
-            <marker date="1550939781114" expanded="true" signature="3584:3644" ph="{...}" />
-            <marker date="1550939781114" expanded="true" signature="3691:3741" ph="{...}" />
-            <marker date="1550939781114" expanded="true" signature="3799:3900" ph="{...}" />
-            <marker date="1550939781114" expanded="true" signature="3950:4080" ph="{...}" />
-            <marker date="1550939781114" expanded="true" signature="4151:4288" ph="{...}" />
-            <marker date="1550939781114" expanded="true" signature="4366:4511" ph="{...}" />
-            <marker date="1550939781114" expanded="true" signature="4556:5013" ph="{...}" />
-            <marker date="1550939781114" expanded="true" signature="4601:4690" ph="{...}" />
-            <marker date="1550939781114" expanded="true" signature="4800:4865" ph="{...}" />
-            <marker date="1550939781114" expanded="true" signature="4882:5003" ph="{...}" />
-            <marker date="1550939781114" expanded="true" signature="5054:5184" ph="{...}" />
-            <marker date="1550939781114" expanded="true" signature="5099:5174" ph="{...}" />
-            <marker date="1550939781114" expanded="true" signature="5224:5353" ph="{...}" />
-            <marker date="1550939781114" expanded="true" signature="5269:5343" ph="{...}" />
-            <marker date="1550939781114" expanded="true" signature="5406:5468" ph="{...}" />
-            <marker date="1550939781114" expanded="true" signature="5535:5674" ph="{...}" />
-            <marker date="1550939781114" expanded="true" signature="5714:5776" ph="{...}" />
-            <marker date="1550939781114" expanded="true" signature="5824:5894" ph="{...}" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/MissionControl/UI/AutoRunConfig.cs">
       <provider selected="true" editor-type-id="text-editor">
-        <state>
-          <caret column="13" lean-forward="true" selection-start-column="13" selection-end-column="13" />
+        <state relative-caret-position="345">
+          <caret line="23" column="22" selection-start-line="23" selection-start-column="22" selection-end-line="23" selection-end-column="22" />
           <folding>
-            <marker date="1550937452858" expanded="true" signature="6:243" ph="..." />
-            <marker date="1550937452858" expanded="true" signature="272:546" ph="{...}" />
-            <marker date="1550937452858" expanded="true" signature="322:544" ph="{...}" />
-            <marker date="1550937452858" expanded="true" signature="388:538" ph="{...}" />
+            <marker date="1551018942429" expanded="true" signature="6:243" ph="..." />
+            <marker date="1551018942429" expanded="true" signature="272:641" ph="{...}" />
+            <marker date="1551018942429" expanded="true" signature="322:639" ph="{...}" />
+            <marker date="1551018942429" expanded="true" signature="396:633" ph="{...}" />
           </folding>
         </state>
       </provider>

@@ -130,7 +130,7 @@ namespace MissionControl.UI
         public void OnMenuAutoRunConfigPressed()
         {
             ShowAutoConfig();
-            Console.WriteLine("hello autoconfig");
+            
         }
 
 
