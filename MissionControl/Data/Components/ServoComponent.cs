@@ -9,14 +9,16 @@ namespace MissionControl.Data.Components
         public float OpenPosition { get; }
 
         public override string TypeName => "Servo";
+        public override int ByteSize => 2;
+        public override bool Signed => false;
 
-        public ServoComponent(byte boardID, int byteSize, string graphicID, string name, float closePosition, float openPosition, string graphicIDSymbol) : base(boardID, byteSize, graphicID, name, graphicIDSymbol)
+        public ServoComponent(byte boardID, string graphicID, string name, float closePosition, float openPosition, string graphicIDSymbol) : base(boardID, graphicID, name, graphicIDSymbol)
         {
             ClosePosition = closePosition;
             OpenPosition = openPosition;
         }
 
-        public ServoComponent(byte boardID, int byteSize, string graphicID, string name, string graphicIDSymbol) : base(boardID, byteSize, graphicID, name, graphicIDSymbol)
+        public ServoComponent(byte boardID, string graphicID, string name, string graphicIDSymbol) : base(boardID, graphicID, name, graphicIDSymbol)
         {
             ClosePosition = 100.0f;
             OpenPosition = 0.0f;

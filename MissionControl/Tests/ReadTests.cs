@@ -13,6 +13,99 @@ namespace MissionControl.Tests
     {
 
         [Test]
+        public void Temperature_Component_Is_Updated_Correctly ()
+        {
+            TestStandMapping mapping = new TestStandMapping();
+            Session session = new Session(mapping);
+            
+            const byte ID = 10;
+
+            // Value = -200 = 0xFF38
+            byte valMSB = 0xFF;
+            byte valLSB = 0x38;
+            byte[] buffer = { ID, valMSB, valLSB };
+            
+            TemperatureComponent expectedResult = new TemperatureComponent(0, "", "", x => x);
+            session.UpdateComponents(buffer);
+            expectedResult.Set(-200);
+
+            Assert.AreEqual(expectedResult.Celcius(), ((TemperatureComponent) mapping.ComponentsByID()[ID]).Celcius());
+            
+            // Value = 200 = 0x00C8
+            valMSB = 0x00;
+            valLSB = 0xC8;
+            buffer = new []{ ID, valMSB, valLSB };
+            
+            session.UpdateComponents(buffer);
+            expectedResult.Set(200);
+
+            Assert.AreEqual(expectedResult.Celcius(), ((TemperatureComponent) mapping.ComponentsByID()[ID]).Celcius());
+        }
+        
+        [Test]
+        public void Pressure_Component_Is_Updated_Correctly ()
+        {
+            byte ID = 16;
+            PressureComponent expectedResult = new PressureComponent(0, "", "", x => x);
+            expectedResult.Set(1337);
+
+            TestStandMapping mapping = new TestStandMapping();
+            Session session = new Session(mapping);
+
+            // Value = 1337 = 0x539
+            session.UpdateComponents(new byte[]{ ID, 0x05, 0x39 });
+
+            Assert.AreEqual(expectedResult.Relative(), ((PressureComponent) mapping.ComponentsByID()[ID]).Relative());
+        }
+        
+        [Test]
+        public void Servo_Component_Is_Updated_Correctly ()
+        {
+            byte ID = 6;
+            ServoComponent expectedResult = new ServoComponent(0, "", "", "");
+            expectedResult.Set(1337);
+
+            TestStandMapping mapping = new TestStandMapping();
+            Session session = new Session(mapping);
+
+            // Value = 1337 = 0x539
+            session.UpdateComponents(new byte[]{ ID, 0x05, 0x39 });
+
+            Assert.AreEqual(expectedResult.Degree(), ((ServoComponent) mapping.ComponentsByID()[ID]).Degree());
+        }
+        
+        [Test]
+        public void Load_Component_Is_Updated_Correctly ()
+        {
+            
+            TestStandMapping mapping = new TestStandMapping();
+            Session session = new Session(mapping);
+            
+            const byte ID = 0;
+
+            // Value = -200 = 0xFF38
+            byte valMSB = 0xFF;
+            byte valLSB = 0x38;
+            byte[] buffer = { ID, valMSB, valLSB };
+            
+            LoadComponent expectedResult = new LoadComponent(0, "", "", x => x);
+            session.UpdateComponents(buffer);
+            expectedResult.Set(-200);
+
+            Assert.AreEqual(expectedResult.Newtons(), ((LoadComponent) mapping.ComponentsByID()[ID]).Newtons());
+            
+            // Value = 200 = 0x00C8
+            valMSB = 0x00;
+            valLSB = 0xC8;
+            buffer = new []{ ID, valMSB, valLSB };
+            
+            session.UpdateComponents(buffer);
+            expectedResult.Set(200);
+
+            Assert.AreEqual(expectedResult.Newtons(), ((LoadComponent) mapping.ComponentsByID()[ID]).Newtons());
+        }
+        
+        [Test]
         public void Single_Component_Is_Updated_By_DataPacket ()
         {
             byte ID = 0;
@@ -20,7 +113,7 @@ namespace MissionControl.Tests
             byte valMSB = 0x05;
             byte valLSB = 0x39;
 
-            LoadComponent expectedResult = new LoadComponent(0, 2, "", "", x => x);
+            LoadComponent expectedResult = new LoadComponent(0, "", "", x => x);
             expectedResult.Set(1337);
 
             TestStandMapping mapping = new TestStandMapping();
@@ -40,7 +133,7 @@ namespace MissionControl.Tests
             byte valMSB = 0x00;
             byte valLSB = 0xFA;
 
-            LoadComponent expectedResult = new LoadComponent(0, 2, "", "", x => x);
+            LoadComponent expectedResult = new LoadComponent(0, "", "", x => x);
             expectedResult.Set(250);
 
             TestStandMapping mapping = new TestStandMapping();
@@ -60,7 +153,7 @@ namespace MissionControl.Tests
             byte valMSB = 0xFA;
             byte valLSB = 0xC7;
 
-            LoadComponent expectedResult = new LoadComponent(0, 2, "", "", x => x);
+            LoadComponent expectedResult = new LoadComponent(0,"", "", x => x);
             expectedResult.Set(-1337);
 
             TestStandMapping mapping = new TestStandMapping();
@@ -80,7 +173,7 @@ namespace MissionControl.Tests
             byte valMSB = 0x05;
             byte valLSB = 0x39;
 
-            LoadComponent expectedResult = new LoadComponent(0, 2, "", "", x => x);
+            LoadComponent expectedResult = new LoadComponent(0, "", "", x => x);
             expectedResult.Set(1337);
 
             TestStandMapping mapping = new TestStandMapping();

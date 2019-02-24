@@ -112,8 +112,18 @@ namespace MissionControl.Data
                                 {
                                     Array.Reverse(valBytes);
                                 }
-                                int value = BitConverter.ToInt32(valBytes, 0);
-                                component.Set(value);
+                                
+                                if (component.Signed)
+                                {
+                                    int value = BitConverter.ToInt32(valBytes, 0);
+                                    component.Set(value);    
+                                }
+                                else
+                                {
+                                    uint value = BitConverter.ToUInt32(valBytes, 0);
+                                    component.Set((int) value);
+                                }
+                                
                                 //Console.WriteLine("{0} set to {1}", component.Name, value);
                             }
                             else

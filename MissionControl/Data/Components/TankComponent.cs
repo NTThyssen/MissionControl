@@ -10,8 +10,11 @@ namespace MissionControl.Data.Components
         private readonly float _initial;
         private int _rawVolume;
         private readonly string _graphicIDGradient;
+        
+        public override int ByteSize => 2;
+        public override bool Signed => false;
 
-        public TankComponent(byte boardID, int byteSize, string graphicID, string name, string graphicIDGradient, float full, float initial) : base(boardID, byteSize, graphicID, name)
+        public TankComponent(byte boardID, string graphicID, string name, string graphicIDGradient, float full, float initial) : base(boardID, graphicID, name)
         {
             _graphicIDGradient = graphicIDGradient;
             _full = full;
