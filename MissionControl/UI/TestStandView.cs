@@ -142,19 +142,19 @@ namespace MissionControl.UI
 
             _btnStartSequence = new Button
             {
-                Label = "Run Auto Sequence",
+                Label = "Start Sequence",
                 HeightRequest = 40
             };
             
-            _btnStartSequence.Pressed += StartSequenceButtonPressed;
+            _btnStartSequence.Pressed += (sender, args) => _listener.OnStartAutoSequencePressed();
             _btnStartSequence.ModifyBg(StateType.Insensitive, new Gdk.Color(140, 140, 140));
             
             _btnStopSequence = new Button
             {
-                Label = "Emergency Stop",
+                Label = "Stop Sequence",
                 HeightRequest = 40
             };
-            _btnStopSequence.Pressed += BtnStopSequenceOnPressed;
+            _btnStopSequence.Pressed += (sender, args) => _listener.OnStopAutoSequencePressed();
             _btnStopSequence.ModifyBg(StateType.Insensitive, new Gdk.Color(140, 140, 140));
 
             // Mid panel
@@ -238,16 +238,6 @@ namespace MissionControl.UI
             UpdateControls();
         }
 
-        void StartSequenceButtonPressed (object sender, EventArgs e)
-        {
-            _listener.OnStartAutoSequencePressed();
-        }
-
-        private void BtnStopSequenceOnPressed(object sender, EventArgs e)
-        {
-            _listener.OnStopAutoSequencePressed();
-        }
-
         public void UpdateControls() {
             UpdateLastConnectionLabel();
             UpdateConnectButton();
@@ -313,11 +303,35 @@ namespace MissionControl.UI
             throw new NotImplementedException();
         }
 
+        
+        
         protected void OnDeleteEvent(object sender, DeleteEventArgs a)
         {
-            KeyPressEvent -= WindowKeyPress;
-            Application.Quit();
-            a.RetVal = true;
+            Dialog dialog = new Dialog
+            {
+                Title = "Confirm",
+                DefaultResponse =  0,
+            };
+            dialog.AddButton("No", 0);
+            dialog.AddButton("Yes", 1);
+            dialog.VBox.PackStart(new Label("Are you sure you want to exit?"));
+            dialog.VBox.ShowAll();
+            dialog.WindowPosition = WindowPosition.CenterAlways;
+            
+            if (dialog.Run() == 1)
+            {
+                dialog.Hide();
+                dialog.Destroy();
+                KeyPressEvent -= WindowKeyPress;
+                Application.Quit();
+                a.RetVal = false;
+            }
+            else
+            {
+                dialog.Hide();
+                dialog.Destroy();
+                a.RetVal = true;
+            }            
         }
 
         public void OnStatePressed(State state)
