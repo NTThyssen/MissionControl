@@ -19,6 +19,7 @@ namespace MissionControl.UI
         void OnLogStopPressed();
         void OnEmergencyCombinationPressed();
         void OnConnectPressed();
+        void OnDisconnectPressed();
         void OnStartAutoSequencePressed();
         void OnStopAutoSequencePressed();
         void OnMenuAutoRunConfigPressed();
@@ -40,7 +41,7 @@ namespace MissionControl.UI
 
         Button _btnStopSequence;
 
-        Button _btnConnect;
+        Button _btnConnect, _btnDisconnect;
         Label _lastConnection;
 
         DToggleButton _btnLock;
@@ -122,41 +123,61 @@ namespace MissionControl.UI
             {
                 _listener.OnConnectPressed();
                 _btnConnect.Sensitive = false;
-                _btnConnect.Label = "Connecting...";
+            };
+            _btnConnect.ModifyBg(StateType.Insensitive, new Gdk.Color(70, 70, 70));
+            
+            _btnDisconnect = new Button
+            {
+                Label = "Disconnect",
+                HeightRequest = 40
             };
 
-            _btnConnect.ModifyBg(StateType.Insensitive, new Gdk.Color(70, 70, 70));
+            _btnDisconnect.Pressed += (sender, e) =>
+            {
+                _listener.OnDisconnectPressed();
+                _btnConnect.Sensitive = !_btnLock.Active && !_session.Connected;
+                _btnDisconnect.Sensitive = !_btnLock.Active && _session.Connected;;
+            };
+            _btnDisconnect.ModifyBg(StateType.Insensitive, new Gdk.Color(70, 70, 70));
 
+            HBox connectionButtons = new HBox(false, 8);
+            connectionButtons.PackStart(_btnConnect, true, true, 0);
+            connectionButtons.PackStart(_btnDisconnect, true, true, 0);
+            
             _lastConnection = new Label { Text = "\n\n" };
             _lastConnection.ModifyFg(StateType.Normal, new Gdk.Color(255, 255, 255));
             _lastConnection.SetAlignment(0, 0.5f);
 
             DSectionTitle connectionTitle = new DSectionTitle("Connection");
             connectionContainer.PackStart(connectionTitle, false, false, 0);
-            connectionContainer.PackStart(_btnConnect, false, false, 0);
+            connectionContainer.PackStart(connectionButtons, false, false, 0);
             connectionContainer.PackStart(_lastConnection, false, false, 0);
 
             _btnLock = new DToggleButton(100, 40, "Enable controls", "Disable controls", DToggleButton.ToggleState.Inactive);
             _btnLock.Pressed += LockButtonPressed;
             _btnLock.ModifyBg(StateType.Insensitive, new Gdk.Color(140, 140, 140));
 
+            HBox autoSequenceButtons = new HBox(false, 8);
             _btnStartSequence = new Button
             {
-                Label = "Start Sequence",
+                Label = "Start Auto",
                 HeightRequest = 40
             };
             
             _btnStartSequence.Pressed += (sender, args) => _listener.OnStartAutoSequencePressed();
-            _btnStartSequence.ModifyBg(StateType.Insensitive, new Gdk.Color(140, 140, 140));
+            _btnStartSequence.ModifyBg(StateType.Insensitive, new Gdk.Color(70, 70, 70));
             
             _btnStopSequence = new Button
             {
-                Label = "Stop Sequence",
+                Label = "Stop Auto",
                 HeightRequest = 40
             };
             _btnStopSequence.Pressed += (sender, args) => _listener.OnStopAutoSequencePressed();
-            _btnStopSequence.ModifyBg(StateType.Insensitive, new Gdk.Color(140, 140, 140));
+            _btnStopSequence.ModifyBg(StateType.Insensitive, new Gdk.Color(70, 70, 70));
 
+            autoSequenceButtons.PackStart(_btnStartSequence, true, true, 0);
+            autoSequenceButtons.PackStart(_btnStopSequence, true, true, 0);
+            
             // Mid panel
             DSectionTitle valvesTitle = new DSectionTitle("Valves");
             midPanel.PackStart(valvesTitle, false, false, 0);
@@ -170,8 +191,7 @@ namespace MissionControl.UI
             rightPanel.PackStart(statesTitle, false, false, 0);
             rightPanel.PackStart(_stateWidget, false, false, 20);
             rightPanel.PackStart(autoSequenceTitle, false, false, 0);
-            rightPanel.PackStart(_btnStartSequence, false, false, 0);
-            rightPanel.PackStart(_btnStopSequence, false,false, 0);
+            rightPanel.PackStart(autoSequenceButtons, false, false, 0);
             rightPanel.PackStart(connectionContainer, false, false, 20);
            
 
@@ -240,14 +260,21 @@ namespace MissionControl.UI
 
         public void UpdateControls() {
             UpdateLastConnectionLabel();
-            UpdateConnectButton();
 
-            _stateWidget.SetCurrentState(_session.State, _session.IsAutoSequence);
             _valveWidget.Sensitive = !_btnLock.Active && !_session.IsAutoSequence;
+            
+            _stateWidget.SetCurrentState(_session.State, _session.IsAutoSequence);
             _stateWidget.Sensitive = !_btnLock.Active && !_session.IsAutoSequence;
+
+            _btnConnect.Sensitive = !_btnLock.Active && !_session.Connected;
+            _btnDisconnect.Sensitive = !_btnLock.Active && _session.Connected;
+            
             _btnStartSequence.Sensitive = !_btnLock.Active && !_session.IsAutoSequence;
             _btnStopSequence.Sensitive = !_btnLock.Active && _session.IsAutoSequence;
+           
             _btnLock.Sensitive = !_session.IsAutoSequence;
+            
+           
         }
 
         public void UpdateSVG() {
@@ -259,19 +286,6 @@ namespace MissionControl.UI
             double time = Math.Floor(10 * (DateTime.Now - _session.LastReceived).TotalMilliseconds / 1000.0) / 10;
             _lastConnection.Text = string.Format("Time since package:\n{0} s", time);
             _lastConnection.ModifyFg(StateType.Normal, (time < 4) ? _clrGoodConnection : _clrBadConnection);
-        }
-
-        public void UpdateConnectButton() { 
-            if (_session.Connected)
-            {
-                _btnConnect.Sensitive = false;
-                _btnConnect.Label = "Connected";
-            }
-            else
-            {
-                _btnConnect.Sensitive = true;
-                _btnConnect.Label = "Connect";
-            }
         }
 
         [GLib.ConnectBefore]

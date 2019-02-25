@@ -206,6 +206,11 @@ namespace MissionControl.UI
             _listener.OnConnectPressed();
         }
 
+        public void OnDisconnectPressed()
+        {
+            _listener.OnDisconnectPressed();
+        }
+
         public void OnStartAutoSequencePressed()
         {
             _listener.OnStartAutoSequencePressed();

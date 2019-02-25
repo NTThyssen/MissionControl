@@ -13,6 +13,7 @@ namespace MissionControl.UI
         void OnLogStartPressed();
         void OnLogStopPressed();
         void OnConnectPressed();
+        void OnDisconnectPressed();
         void OnStartAutoSequencePressed();
         void OnStopAutoSequencePressed();
     }

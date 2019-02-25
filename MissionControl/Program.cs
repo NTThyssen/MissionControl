@@ -109,6 +109,11 @@ namespace MissionControl
             _ioThread.StartConnection(port);
         }
 
+        public void OnDisconnectPressed()
+        {
+            _ioThread.StopConnection();
+        }
+
         public void OnStartAutoSequencePressed()
         {
 
