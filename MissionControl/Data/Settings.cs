@@ -22,7 +22,7 @@ namespace MissionControl.Data
 
         public StringProperty (string prefKey) : base(prefKey) { }
 
-        override public string ToString()
+        public override string ToString()
         {
             return Value;
         }
@@ -35,7 +35,7 @@ namespace MissionControl.Data
 
         public IntegerProperty (string prefKey) : base(prefKey) { }
 
-        override public string ToString()
+        public override string ToString()
         {
             return Convert.ToString(Value);
         }
@@ -48,7 +48,7 @@ namespace MissionControl.Data
 
         public FloatProperty(string prefKey) : base(prefKey) { }
 
-        override public string ToString()
+        public override string ToString()
         {
             return Convert.ToString(Value, CultureInfo.InvariantCulture);
         }
@@ -61,7 +61,7 @@ namespace MissionControl.Data
 
         public BoolProperty(string prefKey) : base(prefKey) { }
 
-        override public string ToString()
+        public override string ToString()
         {
             return Convert.ToString(Value);
         }
@@ -81,12 +81,14 @@ namespace MissionControl.Data
         public StringProperty PortName { get; } = new StringProperty("PortName");
         public IntegerProperty BaudRate { get; } = new IntegerProperty("BaudRate");
 
+        public BoolProperty ShowSettingsOnStartup { get; } = new BoolProperty("ShowSettingsOnStartup");
+        
         // Visual
         public BoolProperty ShowAbsolutePressure { get; } = new BoolProperty("ShowRelativePressure");
 
         public List<Property> Properties()
         {
-            return new List<Property> { LogFilePath, PortName, BaudRate, OxidCV, OxidDensity, FuelCV, FuelDensity, TodayPressure, ShowAbsolutePressure };
+            return new List<Property> { LogFilePath, PortName, BaudRate, OxidCV, OxidDensity, FuelCV, FuelDensity, TodayPressure, ShowAbsolutePressure, ShowSettingsOnStartup };
         }
 
         public Dictionary<string, Property> PropertiesByID()

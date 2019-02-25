@@ -28,6 +28,8 @@ namespace MissionControl.Connection
         ISerialPort _port;
         bool _shouldRun;
 
+        public List<Command> Commands => _commands.ToList();
+
         public IOThread(IDataLog dataLog, ref Session session)
         {
             _dataLog = dataLog;

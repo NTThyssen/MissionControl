@@ -35,13 +35,20 @@ namespace MissionControl.UI
 
         }
 
-        public void StartUI(IUIEvents listener) {
+        public void StartUI(IUIEvents listener)
+        {
             Application.Init();
 
             _listener = listener;
-            ShowSessionSettings(true);
-            //ShowTestStandView();
-            //ShowPlotViewer();
+            if (_session.Setting.ShowSettingsOnStartup.Value)
+            {
+                ShowSessionSettings(true);
+            }
+            else
+            {
+                ShowTestStandView();
+            }
+
             Application.Run();
         }
 
@@ -126,7 +133,9 @@ namespace MissionControl.UI
         {
             ShowPlotViewer();
         }
-        
+
+       
+
         public void OnMenuAutoRunConfigPressed()
         {
             ShowAutoConfig();
@@ -204,9 +213,19 @@ namespace MissionControl.UI
             _listener.OnConnectPressed();
         }
 
-        public void OnRunAutoSequencePressed()
+        public void OnDisconnectPressed()
         {
-            _listener.OnRunAutoSequencePressed();
+            _listener.OnDisconnectPressed();
+        }
+
+        public void OnStartAutoSequencePressed()
+        {
+            _listener.OnStartAutoSequencePressed();
+        }
+        
+        public void OnStopAutoSequencePressed()
+        {
+            _listener.OnStopAutoSequencePressed();
         }
     }
 }
