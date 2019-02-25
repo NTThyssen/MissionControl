@@ -68,6 +68,7 @@ namespace MissionControl.Data
             _session.Setting.LogFilePath.Value = PreferenceManager.GetIfExists(_session.Setting.LogFilePath.PreferenceKey, _session.Setting.LogFilePath.Value);
             _session.Setting.PortName.Value = PreferenceManager.GetIfExists(_session.Setting.PortName.PreferenceKey, _session.Setting.PortName.Value);
             _session.Setting.BaudRate.Value = PreferenceManager.GetIfExists(_session.Setting.BaudRate.PreferenceKey, 9600);
+            _session.Setting.ShowSettingsOnStartup.Value = PreferenceManager.GetIfExists(_session.Setting.ShowSettingsOnStartup.PreferenceKey, true);
 
             // Fluid
             _session.Setting.OxidCV.Value = PreferenceManager.GetIfExists(_session.Setting.OxidCV.PreferenceKey, 1.0f);

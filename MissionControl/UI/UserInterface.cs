@@ -35,13 +35,20 @@ namespace MissionControl.UI
 
         }
 
-        public void StartUI(IUIEvents listener) {
+        public void StartUI(IUIEvents listener)
+        {
             Application.Init();
 
             _listener = listener;
-            ShowSessionSettings(true);
-            //ShowTestStandView();
-            //ShowPlotViewer();
+            if (_session.Setting.ShowSettingsOnStartup.Value)
+            {
+                ShowSessionSettings(true);
+            }
+            else
+            {
+                ShowTestStandView();
+            }
+
             Application.Run();
         }
 

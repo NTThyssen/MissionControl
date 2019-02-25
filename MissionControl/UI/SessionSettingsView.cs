@@ -26,6 +26,7 @@ namespace MissionControl.UI
         Label _lblFilepath;
         Button _btnChooseFilePath;
         string _chosenFilePath;
+        private LabelledCheckboxWidget _chkSettingsOnStartup;
 
         // Serial port
         private readonly int[] bauds = { 9600, 14400, 19200, 38400, 57600, 115200, 128000, 256000, 512000 };
@@ -95,11 +96,18 @@ namespace MissionControl.UI
             _baudRateDropdown = new DropdownWidget("Baud rate", bauds.Select(x => x.ToString()).ToArray());
             _baudRateDropdown.Set(session.Setting.BaudRate.Value.ToString());
 
+            _chkSettingsOnStartup = new LabelledCheckboxWidget
+            {
+                LabelText = "Show settings on startup",
+                Checked =  session.Setting.ShowSettingsOnStartup.Value
+            };
+            
             machinePage.PackStart(new Label("Serial port:"), false, false, 10);
             machinePage.PackStart(portBox, false, false, 0);
             machinePage.PackStart(_baudRateDropdown, false, false, 10);
             machinePage.PackStart(new Label("Save path:"), false, false, 0);
             machinePage.PackStart(filepathContainer, false, false, 0);
+            machinePage.PackStart(_chkSettingsOnStartup, false, false, 20);
 
             /*
              * ------------------------------------------- Visual Page 
@@ -336,7 +344,9 @@ namespace MissionControl.UI
                 hasErrors = true;
                 errorMessage += "- Conversion error in baud rate\n";
             }
-
+            
+            // Show settings on startup
+            newSession.Setting.ShowSettingsOnStartup.Value = _chkSettingsOnStartup.Checked;
 
             // Update sensor component settings
             foreach (ComponentSettingWidget widget in _componentWidgets)
