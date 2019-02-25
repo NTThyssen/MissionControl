@@ -126,7 +126,9 @@ namespace MissionControl.UI
         {
             ShowPlotViewer();
         }
-        
+
+       
+
         public void OnMenuAutoRunConfigPressed()
         {
             ShowAutoConfig();
@@ -204,9 +206,14 @@ namespace MissionControl.UI
             _listener.OnConnectPressed();
         }
 
-        public void OnRunAutoSequencePressed()
+        public void OnStartAutoSequencePressed()
         {
-            _listener.OnRunAutoSequencePressed();
+            _listener.OnStartAutoSequencePressed();
+        }
+        
+        public void OnStopAutoSequencePressed()
+        {
+            _listener.OnStopAutoSequencePressed();
         }
     }
 }

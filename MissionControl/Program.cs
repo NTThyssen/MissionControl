@@ -109,7 +109,7 @@ namespace MissionControl
             _ioThread.StartConnection(port);
         }
 
-        public void OnRunAutoSequencePressed()
+        public void OnStartAutoSequencePressed()
         {
 
             AutoSequenceCommand command = new AutoSequenceCommand(true);
@@ -117,6 +117,15 @@ namespace MissionControl
 
             // Fake response
             _dataStore.GetCurrentSession().IsAutoSequence = true;
+        }
+
+        public void OnStopAutoSequencePressed()
+        {
+            AutoSequenceCommand command = new AutoSequenceCommand(false);
+            _ioThread.SendCommand(command);
+
+            // Fake response
+            _dataStore.GetCurrentSession().IsAutoSequence = false;
         }
     }
 }

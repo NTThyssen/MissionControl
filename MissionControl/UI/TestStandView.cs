@@ -19,7 +19,8 @@ namespace MissionControl.UI
         void OnLogStopPressed();
         void OnEmergencyCombinationPressed();
         void OnConnectPressed();
-        void OnRunAutoSequencePressed();
+        void OnStartAutoSequencePressed();
+        void OnStopAutoSequencePressed();
         void OnMenuAutoRunConfigPressed();
     }
 
@@ -35,9 +36,9 @@ namespace MissionControl.UI
         bool _logRunning = false;
         Button _btnLogStart, _btnLogStop;
 
-        Button _btnRunSequence;
+        Button _btnStartSequence;
 
-        Button _btnEmergency;
+        Button _btnStopSequence;
 
         Button _btnConnect;
         Label _lastConnection;
@@ -139,22 +140,22 @@ namespace MissionControl.UI
             _btnLock.Pressed += LockButtonPressed;
             _btnLock.ModifyBg(StateType.Insensitive, new Gdk.Color(140, 140, 140));
 
-            _btnRunSequence = new Button
+            _btnStartSequence = new Button
             {
                 Label = "Run Auto Sequence",
                 HeightRequest = 40
             };
             
-            _btnRunSequence.Pressed += RunSequenceButtonPressed;
-            _btnRunSequence.ModifyBg(StateType.Insensitive, new Gdk.Color(140, 140, 140));
+            _btnStartSequence.Pressed += StartSequenceButtonPressed;
+            _btnStartSequence.ModifyBg(StateType.Insensitive, new Gdk.Color(140, 140, 140));
             
-            _btnEmergency = new Button
+            _btnStopSequence = new Button
             {
                 Label = "Emergency Stop",
                 HeightRequest = 40
             };
-            
-            _btnEmergency.ModifyBg(StateType.Insensitive, new Gdk.Color(140, 140, 140));
+            _btnStopSequence.Pressed += BtnStopSequenceOnPressed;
+            _btnStopSequence.ModifyBg(StateType.Insensitive, new Gdk.Color(140, 140, 140));
 
             // Mid panel
             DSectionTitle valvesTitle = new DSectionTitle("Valves");
@@ -169,8 +170,8 @@ namespace MissionControl.UI
             rightPanel.PackStart(statesTitle, false, false, 0);
             rightPanel.PackStart(_stateWidget, false, false, 20);
             rightPanel.PackStart(autoSequenceTitle, false, false, 0);
-            rightPanel.PackStart(_btnRunSequence, false, false, 0);
-            rightPanel.PackStart(_btnEmergency, false,false, 20);
+            rightPanel.PackStart(_btnStartSequence, false, false, 0);
+            rightPanel.PackStart(_btnStopSequence, false,false, 0);
             rightPanel.PackStart(connectionContainer, false, false, 20);
            
 
@@ -213,6 +214,8 @@ namespace MissionControl.UI
 
         }
 
+        
+
         void LogStartPressed(object sender, EventArgs e)
         {
             _listener.OnLogStartPressed();
@@ -235,11 +238,15 @@ namespace MissionControl.UI
             UpdateControls();
         }
 
-        void RunSequenceButtonPressed (object sender, EventArgs e)
+        void StartSequenceButtonPressed (object sender, EventArgs e)
         {
-            _listener.OnRunAutoSequencePressed();
+            _listener.OnStartAutoSequencePressed();
         }
 
+        private void BtnStopSequenceOnPressed(object sender, EventArgs e)
+        {
+            _listener.OnStopAutoSequencePressed();
+        }
 
         public void UpdateControls() {
             UpdateLastConnectionLabel();
@@ -248,7 +255,8 @@ namespace MissionControl.UI
             _stateWidget.SetCurrentState(_session.State, _session.IsAutoSequence);
             _valveWidget.Sensitive = !_btnLock.Active && !_session.IsAutoSequence;
             _stateWidget.Sensitive = !_btnLock.Active && !_session.IsAutoSequence;
-            _btnRunSequence.Sensitive = !_btnLock.Active && !_session.IsAutoSequence;
+            _btnStartSequence.Sensitive = !_btnLock.Active && !_session.IsAutoSequence;
+            _btnStopSequence.Sensitive = !_btnLock.Active && _session.IsAutoSequence;
             _btnLock.Sensitive = !_session.IsAutoSequence;
         }
 
