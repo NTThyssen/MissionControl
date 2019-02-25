@@ -9,6 +9,7 @@ using Gtk;
 using MissionControl.Data;
 using MissionControl.Data.Components;
 using MissionControl.UI.Widgets;
+using Svg;
 using Window = Gtk.Window;
 using WindowType = Gtk.WindowType;
 
@@ -17,16 +18,17 @@ namespace MissionControl.UI
     public class AutoRunConfig : Window
     {
         
-        LabelledEntryWidget StartDelay;
-        LabelledEntryWidget FuelTimeState1;
-        LabelledEntryWidget FuelPerfcentState1;
-        LabelledEntryWidget FuelState2;
-        LabelledEntryWidget FuelState3;
+        LabelledEntryWidget startDelay;
+        LabelledEntryWidget fuelTimeState1;
+        LabelledEntryWidget fuelPerfcentState1;
+        LabelledEntryWidget fuelState2;
+        LabelledEntryWidget fuelState3;
         LabelledEntryWidget fuelValveCoefficient;
         LabelledEntryWidget fuelDensity;
         LabelledEntryWidget todaysPressure;
-        LabelledRadioWidget showAbsolutePressure;
-
+        LabelledEntryWidget showAbsolutePressure;
+        private Label sequence;
+        
         private VBox vertical;
         private HBox horizontal;
         private Color _bgColor = new Color(0, 0, 0);
@@ -38,9 +40,24 @@ namespace MissionControl.UI
             SetSizeRequest(400, 650);
             SetPosition(WindowPosition.Center);
             Console.WriteLine("hello autoconfig");
-            HBox portBox = new HBox(false, 10);
-            portBox.PackStart(StartDelay, false ,false, 0);
-            Add(portBox);
+            _btnAutoRunConfigSave = new Button{Label = "Save", WidthRequest = 50, HeightRequest = 40};
+            sequence = new Label("auto sequence");
+            startDelay = new LabelledEntryWidget {
+                LabelText = "Start Delay",
+                EntryText =  ""
+            };
+            
+            VBox headerBox = new VBox( false, 10 );
+            
+            HBox horiBox = new HBox(false, 10);
+            VBox vertBox = new VBox(false , 10);
+           
+            vertBox.PackStart(startDelay, false, false, 0);
+            horiBox.PackStart(vertBox, false, false, 0);
+            horiBox.PackStart(_btnAutoRunConfigSave, false ,false, 0);
+            headerBox.PackStart(sequence, false, false,0);
+            headerBox.PackStart(horiBox, false, false, 0);
+            Add(headerBox);
             ShowAll();
         }
     }
