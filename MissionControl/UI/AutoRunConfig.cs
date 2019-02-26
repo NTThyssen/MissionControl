@@ -47,7 +47,7 @@ namespace MissionControl.UI
         {
             Title = "Auto Sequence Config";
             
-            SetSizeRequest(800, 650);
+            SetSizeRequest(800, 350);
             SetPosition(WindowPosition.Center);
             Console.WriteLine("hello autoconfig");
             _btnAutoRunConfigSave = new Button{Label = "Save", WidthRequest = 50, HeightRequest = 40};
@@ -100,13 +100,10 @@ namespace MissionControl.UI
             {
                 LabelText = "Position:",
                 EntryText = "",
-                
-                
-                
+               
             };
             
-              
-            oxidTimeState1 = new LabelledEntryWidget
+             oxidTimeState1 = new LabelledEntryWidget
             {
                 LabelText =   "Time:",
                 EntryText =  "",
@@ -160,10 +157,7 @@ namespace MissionControl.UI
                 LabelText = "End Time",
                 EntryText = ""
             };
-            
-            
 
-              
             VBox container = new VBox(false , 50);
             HBox headerTop = new HBox(false, 0);
             VBox startTimeBox = new VBox(false,0);
@@ -215,10 +209,42 @@ namespace MissionControl.UI
             bottom.PackStart(oxidState1, false, false, 0);
             bottom.PackStart(oxidState2, false, false, 0);
             bottom.PackStart(oxidState3, false, false,0);
-            
-            
+            bottom.PackStart(_btnAutoRunConfigSave, false, false,0);
+            _btnAutoRunConfigSave.Clicked += (sender, args) => getTimeings(sender, new EventArgs());
             Add(container);
             ShowAll();
+        }
+        
+        
+        
+        
+        public void getTimeings(object sender, EventArgs e)
+        {
+            List<LabelledEntryWidget> entryValues = new List<LabelledEntryWidget>
+            {
+                startDelay,
+                ignitionTime,
+                fuelTimeState1,
+                fuelPercentState1,
+                fuelTimeState2,
+                fuelPercentState2,
+                fuelTimeState3,
+                fuelPercentState3,
+                oxidTimeState1,
+                oxidPercentState1,
+                oxidTimeState2,
+                oxidPercentState2,
+                oxidTimeState3,
+                oxidPercentState3,
+                endTime
+            };
+
+            foreach (LabelledEntryWidget label in entryValues)
+            {
+                Console.WriteLine(label.EntryText);
+            }
+
+                
         }
         
         
