@@ -19,46 +19,211 @@ namespace MissionControl.UI
     {
         
         LabelledEntryWidget startDelay;
+        LabelledEntryWidget ignitionTime;
+        LabelledEntryWidget endTime;
         LabelledEntryWidget fuelTimeState1;
-        LabelledEntryWidget fuelPerfcentState1;
-        LabelledEntryWidget fuelState2;
-        LabelledEntryWidget fuelState3;
-        LabelledEntryWidget fuelValveCoefficient;
-        LabelledEntryWidget fuelDensity;
-        LabelledEntryWidget todaysPressure;
-        LabelledEntryWidget showAbsolutePressure;
-        private Label sequence;
-        
-        private VBox vertical;
-        private HBox horizontal;
-        private Color _bgColor = new Color(0, 0, 0);
+        LabelledEntryWidget fuelPercentState1;
+        LabelledEntryWidget fuelTimeState2;
+        LabelledEntryWidget fuelPercentState2;
+        LabelledEntryWidget fuelTimeState3;
+        LabelledEntryWidget fuelPercentState3;
+        LabelledEntryWidget oxidTimeState1;
+        LabelledEntryWidget oxidPercentState1;
+        LabelledEntryWidget oxidTimeState2;
+        LabelledEntryWidget oxidPercentState2;
+        LabelledEntryWidget oxidTimeState3;
+        LabelledEntryWidget oxidPercentState3;
+   
+        private Label headerFuelLabel1;
+        private Label headerFuelLabel2;
+        private Label headerFuelLabel3;
+        private Label headerOxidLabel1;
+        private Label headerOxidLabel2;
+        private Label headerOxidLabel3;
+   
+
         private Button _btnAutoRunConfigSave;
         public AutoRunConfig() : base(WindowType.Toplevel)
         {
             Title = "Auto Sequence Config";
             
-            SetSizeRequest(400, 650);
+            SetSizeRequest(800, 650);
             SetPosition(WindowPosition.Center);
             Console.WriteLine("hello autoconfig");
             _btnAutoRunConfigSave = new Button{Label = "Save", WidthRequest = 50, HeightRequest = 40};
-            sequence = new Label("auto sequence");
+            headerFuelLabel1 = new Label("Fuel State 1");
+            headerFuelLabel2 = new Label("Fuel State 2");
+            headerFuelLabel3= new Label("Fuel State 3");
+            headerOxidLabel1 = new Label("Oxid State 1");
+            headerOxidLabel2 = new Label("Oxid State 2");
+            headerOxidLabel3= new Label("Oxid State 3");
             startDelay = new LabelledEntryWidget {
-                LabelText = "Start Delay",
-                EntryText =  ""
+                LabelText = "Start Delay:",
+                EntryText =  "",
+            };
+            fuelTimeState1 = new LabelledEntryWidget
+            {
+                LabelText =   "Time:",
+                EntryText =  "",
+                
+           
+            };
+            fuelPercentState1 = new LabelledEntryWidget
+            {
+                LabelText = "Position:",
+                EntryText = "",
+                
             };
             
-            VBox headerBox = new VBox( false, 10 );
+            fuelTimeState2 = new LabelledEntryWidget
+            {
+                LabelText = "Time:",
+                EntryText = "",
+                
+            };
             
-            HBox horiBox = new HBox(false, 10);
-            VBox vertBox = new VBox(false , 10);
+            fuelPercentState2 = new LabelledEntryWidget
+            {
+                LabelText = "Position:",
+                EntryText = "",
+                
+            };
+            
+            fuelTimeState3 = new LabelledEntryWidget
+            {
+                LabelText = "Time:",
+                EntryText = "",
+                
+            };
+            
+            fuelPercentState3 = new LabelledEntryWidget
+            {
+                LabelText = "Position:",
+                EntryText = "",
+                
+                
+                
+            };
+            
+              
+            oxidTimeState1 = new LabelledEntryWidget
+            {
+                LabelText =   "Time:",
+                EntryText =  "",
+                
            
-            vertBox.PackStart(startDelay, false, false, 0);
-            horiBox.PackStart(vertBox, false, false, 0);
-            horiBox.PackStart(_btnAutoRunConfigSave, false ,false, 0);
-            headerBox.PackStart(sequence, false, false,0);
-            headerBox.PackStart(horiBox, false, false, 0);
-            Add(headerBox);
+            };
+            oxidPercentState1 = new LabelledEntryWidget
+            {
+                LabelText = "Position:",
+                EntryText = "",
+                
+            };
+            
+            oxidTimeState2 = new LabelledEntryWidget()
+            {
+                LabelText = "Time:",
+                EntryText = "",
+                
+                
+            };
+            
+            oxidPercentState2 = new LabelledEntryWidget
+            {
+                LabelText = "Position:",
+                EntryText = "",
+                
+            };
+            
+            oxidTimeState3 = new LabelledEntryWidget
+            {
+                LabelText = "Time:",
+                EntryText = "",
+            };
+            
+            oxidPercentState3 = new LabelledEntryWidget
+            {
+                LabelText = "Position:",
+                EntryText = "",
+            };
+            
+            ignitionTime = new LabelledEntryWidget()
+            {
+                LabelText = "Ignition Time:",
+                EntryText = ""
+            };
+            
+        
+
+            endTime = new LabelledEntryWidget
+            {
+                LabelText = "End Time",
+                EntryText = ""
+            };
+            
+            
+
+              
+            VBox container = new VBox(false , 50);
+            HBox headerTop = new HBox(false, 0);
+            VBox startTimeBox = new VBox(false,0);
+            VBox ignitionBox = new VBox(false, 0);
+            VBox endTimeBox = new VBox(false,0);
+            HBox top = new HBox(false ,0);
+            VBox fuelState1 = new VBox(false, 0);
+            VBox fuelState2 = new VBox(false, 0);
+            VBox fuelState3 = new VBox(false,0);
+            HBox bottom = new HBox(false ,0);
+            VBox oxidState1 = new VBox(false, 0);
+            VBox oxidState2 = new VBox(false, 0);
+            VBox oxidState3 = new VBox(false,0);
+           
+            
+            container.PackStart(headerTop, false, false,0);
+            container.PackStart(top,false,false,0);
+            container.PackStart(bottom,false,false,0);
+            top.PackStart(fuelState1, false,false,0);
+            top.PackStart(fuelState2,false,false,0);
+            top.PackStart(fuelState3, false, false, 0);
+            headerTop.PackStart(startTimeBox);
+            headerTop.PackStart(ignitionBox);
+            headerTop.PackStart(endTimeBox);
+           
+            startTimeBox.PackStart(startDelay, false, false, 0);
+            ignitionBox.PackStart(ignitionTime, false, false, 0);
+            endTimeBox.PackStart(endTime, false, false,0);
+        
+            fuelState1.PackStart(headerFuelLabel1, true,false,0);
+            fuelState1.PackStart(fuelTimeState1, false , false,0);
+            fuelState1.PackEnd(fuelPercentState1, false ,false,0);
+            fuelState2.PackStart(headerFuelLabel2, false, false,0 );
+            fuelState2.PackStart(fuelTimeState2,false,false,0);
+            fuelState2.PackEnd(fuelPercentState2,false,false,0);
+            fuelState3.PackStart(headerFuelLabel3, false, false,0);
+            fuelState3.PackStart(fuelTimeState3,false,false,0);
+            fuelState3.PackEnd(fuelPercentState3, false,false,0);
+            oxidState1.PackStart(headerOxidLabel1, false, false, 0);
+            oxidState1.PackStart(oxidTimeState1, false, false, 0);
+            oxidState1.PackEnd(oxidPercentState1, false, false, 0);
+            
+            oxidState2.PackStart(headerOxidLabel2, false, false, 0);
+            oxidState2.PackStart(oxidTimeState2, false, false ,0);
+            oxidState2.PackEnd(oxidPercentState2, false , false , 0);
+            oxidState3.PackStart(headerOxidLabel3, false, false, 0);
+            oxidState3.PackStart(oxidTimeState3, false, false, 0);
+            oxidState3.PackStart(oxidPercentState3, false ,false, 0);
+            bottom.PackStart(oxidState1, false, false, 0);
+            bottom.PackStart(oxidState2, false, false, 0);
+            bottom.PackStart(oxidState3, false, false,0);
+            
+            
+            Add(container);
             ShowAll();
         }
+        
+        
     }
+  
+    
+    
 }

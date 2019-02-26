@@ -35,7 +35,7 @@ namespace MissionControl.UI.Widgets
             };
 
             _box.PackStart(_label, true, false, 0);
-            _box.PackStart(_text, false, false, 60);
+            _box.PackStart(_text, false, false, 30);
 
             Add(_box);
         }
