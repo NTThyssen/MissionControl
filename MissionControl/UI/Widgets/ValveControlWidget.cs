@@ -54,21 +54,5 @@ namespace MissionControl.UI.Widgets
 
             ShowAll();
         }
-
-        public void Sen ()
-        {
-            foreach(Widget w in _widgets)
-            {
-                w.Sensitive = false;
-            }
-        }
-
-        public void DisableAll ()
-        {
-
-        }
-
-
-
     }
 }

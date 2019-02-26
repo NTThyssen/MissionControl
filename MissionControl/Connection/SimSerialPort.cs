@@ -36,7 +36,7 @@ namespace MissionControl.Connection
             {
                 if (_buffer.Length - _index == 0)
                 {
-                    if ((int)(DateTime.Now - _lastReadFull).TotalMilliseconds > 100)
+                    if ((int)(DateTime.Now - _lastReadFull).TotalMilliseconds > 1000)
                     {
                         _index = 0;
                         _time++;
@@ -128,8 +128,8 @@ namespace MissionControl.Connection
                     case LoadComponent load:
                         value = BitConverter.GetBytes((short)random.Next(0, 311));
                         break;
-                    case TankComponent tank:
-                        value = BitConverter.GetBytes((short)random.Next(0, (int)tank.Full + 1));
+                    case LevelComponent tank:
+                        value = BitConverter.GetBytes((short)random.Next(0, (int)tank.Total + 1));
                         break;
                     case ServoComponent servo:
                         value = BitConverter.GetBytes((short)random.Next(0, 101));

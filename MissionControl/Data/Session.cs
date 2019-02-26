@@ -154,6 +154,9 @@ namespace MissionControl.Data
                         float density = (Setting.PropertiesByID()[fc.SettingsConstantName + "FluidDensity"] as FloatProperty).Value;
                         fc.Compute(cv, density);
                         break;
+                    case TankComponent tc:
+                        tc.Compute(SystemTime);
+                        break;
                 }
             }
         }

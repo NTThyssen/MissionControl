@@ -68,6 +68,7 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Data\Components\TankComponent.cs" />
     <Compile Include="gtk-gui\generated.cs" />
     <Compile Include="gtk-gui\MissionControl.UI.LabelledCheckboxWidget.cs" />
     <Compile Include="Program.cs" />
@@ -91,7 +92,7 @@
     <Compile Include="Data\Components\Component.cs" />
     <Compile Include="Data\Components\PressureComponent.cs" />
     <Compile Include="Data\Components\TemperatureComponent.cs" />
-    <Compile Include="Data\Components\TankComponent.cs" />
+    <Compile Include="Data\Components\LevelComponent.cs" />
     <Compile Include="UI\ILockable.cs" />
     <Compile Include="Data\Components\ServoComponent.cs" />
     <Compile Include="Data\Components\VoltageComponent.cs" />

@@ -13,7 +13,8 @@ namespace MissionControl.Data
         LoadComponent LOAD;
         ServoComponent SV_IPA, SV_N2O, MV_IPA, MV_N2O;
         SolenoidComponent SN_N2O_FILL, SN_FLUSH; 
-        TankComponent T_IPA, T_N2O;
+        LevelComponent T_N2O;
+        TankComponent T_IPA;
         VoltageComponent BATTERY;
         FlowComponent FLO_IPA, FLO_N2O;
 
@@ -49,17 +50,14 @@ namespace MissionControl.Data
             SN_N2O_FILL = new SolenoidComponent(2, "SN_N2O_FILL", "SN-N2O-FILL", "SN_N2O_FILL_SYMBOL");
             SN_FLUSH = new SolenoidComponent(3,  "SN_FLUSH", "SN-FLUSH", "SN_FLUSH_SYMBOL");
 
-            T_IPA = new TankComponent(24, "FUEL", "FUEL", "FUEL_GRADIENT", 4, 2);
-            T_N2O = new TankComponent(1, "OXID", "OXID", "OXID_GRADIENT", 20, 20);
-
-            T_IPA.Set(1);
-            T_N2O.Set(15);
-
             BATTERY = new VoltageComponent(22,"BATTERY", "BATTERY", 12.0f, 14.8f);
 
             FLO_IPA = new FlowComponent(100, "FLO_IPA", "FLO-IPA", ref PT_FUEL, ref PT_CHAM, "Fuel");
             FLO_N2O = new FlowComponent(101, "FLO_N2O", "FLO-N2O", ref PT_N2O, ref PT_CHAM, "Oxid");
 
+            T_IPA = new TankComponent(24, "FUEL", "FUEL", "FUEL_GRADIENT", ref FLO_IPA, "Fuel");
+            T_N2O = new LevelComponent(1, "OXID", "OXID", "OXID_GRADIENT", 20);
+            
             _states = new List<State>
             {
                 new State(0, "First"),
@@ -80,12 +78,12 @@ namespace MissionControl.Data
 
         public override List<ComputedComponent> ComputedComponents()
         {
-            return new List<ComputedComponent> { FLO_IPA, FLO_N2O };
+            return new List<ComputedComponent> { FLO_IPA, FLO_N2O, T_IPA };
         }
 
         public override List<MeasuredComponent> MeasuredComponents()
         {
-            return new List<MeasuredComponent> { PT_N2, PT_IPA, PT_N2O, PT_FUEL, PT_OX, PT_CHAM, TC_IPA, TC_N2O, TC_1, TC_2, TC_3, TC_4, TC_5, TC_6, LOAD, SV_IPA, SV_N2O, SN_FLUSH, SN_N2O_FILL, MV_IPA, MV_N2O, T_IPA, T_N2O, BATTERY };
+            return new List<MeasuredComponent> { PT_N2, PT_IPA, PT_N2O, PT_FUEL, PT_OX, PT_CHAM, TC_IPA, TC_N2O, TC_1, TC_2, TC_3, TC_4, TC_5, TC_6, LOAD, SV_IPA, SV_N2O, SN_FLUSH, SN_N2O_FILL, MV_IPA, MV_N2O, T_N2O, BATTERY };
         }
 
         public override List<State> States()
