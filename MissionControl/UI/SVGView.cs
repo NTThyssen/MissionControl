@@ -72,6 +72,11 @@ namespace MissionControl.UI.Widgets
                         _svgElements.Add(component.GraphicID, FindTextByID(component.GraphicID));
                         FindTextByID(component.GraphicID + "_NAME").Text = component.Name;
                         break;
+                    case LevelComponent level:
+                        _svgElements.Add(component.GraphicID, FindTextByID(component.GraphicID));
+                        _svgElements.Add(level.GraphicIDGradient, _svg.GetElementById(level.GraphicIDGradient));
+                        FindTextByID(component.GraphicID + "_NAME").Text = component.Name;
+                        break;
                     case TankComponent tank:
                         _svgElements.Add(component.GraphicID, FindTextByID(component.GraphicID));
                         _svgElements.Add(tank.GraphicIDGradient, _svg.GetElementById(tank.GraphicIDGradient));
@@ -138,10 +143,20 @@ namespace MissionControl.UI.Widgets
                         text.Text = load.ToDisplay() + " N";
                         text.Color = load.IsNominal(load.Newtons()) ? nominalColor : warningColor;
                         break;
-                    case TankComponent tank:
-                        text.Text = tank.ToDisplay() + " %";
+                    case LevelComponent level:
+                        text.Text = level.ToDisplay() + " %";
 
-                        float gradientStop = 1 - (tank.PercentageFull() / 100.0f);
+                        float levelGradientStop = 1 - (level.PercentageFull() / 100.0f);
+                        SvgLinearGradientServer levelGradient = (SvgLinearGradientServer)_svgElements[level.GraphicIDGradient];
+                        levelGradient.Stops[0].Offset = 0.0f;
+                        levelGradient.Stops[1].Offset = levelGradientStop;
+                        levelGradient.Stops[2].Offset = levelGradientStop;
+                        levelGradient.Stops[3].Offset = 1.0f;
+                        break;
+                    case TankComponent tank:
+                        text.Text = tank.ToDisplay();
+
+                        float gradientStop = 1 - (tank.ToPercentage() / 100.0f);
                         SvgLinearGradientServer gradient = (SvgLinearGradientServer)_svgElements[tank.GraphicIDGradient];
                         gradient.Stops[0].Offset = 0.0f;
                         gradient.Stops[1].Offset = gradientStop;

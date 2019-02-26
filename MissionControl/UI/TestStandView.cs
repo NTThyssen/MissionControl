@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Globalization;
 using Gtk;
 using MissionControl.Connection.Commands;
 using MissionControl.Data;
@@ -23,6 +24,7 @@ namespace MissionControl.UI
         void OnStartAutoSequencePressed();
         void OnStopAutoSequencePressed();
         void OnMenuAutoRunConfigPressed();
+        void OnFuelTankFillSet(float mass);
     }
 
     public partial class TestStandView : Window, ILockable, IValveControlListener, IStateControlListener
@@ -38,13 +40,15 @@ namespace MissionControl.UI
         Button _btnLogStart, _btnLogStop;
 
         Button _btnStartSequence;
-
         Button _btnStopSequence;
 
         Button _btnConnect, _btnDisconnect;
         Label _lastConnection;
 
         DToggleButton _btnLock;
+
+        Button _btnFuelTankSet;
+        Entry _fuelTankInput;
 
         Gdk.Color _clrGoodConnection = new Gdk.Color(0, 255, 0);
         Gdk.Color _clrBadConnection = new Gdk.Color(255, 0, 0);
@@ -178,12 +182,30 @@ namespace MissionControl.UI
             autoSequenceButtons.PackStart(_btnStartSequence, true, true, 0);
             autoSequenceButtons.PackStart(_btnStopSequence, true, true, 0);
             
+            // IPA Tank Input
+            HBox tankFillContainer = new HBox(false,8 );
+            _btnFuelTankSet = new Button
+            {
+                Label = "Set",
+                HeightRequest = 40
+            };
+            _btnFuelTankSet.Pressed += BtnFuelTankSetOnPressed;
+            _fuelTankInput = new Entry
+            {
+                HeightRequest = 40,
+                WidthChars = 10
+            };
+            tankFillContainer.PackStart(_fuelTankInput, false, false, 0);
+            tankFillContainer.PackStart(_btnFuelTankSet, true, true, 0);
+            
             // Mid panel
             DSectionTitle valvesTitle = new DSectionTitle("Valves");
+            DSectionTitle tankFillTitle = new DSectionTitle("IPA Tank [kg]");
             midPanel.PackStart(valvesTitle, false, false, 0);
             midPanel.PackStart(_valveWidget, false, false, 0);
-            midPanel.PackStart(logButtonContainer, false, false, 20);
-            midPanel.PackStart(_btnLock, false, false, 20);
+            midPanel.PackStart(tankFillTitle, false, false, 10);
+            midPanel.PackStart(tankFillContainer, false, false, 0);
+            midPanel.PackStart(logButtonContainer, false, false, 10);
 
             // Right panel
             DSectionTitle statesTitle = new DSectionTitle("States");
@@ -193,7 +215,7 @@ namespace MissionControl.UI
             rightPanel.PackStart(autoSequenceTitle, false, false, 0);
             rightPanel.PackStart(autoSequenceButtons, false, false, 0);
             rightPanel.PackStart(connectionContainer, false, false, 20);
-           
+            rightPanel.PackStart(_btnLock, false, false, 20);
 
             // Horizonal layout
             HBox horizontalLayout = new HBox(false, 0);
@@ -234,7 +256,40 @@ namespace MissionControl.UI
 
         }
 
-        
+        private void BtnFuelTankSetOnPressed(object sender, EventArgs e)
+        {
+            string input = _fuelTankInput.Text;
+            input = input.Replace(',', '.');
+
+            float value;
+
+            try
+            {
+                value = float.Parse(input, CultureInfo.InvariantCulture.NumberFormat);
+            }
+            catch (Exception err)
+            {
+                if (Toplevel.IsTopLevel)
+                {
+                    Window top = (Window) Toplevel;
+                    MessageDialog errorDialog = new MessageDialog(top,
+                        DialogFlags.DestroyWithParent,
+                        MessageType.Error,
+                        ButtonsType.Close,
+                        "Value for Valve is not a number value"
+                    );
+                    errorDialog.Run();
+                    errorDialog.Destroy();
+                    return;
+                }
+
+                Console.WriteLine("Value for Valve is not a number value");
+                return;
+            }
+            
+            _listener.OnFuelTankFillSet(value);
+        }
+
 
         void LogStartPressed(object sender, EventArgs e)
         {

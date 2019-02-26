@@ -20,8 +20,8 @@ namespace MissionControl.Data.Components
 
         public ServoComponent(byte boardID, string graphicID, string name, string graphicIDSymbol) : base(boardID, graphicID, name, graphicIDSymbol)
         {
-            ClosePosition = 100.0f;
-            OpenPosition = 0.0f;
+            ClosePosition = 0.0f;
+            OpenPosition = 100.0f;
         }
 
         public override void Set(int val)

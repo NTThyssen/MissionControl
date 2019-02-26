@@ -1,62 +1,38 @@
-﻿using System;
-using System.Globalization;
-
 namespace MissionControl.Data.Components
 {
-    public class TankComponent : MeasuredComponent, ILoggable
+    public class TankComponent : ComputedComponent, ILoggable
     {
-
-        private readonly float _full;
-        private readonly float _initial;
-        private int _rawVolume;
-        private readonly string _graphicIDGradient;
+        private FlowComponent _flow;
+        private float _inputtedVolume = 1;
+        private float _accumulated;
         
-        public override int ByteSize => 2;
-        public override bool Signed => false;
-
-        public TankComponent(byte boardID, string graphicID, string name, string graphicIDGradient, float full, float initial) : base(boardID, graphicID, name)
+        private long _lastTime = 0;
+        private float _lastMassFlow = 0;
+        public string SettingsConstantName { get; }
+        public float CurrentVolume { get; private set; }
+        public string GraphicIDGradient { get; }
+        
+        public TankComponent(byte boardID, string graphicID, string name, string graphicIDGradient, ref FlowComponent flow,  string settingsConstantName) : base(boardID, graphicID, name)
         {
-            _graphicIDGradient = graphicIDGradient;
-            _full = full;
-            _initial = initial;
+            _flow = flow;
+            SettingsConstantName = settingsConstantName;
+            GraphicIDGradient = graphicIDGradient;
         }
-
-
-        public override void Set(int val)
-        {
-            _rawVolume = val;
-        }
-
-        public void Decrement(int val)
-        {
-            _rawVolume -= val;
-        }
-
-        public String GraphicIDGradient => _graphicIDGradient;
-        public float Full => _full;
-        public float Initial => _initial;
 
         public override string TypeName => "Tank";
-
-        public float PercentageInit() 
+        public override string ToDisplay()
         {
-            return (_rawVolume / _initial) * 100;
+            return ToRounded(ToPercentage(), 2) + "%";
         }
 
-        public float PercentageFull()
+        public float ToPercentage()
         {
-            return (_rawVolume / _full) * 100;
-         }
-
-        public float Litres()
-        {
-            return _rawVolume / 1000.0f;
+            return CurrentVolume / _inputtedVolume * 100.0f;
         }
 
         public string ToLog()
         {
-            // Rounding to three decimals
-            return ToRounded(Litres(), 4);
+            return ToRounded(CurrentVolume, 3);
         }
 
         public string LogHeader()
@@ -64,9 +40,24 @@ namespace MissionControl.Data.Components
             return Name + " [L]";
         }
 
-        public override string ToDisplay()
+        public void Compute(long time)
         {
-            return ToRounded(Litres(), 2);
+            long timeDelta = time - _lastTime;
+            _accumulated += (timeDelta / 1000.0f) * _lastMassFlow;
+
+            CurrentVolume = _inputtedVolume - _accumulated;
+            
+            _lastTime = time;
+            _lastMassFlow = _flow.MassFlow;
+
+        }
+
+        public void SetInputVolume(long time, float volume)
+        {
+            _inputtedVolume = volume;
+            _lastTime = time;
+            _accumulated = 0;
+            CurrentVolume = volume;
         }
     }
 }

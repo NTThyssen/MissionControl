@@ -132,5 +132,17 @@ namespace MissionControl
             // Fake response
             _dataStore.GetCurrentSession().IsAutoSequence = false;
         }
+
+        public void OnFuelTankFillSet(float mass)
+        {
+            if (_dataStore.GetCurrentSession().Mapping.ComponentsByID()[24] is TankComponent tc)
+            {
+                tc.SetInputVolume(_dataStore.GetCurrentSession().SystemTime, mass);    
+            }
+            else
+            {
+                Console.Write("Cannot set fill on fuel tank");
+            }
+        }
     }
 }

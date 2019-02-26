@@ -142,6 +142,11 @@ namespace MissionControl.UI
             
         }
 
+        public void OnFuelTankFillSet(float mass)
+        {
+            _listener.OnFuelTankFillSet(mass);
+        }
+
 
         public void OnStatePressed(State state)
         {

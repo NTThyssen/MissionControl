@@ -76,7 +76,7 @@ namespace MissionControl.Connection
 
         const byte HIGH = 0xFF;
         const byte LOW = 0x01;
-        const int endHighs = 3;
+        const int endHighs = 4;
         const int endLows = 1;
         const int bufsize = 8;
         int highs, lows;
@@ -86,6 +86,7 @@ namespace MissionControl.Connection
         public void RunMethod()
         {
             buffered = new List<byte>();
+            _commands.Clear();
             Open();
 
             while (_shouldRun && _port.IsOpen)
@@ -122,10 +123,23 @@ namespace MissionControl.Connection
         {
             while (_commands.Count > 0)
             {
-                byte[] wbuffer = _commands.Dequeue().ToByteData();
+                byte[] startFence = {0xFF, 0x01};
+                byte[] endFence = {0x01, 0xFF, 0xFF, 0xFF, 0xFF};
+                byte[] byteData = _commands.Dequeue().ToByteData();
+                byte[] wbuffer = new byte[startFence.Length + endFence.Length + byteData.Length];
+                Array.Copy(startFence, 0, wbuffer, 0, startFence.Length);
+                Array.Copy(byteData, 0, wbuffer, startFence.Length, byteData.Length);
+                Array.Copy(endFence, 0, wbuffer, startFence.Length + byteData.Length, endFence.Length);
+                
                 try
                 {
-                    _port.Write(wbuffer, 0, wbuffer.Length);
+                    _port.Write(wbuffer, 0, wbuffer.Length);   
+                    Console.Write("Writing: ");
+                    foreach (byte b in wbuffer)
+                    {
+                        Console.Write("{0:X} ", b);
+                    }
+                    Console.WriteLine();
                 } catch (IOException)
                 {
                     Console.WriteLine("While writing an IOException occured");
@@ -147,6 +161,12 @@ namespace MissionControl.Connection
                     int bytes = Math.Min(_port.BytesToRead, 8);
                     buf = new byte[bytes];
                     bytesRead = _port.Read(buf, 0, bytes);
+                    Console.Write("Read: ");
+                    foreach (byte b in buf)
+                    {
+                        Console.Write("{0:X} ", b);
+                    }
+                    Console.WriteLine();
                 }
             } catch (IOException)
             {
