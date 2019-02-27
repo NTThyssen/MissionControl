@@ -26,17 +26,18 @@ namespace MissionControl.Data.Components
 
         public override void Set(int val)
         {
+            Console.WriteLine("Servo value: {0}", val);
             _rawPosition = val;
         }
 
         public float Degree()
         {
-            return (_rawPosition / 100.0f) * 360;
+            return (Percentage() / 100.0f) * 360;
         }
 
         public float Percentage()
         {
-            return _rawPosition;
+            return ((float) _rawPosition) / ushort.MaxValue * 100.0f;
         }
 
         public string ToLog()

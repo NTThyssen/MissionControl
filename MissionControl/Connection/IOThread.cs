@@ -161,12 +161,12 @@ namespace MissionControl.Connection
                     int bytes = Math.Min(_port.BytesToRead, 8);
                     buf = new byte[bytes];
                     bytesRead = _port.Read(buf, 0, bytes);
-                    Console.Write("Read: ");
+                    /*Console.Write("Read: ");
                     foreach (byte b in buf)
                     {
                         Console.Write("{0:X} ", b);
                     }
-                    Console.WriteLine();
+                    Console.WriteLine();*/
                 }
             } catch (IOException)
             {
