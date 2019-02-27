@@ -220,7 +220,9 @@ namespace MissionControl.UI
         
         public void getTimeings(object sender, EventArgs e)
         {
+           
             List<LabelledEntryWidget> entryValues = new List<LabelledEntryWidget>
+            
             {
                 startDelay,
                 ignitionTime,
@@ -238,10 +240,13 @@ namespace MissionControl.UI
                 oxidPercentState3,
                 endTime
             };
-
+            int[] intList = new int[15];
+            int counter = 0;
             foreach (LabelledEntryWidget label in entryValues)
             {
-                Console.WriteLine(label.EntryText);
+                Int32.TryParse(label.EntryText, out intList[counter++]);
+                Console.WriteLine(intList[counter++].GetType());
+                counter++;
             }
 
                 
