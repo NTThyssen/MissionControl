@@ -105,7 +105,7 @@ namespace MissionControl.Data
                                 byte sign = (byte)(((valBytes[4 - size] & 0b10000000) == 0) ? 0 : 0xFF);
                                 for (int j = 0; j < 4 - size; j++)
                                 {
-                                    valBytes[j] = sign;
+                                    valBytes[j] = (component.Signed) ? sign : valBytes[j];
                                 }
 
                                 if (BitConverter.IsLittleEndian)
@@ -120,7 +120,9 @@ namespace MissionControl.Data
                                 }
                                 else
                                 {
+                                    Console.WriteLine("Name: {0}, Bytes {1} {2} {3} {4}", component.Name, valBytes[3], valBytes[2], valBytes[1], valBytes[0]);
                                     uint value = BitConverter.ToUInt32(valBytes, 0);
+                                    Console.WriteLine("Name: {0}, uint: {1} int: {2}", component.Name, value, (int) value);
                                     component.Set((int) value);
                                 }
                                 
