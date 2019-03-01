@@ -42,7 +42,7 @@ namespace MissionControl.Data.Components
 
         public string ToLog()
         {
-            return "" + Percentage();
+            return ToRounded(Percentage(), 1);
         }
 
         public string LogHeader()

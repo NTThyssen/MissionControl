@@ -47,13 +47,13 @@ namespace MissionControl.Tests
         {
             byte ID = 16;
             PressureComponent expectedResult = new PressureComponent(0, "", "", x => x);
-            expectedResult.Set(1337);
+            expectedResult.Set(40000);
 
             TestStandMapping mapping = new TestStandMapping();
             Session session = new Session(mapping);
 
             // Value = 1337 = 0x539
-            session.UpdateComponents(new byte[]{ ID, 0x05, 0x39 });
+            session.UpdateComponents(new byte[]{ ID, 0x9C, 0x40 });
 
             Assert.AreEqual(expectedResult.Relative(), ((PressureComponent) mapping.ComponentsByID()[ID]).Relative());
         }
@@ -63,13 +63,13 @@ namespace MissionControl.Tests
         {
             byte ID = 6;
             ServoComponent expectedResult = new ServoComponent(0, "", "", "");
-            expectedResult.Set(1337);
+            expectedResult.Set(40000);
 
             TestStandMapping mapping = new TestStandMapping();
             Session session = new Session(mapping);
 
             // Value = 1337 = 0x539
-            session.UpdateComponents(new byte[]{ ID, 0x05, 0x39 });
+            session.UpdateComponents(new byte[]{ ID, 0x9C, 0x40 });
 
             Assert.AreEqual(expectedResult.Degree(), ((ServoComponent) mapping.ComponentsByID()[ID]).Degree());
         }
