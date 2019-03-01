@@ -144,5 +144,11 @@ namespace MissionControl
                 Console.Write("Cannot set fill on fuel tank");
             }
         }
+
+        public void OnAutoParametersSet(AutoParameters ap)
+        {
+            AutoParametersCommand command = new AutoParametersCommand(ap);
+            _ioThread.SendCommand(command);
+        }
     }
 }
