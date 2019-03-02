@@ -157,11 +157,11 @@ namespace MissionControl
             PreferenceManager.Preferences.Save();
         }
 
-        public void OnTarePressed(float loadCellValue)
+        public void OnTarePressed()
         {
             if (_dataStore.GetCurrentSession().Mapping.ComponentsByID()[0] is LoadComponent lc)
             {
-                lc.Tare(loadCellValue);
+                lc.Tare();
              }
         }
     }

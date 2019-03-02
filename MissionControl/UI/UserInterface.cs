@@ -148,9 +148,9 @@ namespace MissionControl.UI
             _listener.OnFuelTankFillSet(mass);
         }
 
-        public void OnTarePressed(float loadCellValue)
+        public void OnTarePressed()
         {
-            _listener.OnTarePressed(200);
+            _listener.OnTarePressed();
         }
 
         public void OnStatePressed(State state)

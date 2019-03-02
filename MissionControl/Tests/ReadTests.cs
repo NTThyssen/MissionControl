@@ -57,6 +57,12 @@ namespace MissionControl.Tests
 
             Assert.AreEqual(expectedResult.Relative(), ((PressureComponent) mapping.ComponentsByID()[ID]).Relative());
         }
+
+        [Test]
+        public void Load_Cell_Tare()
+        {
+            
+        }
         
         [Test]
         public void Servo_Component_Is_Updated_Correctly ()

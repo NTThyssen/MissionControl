@@ -18,7 +18,7 @@ namespace MissionControl.UI
         void OnStopAutoSequencePressed();
         void OnFuelTankFillSet(float mass);
         void OnAutoParametersSet(AutoParameters ap);
-        void OnTarePressed(float loadCellValue);
+        void OnTarePressed();
 
     }
 }

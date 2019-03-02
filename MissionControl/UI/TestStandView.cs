@@ -25,7 +25,7 @@ namespace MissionControl.UI
         void OnStopAutoSequencePressed();
         void OnMenuAutoRunConfigPressed();
         void OnFuelTankFillSet(float mass);
-        void OnTarePressed(float loadCellValue);
+        void OnTarePressed();
 
 
     }
@@ -278,7 +278,7 @@ namespace MissionControl.UI
 
         private void BtnTarePressed(object sender, EventArgs e)
         {
-            _listener.OnTarePressed(10);
+            _listener.OnTarePressed();
         }
 
         private void BtnFuelTankSetOnPressed(object sender, EventArgs e)
