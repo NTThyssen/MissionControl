@@ -89,7 +89,7 @@ namespace MissionControl.UI.Widgets
                     else
                     {
                         kv.Key.ModifyBg(StateType.Normal, Colors.ButtonNormal);
-                        kv.Key.ModifyBg(StateType.Prelight, Colors.ButtonNormal);
+                        kv.Key.ModifyBg(StateType.Prelight, Colors.ButtonNormalHover);
                         kv.Key.ModifyBg(StateType.Insensitive, Colors.ButtonDisabled);
                         kv.Key.Sensitive = true;
                     }

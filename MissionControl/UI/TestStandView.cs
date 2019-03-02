@@ -38,8 +38,7 @@ namespace MissionControl.UI
         StateControlWidget _stateWidget;
         ITestStandViewListener _listener;
         Session _session;
-        private LoadComponent loadComponent;
-
+       
         bool _logRunning = false;
         Button _btnLogStart, _btnLogStop;
 
@@ -215,12 +214,12 @@ namespace MissionControl.UI
             
             // Mid panel
             DSectionTitle valvesTitle = new DSectionTitle("Valves");
-            DSectionTitle tankFillTitle = new DSectionTitle("IPA Tank [kg]");
             DSectionTitle tareLoadTitl
                 = new DSectionTitle("Reset Load");
+            DSectionTitle tankFillTitle = new DSectionTitle("IPA Tank [kg]", 14);
             midPanel.PackStart(valvesTitle, false, false, 0);
-            midPanel.PackStart(_valveWidget, false, false, 0);
-            midPanel.PackStart(tankFillTitle, false, false, 10);
+            midPanel.PackStart(_valveWidget, false, false, 10);
+            midPanel.PackStart(tankFillTitle, false, false, 0);
             midPanel.PackStart(tankFillContainer, false, false, 0);
             midPanel.PackStart(tareLoadTitl, false, false, 0);
             midPanel.PackStart(_tareLoadBtn, false, false, 0);
@@ -453,7 +452,5 @@ namespace MissionControl.UI
         {
             _svgWidget.UnmarkValve(component);
         }
-
-       
     }
 }

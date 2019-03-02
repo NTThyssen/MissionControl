@@ -111,8 +111,13 @@ namespace MissionControl.Data
                     switch (oldProps[i])
                     {
                         case StringProperty p:
-                            p.Value = (newProps[i] as StringProperty).Value;
-                            PreferenceManager.Set(newProps[i].PreferenceKey, p.ToString());
+                            
+                            string s = (newProps[i] as StringProperty).Value;
+                            if (s != null)
+                            {
+                                p.Value = s;
+                                PreferenceManager.Set(newProps[i].PreferenceKey, p.ToString());    
+                            }
                             break;
                         case IntegerProperty p:
                             p.Value = (newProps[i] as IntegerProperty).Value;
