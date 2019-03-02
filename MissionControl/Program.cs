@@ -149,6 +149,11 @@ namespace MissionControl
         {
             AutoParametersCommand command = new AutoParametersCommand(ap);
             _ioThread.SendCommand(command);
+
+            string serialized = ap.Serialize();
+            _dataStore.GetCurrentSession().Setting.AutoParameters.Value = serialized;
+            PreferenceManager.Set(_dataStore.GetCurrentSession().Setting.AutoParameters.PreferenceKey, serialized);
+            PreferenceManager.Preferences.Save();
         }
     }
 }

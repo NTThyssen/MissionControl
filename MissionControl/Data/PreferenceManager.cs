@@ -70,7 +70,7 @@ namespace MissionControl.Data
             {
                 foreach (KeyValuePair<string, string> kv in _preferences)
                 {
-                    sw.WriteLine(string.Format("{0}:{1}", kv.Key, kv.Value));
+                    sw.WriteLine("{0}:{1}", kv.Key, kv.Value);
                 }
             }
         }

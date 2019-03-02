@@ -14,13 +14,13 @@ namespace MissionControl.UI
         void StartUI(IUIEvents listener);
         }
 
-    public class UserInterface : IUserInterface, ITestStandViewListener, ISessionSettingsViewListener
+    public class UserInterface : IUserInterface, ITestStandViewListener, ISessionSettingsViewListener, IAutoParameterListener
     {
 
         SessionSettingsView _newSessionView;
         TestStandView _testStandView;
         PlotView _plotView;
-        AutoRunConfig _autoRunConfig;
+        AutoRunConfigView _autoRunConfigView;
 
         private IUIEvents _listener;
         Session _session;
@@ -111,16 +111,16 @@ namespace MissionControl.UI
         
         public void ShowAutoConfig()
         {
-            if (_plotView == null)
+            if (_autoRunConfigView == null)
             {
-                _autoRunConfig = new AutoRunConfig();
+                _autoRunConfigView = new AutoRunConfigView(this, _session.Setting.AutoParameters.Value);
             }
             else
             {
-                _autoRunConfig.Destroy();
-                _autoRunConfig = new AutoRunConfig();
+                _autoRunConfigView.Destroy();
+                _autoRunConfigView = new AutoRunConfigView(this, _session.Setting.AutoParameters.Value);
             }
-            _autoRunConfig.DeleteEvent += (object o, DeleteEventArgs args) => _updateSVGTimer = SetUpdateSVGFrequency(_updateSVGTimer, UPDATE_FREQ_FOREGROUND);
+            _autoRunConfigView.DeleteEvent += (object o, DeleteEventArgs args) => _updateSVGTimer = SetUpdateSVGFrequency(_updateSVGTimer, UPDATE_FREQ_FOREGROUND);
             _updateSVGTimer = SetUpdateSVGFrequency(_updateSVGTimer, UPDATE_FREQ_BACKGROUND);
         }
 
@@ -231,6 +231,12 @@ namespace MissionControl.UI
         public void OnStopAutoSequencePressed()
         {
             _listener.OnStopAutoSequencePressed();
+        }
+
+        public void OnParametersSave(AutoParameters ap)
+        {
+            _listener.OnAutoParametersSet(ap);
+            _autoRunConfigView?.Destroy();
         }
     }
 }

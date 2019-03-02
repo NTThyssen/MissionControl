@@ -18,8 +18,15 @@ using WindowType = Gtk.WindowType;
 
 namespace MissionControl.UI
 {
-    public class AutoRunConfig : Window
+
+    public interface IAutoParameterListener
     {
+        void OnParametersSave(AutoParameters ap);
+    }
+    
+    public class AutoRunConfigView : Window
+    {
+        private IAutoParameterListener _listener;
         
         private LabelledEntryWidget _startDelay;
         private LabelledEntryWidget _ignitionTime;
@@ -39,33 +46,35 @@ namespace MissionControl.UI
    
         private Button _btnAutoRunConfigSave;
         
-        public AutoRunConfig() : base(WindowType.Toplevel)
+        public AutoRunConfigView(IAutoParameterListener listener, string param) : base(WindowType.Toplevel)
         {
+            _listener = listener;
             Title = "Auto Sequence Config";
             
             SetSizeRequest(950, 350);
             SetPosition(WindowPosition.Center);
             Console.WriteLine("hello autoconfig");
             
+            AutoParameters ap = AutoParameters.Deserialize(param);
             
-            _startDelay         = new LabelledEntryWidget(0.0f, 0.5f) { LabelText = "Start Delay:" };
-            _ignitionTime       = new LabelledEntryWidget(0.0f, 0.5f) { LabelText = "Ignition Time:" };
-            _endTime            = new LabelledEntryWidget(0.0f, 0.5f) { LabelText = "End Time:"};
+            _startDelay         = new LabelledEntryWidget(0.0f, 0.5f) { LabelText = "Start Delay:" , EntryText = GetValueString(ap.startTime) };
+            _ignitionTime       = new LabelledEntryWidget(0.0f, 0.5f) { LabelText = "Ignition Time:" , EntryText = GetValueString(ap.ignitionTime) };
+            _endTime            = new LabelledEntryWidget(0.0f, 0.5f) { LabelText = "End Time:" , EntryText = GetValueString(ap.endTime) };
             
-            _fuelTimeState1     = new LabelledEntryWidget(0.0f, 0.5f) { LabelText = "State 1 Time Fuel:" };
-            _fuelPercentState1  = new LabelledEntryWidget(0.0f, 0.5f) { LabelText = "State 1 Position Fuel:" };
-            _oxidTimeState1     = new LabelledEntryWidget(0.0f, 0.5f) { LabelText = "State 1 Time Oxid:" };
-            _oxidPercentState1  = new LabelledEntryWidget(0.0f, 0.5f) { LabelText = "State 1 Position Oxid:" };
+            _fuelTimeState1     = new LabelledEntryWidget(0.0f, 0.5f) { LabelText = "State 1 Time Fuel:" , EntryText = GetValueString(ap.fuelState1Time) };
+            _fuelPercentState1  = new LabelledEntryWidget(0.0f, 0.5f) { LabelText = "State 1 Position Fuel:" , EntryText = GetValueString(ap.fuelState1Percentage) };
+            _oxidTimeState1     = new LabelledEntryWidget(0.0f, 0.5f) { LabelText = "State 1 Time Oxid:" , EntryText = GetValueString(ap.oxidState1Time) };
+            _oxidPercentState1  = new LabelledEntryWidget(0.0f, 0.5f) { LabelText = "State 1 Position Oxid:" , EntryText = GetValueString(ap.oxidState1Percentage) };
 
-            _fuelTimeState2     = new LabelledEntryWidget(0.0f, 0.5f) { LabelText = "State 2 Time Fuel:" };
-            _fuelPercentState2  = new LabelledEntryWidget(0.0f, 0.5f) { LabelText = "State 2 Position Fuel:" };
-            _oxidTimeState2     = new LabelledEntryWidget(0.0f, 0.5f) { LabelText = "State 2 Time Oxid:" };
-            _oxidPercentState2  = new LabelledEntryWidget(0.0f, 0.5f) { LabelText = "State 2 Position Oxid:" };
+            _fuelTimeState2     = new LabelledEntryWidget(0.0f, 0.5f) { LabelText = "State 2 Time Fuel:" , EntryText = GetValueString(ap.fuelState2Time)};
+            _fuelPercentState2  = new LabelledEntryWidget(0.0f, 0.5f) { LabelText = "State 2 Position Fuel:" , EntryText = GetValueString(ap.fuelState2Percentage) };
+            _oxidTimeState2     = new LabelledEntryWidget(0.0f, 0.5f) { LabelText = "State 2 Time Oxid:" , EntryText = GetValueString(ap.oxidState2Time) };
+            _oxidPercentState2  = new LabelledEntryWidget(0.0f, 0.5f) { LabelText = "State 2 Position Oxid:" , EntryText = GetValueString(ap.oxidState2Percentage) };
 
-            _fuelTimeState3     = new LabelledEntryWidget(0.0f, 0.5f) { LabelText = "State 3 Time Fuel:" };
-            _fuelPercentState3  = new LabelledEntryWidget(0.0f, 0.5f) { LabelText = "State 3 Position Fuel:"};
-            _oxidTimeState3     = new LabelledEntryWidget(0.0f, 0.5f) { LabelText = "State 3 Time Oxid:" };
-            _oxidPercentState3  = new LabelledEntryWidget(0.0f, 0.5f) { LabelText = "State 3 Position Oxid:" };
+            _fuelTimeState3     = new LabelledEntryWidget(0.0f, 0.5f) { LabelText = "State 3 Time Fuel:" , EntryText = GetValueString(ap.fuelState3Time) };
+            _fuelPercentState3  = new LabelledEntryWidget(0.0f, 0.5f) { LabelText = "State 3 Position Fuel:" , EntryText = GetValueString(ap.fuelState3Percentage) };
+            _oxidTimeState3     = new LabelledEntryWidget(0.0f, 0.5f) { LabelText = "State 3 Time Oxid:" , EntryText = GetValueString(ap.oxidState3Time) };
+            _oxidPercentState3  = new LabelledEntryWidget(0.0f, 0.5f) { LabelText = "State 3 Position Oxid:" , EntryText = GetValueString(ap.oxidState3Percentage) };
             
             _btnAutoRunConfigSave = new Button{Label = "Save", WidthRequest = 80, HeightRequest = 40};
             
@@ -130,13 +139,13 @@ namespace MissionControl.UI
             error |= ValidateTime(_endTime, Math.Max(ap.fuelState3Time, ap.oxidState3Time), ref errorMsg, out ap.endTime);
 
             error |= ValidatePosition(_fuelPercentState1, ref errorMsg, out ap.fuelState1Percentage);
-            error |= ValidatePosition(_oxidTimeState1, ref errorMsg, out ap.oxidState1Percentage);
+            error |= ValidatePosition(_oxidPercentState1, ref errorMsg, out ap.oxidState1Percentage);
             
             error |= ValidatePosition(_fuelPercentState2, ref errorMsg, out ap.fuelState2Percentage);
-            error |= ValidatePosition(_oxidTimeState2, ref errorMsg, out ap.oxidState2Percentage);
+            error |= ValidatePosition(_oxidPercentState2, ref errorMsg, out ap.oxidState2Percentage);
             
             error |= ValidatePosition(_fuelPercentState3, ref errorMsg, out ap.fuelState3Percentage);
-            error |= ValidatePosition(_oxidTimeState3, ref errorMsg, out ap.oxidState3Percentage);
+            error |= ValidatePosition(_oxidPercentState3, ref errorMsg, out ap.oxidState3Percentage);
             
             /*
            
@@ -166,10 +175,20 @@ namespace MissionControl.UI
                 return;
             }
             
+            _listener.OnParametersSave(ap);
             
         }
 
-
+        private string GetValueString(ushort value)
+        {
+            return (value != 0) ? value.ToString() : "";
+        }
+        
+        private string GetValueString(float value)
+        {
+            return (value != 0) ? value.ToString(CultureInfo.InvariantCulture) : "";
+        }
+        
 
         public bool ValidateTime(LabelledEntryWidget input, int lowerTime, ref string errMsg, out ushort time)
         {
@@ -182,7 +201,7 @@ namespace MissionControl.UI
                 }
                 
                 time = 0;
-                errMsg += $"\"{input.LabelText}\" was smaller than required\n";
+                errMsg += $"\"{input.LabelText}\" was smaller than {lowerTime}\n";
                 return true;
             }
 

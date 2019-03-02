@@ -41,9 +41,6 @@ namespace MissionControl.Data
         }
     }
     
-    
-    
-
     public class FloatProperty : Property
     {
 
@@ -89,28 +86,12 @@ namespace MissionControl.Data
         // Visual
         public BoolProperty ShowAbsolutePressure { get; } = new BoolProperty("ShowRelativePressure");
 
+        // Auto Sequence Parameters
+        public StringProperty AutoParameters { get; } = new StringProperty("AutoParameters");
+        
         public List<Property> Properties()
         {
-            return new List<Property> { LogFilePath, PortName, BaudRate, OxidCV, OxidDensity, FuelCV, FuelDensity, TodayPressure, ShowAbsolutePressure, ShowSettingsOnStartup };
-        }
-
-        public struct AutoParams
-        {
-            ushort startTime;
-            ushort ignitionTime;
-            ushort fuelState1Time;
-            FloatProperty fuelState1Percentage;
-            ushort oxidState1Time;
-            FloatProperty oxidState1Percentage;
-            ushort fuelState2Time;
-            FloatProperty fuelState2Percentage;
-            ushort oxidState2Time;
-            FloatProperty oxidState2Percentage;
-            ushort fuelState3Time;
-            FloatProperty fuelState3Percentage;
-            ushort oxidState3Time;
-            FloatProperty oxidState3Percentage;
-            ushort endTime;
+            return new List<Property> { LogFilePath, PortName, BaudRate, OxidCV, OxidDensity, FuelCV, FuelDensity, TodayPressure, ShowAbsolutePressure, ShowSettingsOnStartup, AutoParameters };
         }
         
         public Dictionary<string, Property> PropertiesByID()
