@@ -259,9 +259,8 @@ namespace MissionControl.UI
                     
                 }
 
-            
-
             }
+            
             if (Int32.Parse(fuelTimeState1.EntryText) > Int32.Parse(fuelTimeState2.EntryText))
             {
                 errorMsg += fuelTimeState2.LabelText + " Must be higher than " + fuelTimeState1.LabelText + "\n";
