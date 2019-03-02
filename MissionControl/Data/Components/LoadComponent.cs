@@ -7,13 +7,11 @@ namespace MissionControl.Data.Components
     {
         private int _rawLoad;
         private Scaler _scaler;
-
-        private int zeroPoint
+        private float _taredValue;
+        public float TaredValue
         {
-            get
-            {
-                return zeroPoint;
-            }
+            get => _taredValue;
+            set => _taredValue = TaredValue;
         }
 
         public override string TypeName => "Load cell";
@@ -32,7 +30,7 @@ namespace MissionControl.Data.Components
 
         public float Newtons()
         {
-            return _scaler(_rawLoad) * 10.0f;
+            return _scaler(_rawLoad) * 10.0f - _taredValue;
         }
 
         public float Kilos()
@@ -50,9 +48,12 @@ namespace MissionControl.Data.Components
             return Name + " [N]";
         }
 
-        public float Tare(int zeroPoint)
+        public void Tare(float loadCellValue)
         {
-            return _scaler(_rawLoad) - zeroPoint;
+            Console.WriteLine(loadCellValue);
+            TaredValue = loadCellValue;
+            Console.WriteLine(TaredValue);
+            
         }
 
         public override string ToDisplay()

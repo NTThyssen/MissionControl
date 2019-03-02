@@ -454,9 +454,6 @@ namespace MissionControl.UI
             _svgWidget.UnmarkValve(component);
         }
 
-        public void OnTarePressed(float loadCellvalue)
-        {
-            _listener.OnTarePressed(10);
-        }
+       
     }
 }

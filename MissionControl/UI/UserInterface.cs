@@ -150,7 +150,7 @@ namespace MissionControl.UI
 
         public void OnTarePressed(float loadCellValue)
         {
-            _listener.OnTarePressed(10);
+            _listener.OnTarePressed(200);
         }
 
         public void OnStatePressed(State state)

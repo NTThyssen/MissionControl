@@ -154,7 +154,10 @@ namespace MissionControl
 
         public void OnTarePressed(float loadCellValue)
         {
-            Console.WriteLine("-----");
+            if (_dataStore.GetCurrentSession().Mapping.ComponentsByID()[0] is LoadComponent lc)
+            {
+                lc.Tare(loadCellValue);
+             }
         }
     }
 }
