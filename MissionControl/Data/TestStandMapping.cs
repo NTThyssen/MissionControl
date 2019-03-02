@@ -38,9 +38,9 @@ namespace MissionControl.Data
             TC_4 = new TemperatureComponent(13,  "TC_4", "TC-4", x => x);
             TC_5 = new TemperatureComponent(14,  "TC_5", "TC-5", x => x);
             TC_6 = new TemperatureComponent(15,  "TC_6", "TC-6", x => x);
-
-            LOAD = new LoadComponent(0, "LOAD", "Load cell", x => x);
-
+            
+            LOAD = new LoadComponent(0, "LOAD", "Load cell", x => 10);
+            
             SV_IPA = new ServoComponent(4, "SV_IPA", "SV-IPA", "SV_IPA_SYMBOL");
             SV_N2O = new ServoComponent(5, "SV_N2O", "SV-N2O", "SV_N2O_SYMBOL");
             MV_IPA = new ServoComponent(6, "MV_IPA", "MV-IPA", "MV_IPA_SYMBOL");

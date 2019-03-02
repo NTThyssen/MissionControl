@@ -21,6 +21,7 @@ namespace MissionControl.UI
         TestStandView _testStandView;
         PlotView _plotView;
         AutoRunConfig _autoRunConfig;
+        LoadComponent loadcell;
 
         private IUIEvents _listener;
         Session _session;
@@ -147,6 +148,10 @@ namespace MissionControl.UI
             _listener.OnFuelTankFillSet(mass);
         }
 
+        public void OnTarePressed(float loadCellValue)
+        {
+            _listener.OnTarePressed(10);
+        }
 
         public void OnStatePressed(State state)
         {
@@ -232,5 +237,7 @@ namespace MissionControl.UI
         {
             _listener.OnStopAutoSequencePressed();
         }
+
+      
     }
 }

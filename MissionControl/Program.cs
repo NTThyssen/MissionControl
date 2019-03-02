@@ -114,6 +114,7 @@ namespace MissionControl
             _ioThread.StopConnection();
         }
 
+    
         public void OnStartAutoSequencePressed()
         {
 
@@ -149,6 +150,11 @@ namespace MissionControl
         {
             AutoParametersCommand command = new AutoParametersCommand(ap);
             _ioThread.SendCommand(command);
+        }
+
+        public void OnTarePressed(float loadCellValue)
+        {
+            Console.WriteLine("-----");
         }
     }
 }

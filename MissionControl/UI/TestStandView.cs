@@ -25,6 +25,9 @@ namespace MissionControl.UI
         void OnStopAutoSequencePressed();
         void OnMenuAutoRunConfigPressed();
         void OnFuelTankFillSet(float mass);
+        void OnTarePressed(float loadCellValue);
+
+
     }
 
     public partial class TestStandView : Window, ILockable, IValveControlListener, IStateControlListener
@@ -35,6 +38,7 @@ namespace MissionControl.UI
         StateControlWidget _stateWidget;
         ITestStandViewListener _listener;
         Session _session;
+        private LoadComponent loadComponent;
 
         bool _logRunning = false;
         Button _btnLogStart, _btnLogStop;
@@ -45,6 +49,8 @@ namespace MissionControl.UI
         Button _btnConnect, _btnDisconnect;
         Label _lastConnection;
 
+        Button _tareLoadBtn; 
+            
         DToggleButton _btnLock;
 
         Button _btnFuelTankSet;
@@ -189,23 +195,37 @@ namespace MissionControl.UI
                 Label = "Set",
                 HeightRequest = 40
             };
+           
             _btnFuelTankSet.Pressed += BtnFuelTankSetOnPressed;
+            
             _fuelTankInput = new Entry
             {
                 HeightRequest = 40,
                 WidthChars = 10
             };
+            _tareLoadBtn = new Button
+            {
+                Label = "Tare",
+                HeightRequest = 40
+            };
+            
+            _tareLoadBtn.Pressed += BtnTarePressed;
             tankFillContainer.PackStart(_fuelTankInput, false, false, 0);
             tankFillContainer.PackStart(_btnFuelTankSet, true, true, 0);
             
             // Mid panel
             DSectionTitle valvesTitle = new DSectionTitle("Valves");
             DSectionTitle tankFillTitle = new DSectionTitle("IPA Tank [kg]");
+            DSectionTitle tareLoadTitl
+                = new DSectionTitle("Reset Load");
             midPanel.PackStart(valvesTitle, false, false, 0);
             midPanel.PackStart(_valveWidget, false, false, 0);
             midPanel.PackStart(tankFillTitle, false, false, 10);
             midPanel.PackStart(tankFillContainer, false, false, 0);
+            midPanel.PackStart(tareLoadTitl, false, false, 0);
+            midPanel.PackStart(_tareLoadBtn, false, false, 0);
             midPanel.PackStart(logButtonContainer, false, false, 10);
+            
 
             // Right panel
             DSectionTitle statesTitle = new DSectionTitle("States");
@@ -254,6 +274,11 @@ namespace MissionControl.UI
 
             Add(verticalLayout);
 
+        }
+
+        private void BtnTarePressed(object sender, EventArgs e)
+        {
+            _listener.OnTarePressed(10);
         }
 
         private void BtnFuelTankSetOnPressed(object sender, EventArgs e)
@@ -427,6 +452,11 @@ namespace MissionControl.UI
         public void OnControlLeave(ValveComponent component)
         {
             _svgWidget.UnmarkValve(component);
+        }
+
+        public void OnTarePressed(float loadCellvalue)
+        {
+            _listener.OnTarePressed(10);
         }
     }
 }

@@ -8,6 +8,14 @@ namespace MissionControl.Data.Components
         private int _rawLoad;
         private Scaler _scaler;
 
+        private int zeroPoint
+        {
+            get
+            {
+                return zeroPoint;
+            }
+        }
+
         public override string TypeName => "Load cell";
         public override int ByteSize => 2;
         public override bool Signed => true;
@@ -16,7 +24,7 @@ namespace MissionControl.Data.Components
         {
             _scaler = scaler;
         }
-
+        
         public override void Set(int val)
         {
             _rawLoad = val;
@@ -40,6 +48,11 @@ namespace MissionControl.Data.Components
         public string LogHeader()
         {
             return Name + " [N]";
+        }
+
+        public float Tare(int zeroPoint)
+        {
+            return _scaler(_rawLoad) - zeroPoint;
         }
 
         public override string ToDisplay()
