@@ -49,6 +49,11 @@ namespace MissionControl.Connection
             }
         }
 
+        public void Close()
+        {
+            IsOpen = false;
+        }
+
         public void DiscardInBuffer()
         {
             _index = 0;

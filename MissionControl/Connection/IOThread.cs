@@ -51,11 +51,11 @@ namespace MissionControl.Connection
 
         public void StopConnection() {
             _shouldRun = false;
-            _session.Connected = false;
             if (t != null && t.ThreadState == ThreadState.Running)
             {
                 t.Join(2000);
             }
+            _session.Connected = false;
          }
 
         public void SendCommand(Command cmd)
@@ -95,6 +95,15 @@ namespace MissionControl.Connection
                 ReadAll();
             }
 
+            _session.Connected = false;
+            try
+            {
+                _port.Close();
+            }
+            catch (IOException e)
+            {
+                Console.WriteLine("Serial IO error: {0}", e.Message);
+            }
         }
 
         private void Open()

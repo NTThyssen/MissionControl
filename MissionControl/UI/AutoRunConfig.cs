@@ -4,9 +4,11 @@ using System.Globalization;
 using System.IO;
 using System.IO.Ports;
 using System.Linq;
+using System.Text;
 using Castle.Core.Internal;
 using Gdk;
 using Gtk;
+using MissionControl.Connection.Commands;
 using MissionControl.Data;
 using MissionControl.Data.Components;
 using MissionControl.UI.Widgets;
@@ -19,23 +21,22 @@ namespace MissionControl.UI
     public class AutoRunConfig : Window
     {
         
-        LabelledEntryWidget startDelay;
-        LabelledEntryWidget ignitionTime;
-        LabelledEntryWidget endTime;
-        LabelledEntryWidget fuelTimeState1;
-        LabelledEntryWidget fuelPercentState1;
-        LabelledEntryWidget fuelTimeState2;
-        LabelledEntryWidget fuelPercentState2;
-        LabelledEntryWidget fuelTimeState3;
-        LabelledEntryWidget fuelPercentState3;
-        LabelledEntryWidget oxidTimeState1;
-        LabelledEntryWidget oxidPercentState1;
-        LabelledEntryWidget oxidTimeState2;
-        LabelledEntryWidget oxidPercentState2;
-        LabelledEntryWidget oxidTimeState3;
-        LabelledEntryWidget oxidPercentState3;
+        private LabelledEntryWidget _startDelay;
+        private LabelledEntryWidget _ignitionTime;
+        private LabelledEntryWidget _endTime;
+        private LabelledEntryWidget _fuelTimeState1;
+        private LabelledEntryWidget _fuelPercentState1;
+        private LabelledEntryWidget _fuelTimeState2;
+        private LabelledEntryWidget _fuelPercentState2;
+        private LabelledEntryWidget _fuelTimeState3;
+        private LabelledEntryWidget _fuelPercentState3;
+        private LabelledEntryWidget _oxidTimeState1;
+        private LabelledEntryWidget _oxidPercentState1;
+        private LabelledEntryWidget _oxidTimeState2;
+        private LabelledEntryWidget _oxidPercentState2;
+        private LabelledEntryWidget _oxidTimeState3;
+        private LabelledEntryWidget _oxidPercentState3;
    
-
         private Button _btnAutoRunConfigSave;
         
         public AutoRunConfig() : base(WindowType.Toplevel)
@@ -45,255 +46,114 @@ namespace MissionControl.UI
             SetSizeRequest(950, 350);
             SetPosition(WindowPosition.Center);
             Console.WriteLine("hello autoconfig");
+            
+            
+            _startDelay         = new LabelledEntryWidget(0.0f, 0.5f) { LabelText = "Start Delay:" };
+            _ignitionTime       = new LabelledEntryWidget(0.0f, 0.5f) { LabelText = "Ignition Time:" };
+            _endTime            = new LabelledEntryWidget(0.0f, 0.5f) { LabelText = "End Time:"};
+            
+            _fuelTimeState1     = new LabelledEntryWidget(0.0f, 0.5f) { LabelText = "State 1 Time Fuel:" };
+            _fuelPercentState1  = new LabelledEntryWidget(0.0f, 0.5f) { LabelText = "State 1 Position Fuel:" };
+            _oxidTimeState1     = new LabelledEntryWidget(0.0f, 0.5f) { LabelText = "State 1 Time Oxid:" };
+            _oxidPercentState1  = new LabelledEntryWidget(0.0f, 0.5f) { LabelText = "State 1 Position Oxid:" };
+
+            _fuelTimeState2     = new LabelledEntryWidget(0.0f, 0.5f) { LabelText = "State 2 Time Fuel:" };
+            _fuelPercentState2  = new LabelledEntryWidget(0.0f, 0.5f) { LabelText = "State 2 Position Fuel:" };
+            _oxidTimeState2     = new LabelledEntryWidget(0.0f, 0.5f) { LabelText = "State 2 Time Oxid:" };
+            _oxidPercentState2  = new LabelledEntryWidget(0.0f, 0.5f) { LabelText = "State 2 Position Oxid:" };
+
+            _fuelTimeState3     = new LabelledEntryWidget(0.0f, 0.5f) { LabelText = "State 3 Time Fuel:" };
+            _fuelPercentState3  = new LabelledEntryWidget(0.0f, 0.5f) { LabelText = "State 3 Position Fuel:"};
+            _oxidTimeState3     = new LabelledEntryWidget(0.0f, 0.5f) { LabelText = "State 3 Time Oxid:" };
+            _oxidPercentState3  = new LabelledEntryWidget(0.0f, 0.5f) { LabelText = "State 3 Position Oxid:" };
+            
             _btnAutoRunConfigSave = new Button{Label = "Save", WidthRequest = 80, HeightRequest = 40};
-            startDelay = new LabelledEntryWidget {
-                LabelText = "Start Delay:",
-                EntryText =  "",
-            };
-            fuelTimeState1 = new LabelledEntryWidget
-            {
-                LabelText =   "Time Fuel State1:",
-                EntryText =  "",
-                    
+            
+            /* Table How To ;)
+             *
+             *   0          1          2
+             *  0+----------+----------+
+             *   |          |          |
+             *  1+----------+----------+
+             *   |          |          |
+             *  2+----------+----------+
+             * 
+             */
            
-            };
+            Table layout = new Table(5, 4, true);
+            layout.Attach(_startDelay, 0, 1, 0, 1);
+            layout.Attach(_ignitionTime, 0, 1, 1, 2);
+            layout.Attach(_endTime, 0, 1, 2, 3);
             
-            fuelPercentState1 = new LabelledEntryWidget
-            {
-                LabelText = "Position Fuel State1:",
-                EntryText = "",
-                
-            };
+            layout.Attach(_fuelTimeState1, 1, 2, 0, 1);
+            layout.Attach(_fuelPercentState1, 1, 2, 1, 2);
+            layout.Attach(_oxidTimeState1, 1, 2, 2, 3);
+            layout.Attach(_oxidPercentState1, 1, 2, 3, 4);
             
-            fuelTimeState2 = new LabelledEntryWidget
-            {
-                LabelText = "Time Fuel State2:",
-                EntryText = "",
-                
-            };
+            layout.Attach(_fuelTimeState2, 2, 3, 0, 1);
+            layout.Attach(_fuelPercentState2, 2, 3, 1, 2);
+            layout.Attach(_oxidTimeState2, 2, 3, 2, 3);
+            layout.Attach(_oxidPercentState2, 2, 3, 3, 4);
             
-            fuelPercentState2 = new LabelledEntryWidget
-            {
-                LabelText = "Position Fuel State2:",
-                EntryText = "",
-                
-            };
+            layout.Attach(_fuelTimeState3, 3, 4, 0, 1);
+            layout.Attach(_fuelPercentState3, 3, 4, 1, 2);
+            layout.Attach(_oxidTimeState3, 3, 4, 2, 3);
+            layout.Attach(_oxidPercentState3, 3, 4, 3, 4);
             
-            fuelTimeState3 = new LabelledEntryWidget
-            {
-                LabelText = "Time Fuel State3:",
-                EntryText = "",
-                
-            };
+            layout.Attach(_btnAutoRunConfigSave, 3, 4, 4, 5, 0, 0, 20, 20);
             
-            fuelPercentState3 = new LabelledEntryWidget
-            {
-                LabelText = "Position Fuel State3:",
-                EntryText = "",
-               
-            };
+            _btnAutoRunConfigSave.Pressed += getTimings;
             
-             oxidTimeState1 = new LabelledEntryWidget
-            {
-                LabelText =   "Time Oxid State1:",
-                EntryText =  "",
-                
-           
-            };
-            oxidPercentState1 = new LabelledEntryWidget
-            {
-                LabelText = "Position Oxid State1:",
-                EntryText = "",
-                
-            };
-            
-            oxidTimeState2 = new LabelledEntryWidget()
-            {
-                LabelText = "Time Oxid State2:",
-                EntryText = "",
-                
-                
-            };
-            
-            oxidPercentState2 = new LabelledEntryWidget
-            {
-                LabelText = "Position Oxid State2:",
-                EntryText = "",
-                
-            };
-            
-            oxidTimeState3 = new LabelledEntryWidget
-            {
-                LabelText = "Time Oxid State1:",
-                EntryText = "",
-            };
-            
-            oxidPercentState3 = new LabelledEntryWidget
-            {
-                LabelText = "Position Oxid State1:",
-                EntryText = "",
-            };
-            
-            ignitionTime = new LabelledEntryWidget()
-            {
-                LabelText = "Ignition Time:",
-                EntryText = ""
-            };
-            
-        
-
-            endTime = new LabelledEntryWidget
-            {
-                LabelText = "End Time:",
-                EntryText = ""
-            };
-            
-            
-
-            VBox container = new VBox(false , 50);
-            HBox headerTop = new HBox(false, 0);
-            VBox startTimeBox = new VBox(false,0);
-            VBox ignitionBox = new VBox(false, 0);
-            VBox endTimeBox = new VBox(false,0);
-            HBox top = new HBox(false ,0);
-            VBox fuelState1 = new VBox(false, 0);
-            VBox fuelState2 = new VBox(false, 0);
-            VBox fuelState3 = new VBox(false,0);
-            HBox bottom = new HBox(false ,0);
-            VBox oxidState1 = new VBox(false, 0);
-            VBox oxidState2 = new VBox(false, 0);
-            VBox oxidState3 = new VBox(false,0);
-           
-            
-            container.PackStart(headerTop, false, false,0);
-            container.PackStart(top,false,false,0);
-            container.PackStart(bottom,false,false,0);
-            top.PackStart(fuelState1, false,false,0);
-            top.PackStart(fuelState2,false,false,0);
-            top.PackStart(fuelState3, false, false, 0);
-            headerTop.PackStart(startTimeBox);
-            headerTop.PackStart(ignitionBox);
-            headerTop.PackStart(endTimeBox);
-           
-            startTimeBox.PackStart(startDelay, false, false, 0);
-            ignitionBox.PackStart(ignitionTime, false, false, 0);
-            endTimeBox.PackStart(endTime, false, false,0);
-        
-           // fuelState1.PackStart(headerFuelLabel1, false,false,0);
-            fuelState1.PackStart(fuelTimeState1, false , false,0);
-            fuelState1.PackEnd(fuelPercentState1, false ,false,0);
-            //fuelState2.PackStart(headerFuelLabel2, false, false,0 );
-            fuelState2.PackStart(fuelTimeState2,false,false,0);
-            fuelState2.PackEnd(fuelPercentState2,false,false,0);
-            //fuelState3.PackStart(headerFuelLabel3, false, false,0);
-            fuelState3.PackStart(fuelTimeState3,false,false,0);
-            fuelState3.PackEnd(fuelPercentState3, false,false,0);
-            //oxidState1.PackStart(headerOxidLabel1, false, false, 0);
-            oxidState1.PackStart(oxidTimeState1, false, false, 0);
-            oxidState1.PackEnd(oxidPercentState1, false, false, 0);
-            
-            //oxidState2.PackStart(headerOxidLabel2, false, false, 0);
-            oxidState2.PackStart(oxidTimeState2, false, false ,0);
-            oxidState2.PackEnd(oxidPercentState2, false , false , 0);
-            //oxidState3.PackStart(headerOxidLabel3, false, false, 0);
-            oxidState3.PackStart(oxidTimeState3, false, false, 0);
-            oxidState3.PackStart(oxidPercentState3, false ,false, 0);
-            bottom.PackStart(oxidState1, false, false, 0);
-            bottom.PackStart(oxidState2, false, false, 0);
-            bottom.PackStart(oxidState3, false, false,0);
-            bottom.PackStart(_btnAutoRunConfigSave, false, false,0);
-            _btnAutoRunConfigSave.Clicked += (sender, args) => getTimeings(sender, new EventArgs());
-            Add(container);
+            Add(layout);
             ShowAll();
         }
         
-        public void getTimeings(object sender, EventArgs e)
+        public void getTimings(object sender, EventArgs e)
         {
 
             String errorMsg = "";
-            List<LabelledEntryWidget> entryValues = new List<LabelledEntryWidget>
+            bool error = false;
+            AutoParameters ap = new AutoParameters();
             
-            {
-                startDelay,
-                ignitionTime,
-                fuelTimeState1,
-                fuelPercentState1,
-                fuelTimeState2,
-                fuelPercentState2,
-                fuelTimeState3,
-                fuelPercentState3,
-                oxidTimeState1,
-                oxidPercentState1,
-                oxidTimeState2,
-                oxidPercentState2,
-                oxidTimeState3,
-                oxidPercentState3,
-                endTime
-            };
+            error |= ValidateTime(_startDelay, 0, ref errorMsg, out ap.startTime);
+            error |= ValidateTime(_ignitionTime, ap.startTime, ref errorMsg, out ap.ignitionTime);
             
-            List<LabelledEntryWidget> entryValuesPosition = new List<LabelledEntryWidget>
+            error |= ValidateTime(_fuelTimeState1, ap.startTime, ref errorMsg, out ap.fuelState1Time);
+            error |= ValidateTime(_oxidTimeState1, ap.startTime, ref errorMsg, out ap.oxidState1Time);
+          
+            error |= ValidateTime(_fuelTimeState2, ap.fuelState1Time, ref errorMsg, out ap.fuelState2Time);
+            error |= ValidateTime(_oxidTimeState2, ap.oxidState1Time, ref errorMsg, out ap.oxidState2Time);
             
-            {
-                fuelPercentState1,
-                fuelPercentState2,
-                fuelPercentState3,
-                oxidPercentState1,
-                oxidPercentState2,
-                oxidPercentState3,
-                
-            };
-            ushort[] intList = new ushort[15];
-            int counter = 0;
-            foreach (LabelledEntryWidget label in entryValues)
-            {
-                ushort.TryParse(label.EntryText, out intList[counter]);
-               
-            }
+            error |= ValidateTime(_fuelTimeState3, ap.fuelState2Time, ref errorMsg, out ap.fuelState3Time);
+            error |= ValidateTime(_oxidTimeState3, ap.oxidState2Time, ref errorMsg, out ap.oxidState3Time);
 
-            
-            for(int i = 0; i < entryValues.Count; i++)
-            {                
-                if (entryValues[i].EntryText.IsNullOrEmpty())
-                {
-                    errorMsg += "-" + entryValues[i].LabelText +" Must not be Empty\n";
-                    
-                }
+            error |= ValidateTime(_endTime, Math.Max(ap.fuelState3Time, ap.oxidState3Time), ref errorMsg, out ap.endTime);
 
-            }
+            error |= ValidatePosition(_fuelPercentState1, ref errorMsg, out ap.fuelState1Percentage);
+            error |= ValidatePosition(_oxidTimeState1, ref errorMsg, out ap.oxidState1Percentage);
             
-            if (Int32.Parse(fuelTimeState1.EntryText) > Int32.Parse(fuelTimeState2.EntryText))
-            {
-                errorMsg += fuelTimeState2.LabelText + " Must be higher than " + fuelTimeState1.LabelText + "\n";
-            }
-                
-            if (Int32.Parse(fuelTimeState2.EntryText) > Int32.Parse(fuelTimeState3.EntryText))
-            {
-                errorMsg += fuelTimeState3.LabelText + " Must be higher than " + fuelTimeState2.LabelText + "\n";
-
-            }
+            error |= ValidatePosition(_fuelPercentState2, ref errorMsg, out ap.fuelState2Percentage);
+            error |= ValidatePosition(_oxidTimeState2, ref errorMsg, out ap.oxidState2Percentage);
             
-            if (Int32.Parse(oxidTimeState1.EntryText) > Int32.Parse(oxidTimeState2.EntryText))
-            {
-                errorMsg += oxidTimeState2.LabelText + " Must be higher than " + oxidTimeState1.LabelText + "\n";
-            }
-                
-            if (Int32.Parse(oxidTimeState2.EntryText) > Int32.Parse(oxidTimeState3.EntryText))
-            {
-                errorMsg += oxidTimeState3.LabelText + " Must be higher than " + oxidTimeState2.LabelText + "\n";
-
-            }
+            error |= ValidatePosition(_fuelPercentState3, ref errorMsg, out ap.fuelState3Percentage);
+            error |= ValidatePosition(_oxidTimeState3, ref errorMsg, out ap.oxidState3Percentage);
+            
+            /*
+           
 
             int[] positionValues = new int[6];
             for (int i = 0; i < entryValuesPosition.Count; i++)
             {
                 Int32.TryParse(entryValuesPosition[i].EntryText, out positionValues[i]);
+                
+                       What? :D 
                 if (!Enumerable.Range(0,100).Contains(positionValues[i]))
                 {
                     errorMsg +=  entryValuesPosition[i].LabelText + " Values must between 0 - 100 in \n";
                 }
-            }
+            }*/
 
-            if (!errorMsg.IsNullOrEmpty())
+            if (error)
             {
                 MessageDialog errorDialog = new MessageDialog(this, 
                     DialogFlags.DestroyWithParent, 
@@ -302,11 +162,53 @@ namespace MissionControl.UI
                     errorMsg
                 );
                 errorDialog.Run();
-                errorDialog.Destroy(); 
-
+                errorDialog.Destroy();
                 
             }
             
+            
+        }
+
+
+
+        public bool ValidateTime(LabelledEntryWidget input, int lowerTime, ref string errMsg, out ushort time)
+        {
+            if (UInt16.TryParse(input.EntryText, out ushort result))
+            {
+                if (result >= lowerTime)
+                {
+                    time = result;
+                    return false;
+                }
+                
+                time = 0;
+                errMsg += $"\"{input.LabelText}\" was smaller than required\n";
+                return true;
+            }
+
+            time = 0;
+            errMsg += $"\"{input.LabelText}\" was not an integer\n";
+            return true;
+        }
+
+        public bool ValidatePosition(LabelledEntryWidget input, ref string errMsg, out float position)
+        {
+            if (float.TryParse(input.EntryText, out float result))
+            {
+                if (result >= 0.0 && result <= 100.0)
+                {
+                    position = result;
+                    return false;
+                }
+                
+                position = 0;
+                errMsg += $"\"{input.LabelText}\" was not between 0.0 and 100.0\n";
+                return true;
+            }
+            
+            position = 0;
+            errMsg += $"\"{input.LabelText}\" was not a floating point number\n";
+            return true;
         }
        
        

@@ -34,8 +34,8 @@ namespace MissionControl.UI.Widgets
                 WidthRequest = 60
             };
 
-            _box.PackStart(_label, true, false, 0);
-            _box.PackStart(_text, false, false, 30);
+            _box.PackStart(_label, false, false, 30);
+            _box.PackEnd(_text, false, false, 30);
 
             Add(_box);
         }
@@ -43,6 +43,11 @@ namespace MissionControl.UI.Widgets
         public LabelledEntryWidget(string label) : this()
         {
             _label.Text = label;
+        }
+        
+        public LabelledEntryWidget(float xalign, float yalign) : this()
+        {
+            _label.SetAlignment(xalign, yalign);
         }
 
         public LabelledEntryWidget(string label, string text) : this(label)
