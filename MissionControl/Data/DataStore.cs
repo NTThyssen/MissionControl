@@ -70,6 +70,10 @@ namespace MissionControl.Data
             _session.Setting.BaudRate.Value = PreferenceManager.GetIfExists(_session.Setting.BaudRate.PreferenceKey, 9600);
             _session.Setting.ShowSettingsOnStartup.Value = PreferenceManager.GetIfExists(_session.Setting.ShowSettingsOnStartup.PreferenceKey, true);
 
+            // Auto Parameters
+            _session.Setting.AutoParameters.Value =
+                PreferenceManager.GetIfExists(_session.Setting.AutoParameters.PreferenceKey, "");
+            
             // Fluid
             _session.Setting.OxidCV.Value = PreferenceManager.GetIfExists(_session.Setting.OxidCV.PreferenceKey, 1.0f);
             _session.Setting.OxidDensity.Value = PreferenceManager.GetIfExists(_session.Setting.OxidDensity.PreferenceKey, 1.0f);

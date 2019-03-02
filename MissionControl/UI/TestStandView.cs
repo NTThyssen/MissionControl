@@ -265,7 +265,7 @@ namespace MissionControl.UI
             plotItem.Activated += (sender, e) => _listener.OnMenuPlotViewerPressed();
             menu.Append(plotItem);
             
-            MenuItem autoRunItem = new MenuItem("AutoRun Config");
+            MenuItem autoRunItem = new MenuItem("Auto Sequence");
             autoRunItem.Activated += (sender, e) => _listener.OnMenuAutoRunConfigPressed();
             menu.Append(autoRunItem);
 
