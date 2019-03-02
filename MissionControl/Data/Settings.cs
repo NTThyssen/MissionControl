@@ -40,6 +40,9 @@ namespace MissionControl.Data
             return Convert.ToString(Value);
         }
     }
+    
+    
+    
 
     public class FloatProperty : Property
     {
@@ -91,6 +94,25 @@ namespace MissionControl.Data
             return new List<Property> { LogFilePath, PortName, BaudRate, OxidCV, OxidDensity, FuelCV, FuelDensity, TodayPressure, ShowAbsolutePressure, ShowSettingsOnStartup };
         }
 
+        public struct AutoParams
+        {
+            ushort startTime;
+            ushort ignitionTime;
+            ushort fuelState1Time;
+            FloatProperty fuelState1Percentage;
+            ushort oxidState1Time;
+            FloatProperty oxidState1Percentage;
+            ushort fuelState2Time;
+            FloatProperty fuelState2Percentage;
+            ushort oxidState2Time;
+            FloatProperty oxidState2Percentage;
+            ushort fuelState3Time;
+            FloatProperty fuelState3Percentage;
+            ushort oxidState3Time;
+            FloatProperty oxidState3Percentage;
+            ushort endTime;
+        }
+        
         public Dictionary<string, Property> PropertiesByID()
         {
             Dictionary<string, Property> dict = new Dictionary<string, Property>();

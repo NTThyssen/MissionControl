@@ -30,7 +30,7 @@ namespace MissionControl.UI
             _relative = new RadioButton(_absolute, "Relative");
 
             HBox box = new HBox(false, 0);
-            box.PackStart(_label, false, false, 0);
+            box.PackStart(_label, false, false, 30);
             box.PackStart(_absolute, false, false, 0);
             box.PackStart(_relative, false, false, 0);
 

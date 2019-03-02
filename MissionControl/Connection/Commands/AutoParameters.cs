@@ -5,17 +5,17 @@ namespace MissionControl.Connection.Commands
         public ushort startTime;
         public ushort ignitionTime;
         public ushort fuelState1Time;
-        public ushort fuelState1Percentage;
+        public float fuelState1Percentage;
         public ushort oxidState1Time;
-        public ushort oxidState1Percentage;
+        public float oxidState1Percentage;
         public ushort fuelState2Time;
-        public ushort fuelState2Percentage;
+        public float fuelState2Percentage;
         public ushort oxidState2Time;
-        public ushort oxidState2Percentage;
+        public float oxidState2Percentage;
         public ushort fuelState3Time;
-        public ushort fuelState3Percentage;
+        public float fuelState3Percentage;
         public ushort oxidState3Time;
-        public ushort oxidState3Percentage;
+        public float oxidState3Percentage;
         public ushort endTime;
     }
 }
