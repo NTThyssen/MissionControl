@@ -200,10 +200,10 @@ namespace MissionControl.UI
             
             // Mid panel
             DSectionTitle valvesTitle = new DSectionTitle("Valves");
-            DSectionTitle tankFillTitle = new DSectionTitle("IPA Tank [kg]");
+            DSectionTitle tankFillTitle = new DSectionTitle("IPA Tank [kg]", 14);
             midPanel.PackStart(valvesTitle, false, false, 0);
-            midPanel.PackStart(_valveWidget, false, false, 0);
-            midPanel.PackStart(tankFillTitle, false, false, 10);
+            midPanel.PackStart(_valveWidget, false, false, 10);
+            midPanel.PackStart(tankFillTitle, false, false, 0);
             midPanel.PackStart(tankFillContainer, false, false, 0);
             midPanel.PackStart(logButtonContainer, false, false, 10);
 
