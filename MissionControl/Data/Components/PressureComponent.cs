@@ -44,7 +44,7 @@ namespace MissionControl.Data.Components
 
         public string LogHeader()
         {
-            return Name + " [barR]";
+            return Name + " [barg]";
         }
     }
 }

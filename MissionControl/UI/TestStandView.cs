@@ -214,16 +214,14 @@ namespace MissionControl.UI
             
             // Mid panel
             DSectionTitle valvesTitle = new DSectionTitle("Valves");
-            DSectionTitle tareLoadTitl
-                = new DSectionTitle("Reset Load");
+            DSectionTitle tareLoadTitle = new DSectionTitle("Tare load");
             DSectionTitle tankFillTitle = new DSectionTitle("IPA Tank [kg]", 14);
             midPanel.PackStart(valvesTitle, false, false, 0);
             midPanel.PackStart(_valveWidget, false, false, 10);
             midPanel.PackStart(tankFillTitle, false, false, 0);
             midPanel.PackStart(tankFillContainer, false, false, 0);
-            midPanel.PackStart(tareLoadTitl, false, false, 0);
+            midPanel.PackStart(tareLoadTitle, false, false, 0);
             midPanel.PackStart(_tareLoadBtn, false, false, 0);
-            midPanel.PackStart(logButtonContainer, false, false, 10);
             
 
             // Right panel
@@ -233,7 +231,8 @@ namespace MissionControl.UI
             rightPanel.PackStart(_stateWidget, false, false, 20);
             rightPanel.PackStart(autoSequenceTitle, false, false, 0);
             rightPanel.PackStart(autoSequenceButtons, false, false, 0);
-            rightPanel.PackStart(connectionContainer, false, false, 20);
+            rightPanel.PackStart(connectionContainer, false, false, 0);
+            rightPanel.PackStart(logButtonContainer, false, false, 20);
             rightPanel.PackStart(_btnLock, false, false, 20);
 
             // Horizonal layout

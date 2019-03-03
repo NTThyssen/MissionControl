@@ -126,12 +126,12 @@ namespace MissionControl.UI.Widgets
                     case PressureComponent pt:
                         if (_session.Setting.ShowAbsolutePressure.Value)
                         {
-                            text.Text = Component.ToRounded(pt.Absolute(_session.Setting.TodayPressure.Value), 2) + " barA";
+                            text.Text = Component.ToRounded(pt.Absolute(_session.Setting.TodayPressure.Value), 2) + " bara";
                             text.Color = pt.IsNominal(pt.Absolute(_session.Setting.TodayPressure.Value)) ? nominalColor : warningColor;
                         }
                         else
                         {
-                            text.Text = Component.ToRounded(pt.Relative(), 2) + " barR";
+                            text.Text = Component.ToRounded(pt.Relative(), 2) + " barg";
                             text.Color = pt.IsNominal(pt.Relative()) ? nominalColor : warningColor;
                         }
                         break;

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Globalization;
+using Pango;
 
 namespace MissionControl.Data.Components
 {
@@ -7,12 +8,14 @@ namespace MissionControl.Data.Components
     {
         private int _rawLoad;
         private Scaler _scaler;
-        private float _taredValue;
+        private int _taredValue;
       
 
         public override string TypeName => "Load cell";
         public override int ByteSize => 2;
         public override bool Signed => true;
+
+        public float Gravity => 10.0f; 
 
         public LoadComponent(byte boardID, string graphicID, string name, Scaler scaler) : base(boardID, graphicID, name)
         {
@@ -26,8 +29,7 @@ namespace MissionControl.Data.Components
 
         public float Newtons()
         {
-            
-            return _scaler(_rawLoad) * 10.0f - _taredValue;
+            return _scaler(_rawLoad - _taredValue) * Gravity;
         }
 
         public float Kilos()
@@ -47,7 +49,7 @@ namespace MissionControl.Data.Components
 
         public void Tare()
         {
-            _taredValue = _scaler(_rawLoad) * 10.0f;
+            _taredValue = _rawLoad;
 
         }
 

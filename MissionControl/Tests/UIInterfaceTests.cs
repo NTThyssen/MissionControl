@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using MissionControl.Connection;
 using MissionControl.Connection.Commands;
 using MissionControl.Data;
+using MissionControl.Data.Components;
 using MissionControl.UI;
 using Moq;
 using NUnit.Framework;
@@ -87,6 +88,30 @@ namespace MissionControl.Tests
             };
             
             Assert.AreEqual(ioThread.Commands[0].ToByteData(), expected);
+        }
+        
+        [Test]
+        public void Verify_Tare() {
+            TestStandMapping mapping = new TestStandMapping();
+            Session session = new Session(mapping);
+            DataStore dataStore = new DataStore(session);
+            
+            Mock<IUserInterface> ui = new Mock<IUserInterface>();
+            Mock<LogThread> logThread = new Mock<LogThread>(dataStore);
+            IOThread ioThread = new IOThread(dataStore,ref session);
+            
+            Program p = new Program(dataStore, logThread.Object, ioThread, ui.Object);
+            
+            LoadComponent l = (mapping.ComponentsByID()[0] as LoadComponent);
+            
+            Assert.AreEqual(0,l.Newtons());
+            l.Set(10);
+            Assert.AreEqual(10 * l.Gravity,l.Newtons());
+            l.Tare();
+            l.Set(10);
+            Assert.AreEqual(0,l.Newtons());
+            l.Set(200);
+            Assert.AreEqual(200 * l.Gravity - 10 * l.Gravity,l.Newtons());
         }
     }
 }

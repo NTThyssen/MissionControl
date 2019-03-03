@@ -67,5 +67,6 @@ namespace MissionControl.Tests
             float volume = tc.CurrentVolume;
             Assert.IsTrue(Math.Abs(volume - 3.832606742) < 0.0001);
         }
+    
     }
 }
