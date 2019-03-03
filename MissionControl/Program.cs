@@ -98,13 +98,14 @@ namespace MissionControl
         {
 
             ISerialPort port;
+            Session currentSession = _dataStore.GetCurrentSession();
             if (_isUsingSimulatedSerialPort)
             {
-                port = new SimSerialPort(_dataStore.GetCurrentSession().Mapping);
+                port = new SimSerialPort(currentSession.Mapping);
             }
             else
             {
-                port = new SerialPort();
+                port = new SerialPort(currentSession.Setting.PortName.Value, currentSession.Setting.BaudRate.Value);
             }
             _ioThread.StartConnection(port);
         }

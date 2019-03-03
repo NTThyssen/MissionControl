@@ -11,7 +11,8 @@ namespace MissionControl.Data
         PressureComponent PT_N2, PT_IPA, PT_N2O, PT_FUEL, PT_OX, PT_CHAM;
         TemperatureComponent TC_IPA, TC_N2O, TC_1, TC_2, TC_3, TC_4, TC_5, TC_6;
         LoadComponent LOAD;
-        ServoComponent SV_IPA, SV_N2O, MV_IPA, MV_N2O;
+        SolenoidComponent SV_IPA, SV_N2O;
+        ServoComponent MV_IPA, MV_N2O;
         SolenoidComponent SN_N2O_FILL, SN_FLUSH; 
         LevelComponent T_N2O;
         TankComponent T_IPA;
@@ -41,8 +42,8 @@ namespace MissionControl.Data
             
             LOAD = new LoadComponent(0, "LOAD", "Load cell", x => x);
             
-            SV_IPA = new ServoComponent(4, "SV_IPA", "SV-IPA", "SV_IPA_SYMBOL");
-            SV_N2O = new ServoComponent(5, "SV_N2O", "SV-N2O", "SV_N2O_SYMBOL");
+            SV_IPA = new SolenoidComponent(4, "SV_IPA", "SV-IPA", "SV_IPA_SYMBOL");
+            SV_N2O = new SolenoidComponent(5, "SV_N2O", "SV-N2O", "SV_N2O_SYMBOL");
             MV_IPA = new ServoComponent(6, "MV_IPA", "MV-IPA", "MV_IPA_SYMBOL");
             MV_N2O = new ServoComponent(7, "MV_N2O", "MV-N2O", "MV_N2O_SYMBOL");
 
@@ -59,11 +60,16 @@ namespace MissionControl.Data
             
             _states = new List<State>
             {
-                new State(0, "First"),
-                new State(1, "Second"),
-                new State(2, "Third")
+                new State(0, "Idle"),
+                new State(1, "Pre-Stage 1"),
+                new State(2, "Pre-Stage 2"),
+                new State(3, "Ramp up"),
+                new State(4, "Regulated"),
+                new State(5, "Shutdown 1"),
+                new State(6, "Shutdown 2"),
+                new State(7, "Flush")
             };
-            EmergencyState = _states[1];
+            EmergencyState = _states[5];
 
         }
 

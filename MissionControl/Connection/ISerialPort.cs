@@ -3,8 +3,6 @@ namespace MissionControl.Connection
 {
     public interface ISerialPort
     {
-        string PortName { get; set; }
-        int BaudRate { get; set; }
         bool IsOpen { get; }
         int BytesToRead { get; }
 

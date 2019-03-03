@@ -70,6 +70,7 @@
   <ItemGroup>
     <Compile Include="Connection\Commands\AutoParameters.cs" />
     <Compile Include="Connection\Commands\AutoParametersCommand.cs" />
+    <Compile Include="Connection\EthernetPort.cs" />
     <Compile Include="Data\Components\TankComponent.cs" />
     <Compile Include="gtk-gui\generated.cs" />
     <Compile Include="gtk-gui\MissionControl.UI.LabelledCheckboxWidget.cs" />

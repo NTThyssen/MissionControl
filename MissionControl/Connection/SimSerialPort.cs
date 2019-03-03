@@ -125,7 +125,7 @@ namespace MissionControl.Connection
                 switch (c)
                 {
                     case PressureComponent pt:
-                        value = BitConverter.GetBytes((short)random.Next(0, 40));
+                        value = BitConverter.GetBytes((short)random.Next(10, 30));
                         break;
                     case TemperatureComponent tc:
                         value = BitConverter.GetBytes((short)random.Next(-50, 300));
@@ -139,7 +139,7 @@ namespace MissionControl.Connection
                     case ServoComponent servo:
                         ushort randVal = (ushort) random.Next(0, ushort.MaxValue);
                         value = BitConverter.GetBytes(randVal);
-                        Console.WriteLine("Name: {0} Random vlaue: {1}. Bytes: {2:X} {3:X}", c.Name, randVal, value[1], value[0]);
+                        Console.WriteLine("Name: {0} Random value: {1}. Bytes: {2:X} {3:X}", c.Name, randVal, value[1], value[0]);
                         break;
                     case SolenoidComponent solenoid:
                         value = BitConverter.GetBytes((short)random.Next(0, 2));

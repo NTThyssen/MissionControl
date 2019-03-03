@@ -180,6 +180,17 @@ namespace MissionControl.UI.Widgets
                         break;
                 }
             }
+            SvgText ofRatioText = FindTextByID("MASS_FLOW_RATIO");
+            FlowComponent fuelFlow = _session.Mapping.ComponentsByID()[100] as FlowComponent;
+            FlowComponent oxidFlow = _session.Mapping.ComponentsByID()[101] as FlowComponent;
+            if (ofRatioText != null && fuelFlow != null && oxidFlow != null)
+            {
+                float ofRatio = (oxidFlow.MassFlow / fuelFlow.MassFlow);
+                ofRatioText.Text = !float.IsNaN(ofRatio) ? 
+                        Component.ToRounded(oxidFlow.MassFlow / fuelFlow.MassFlow, 2) 
+                        : "0.00";
+            }
+            
             UpdateImage();
 
         }

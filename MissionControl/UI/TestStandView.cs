@@ -64,7 +64,7 @@ namespace MissionControl.UI
                 base(Gtk.WindowType.Toplevel)
         {
             Title = "Control Panel";
-            SetPosition(WindowPosition.Center);
+            //SetPosition(WindowPosition.Center);
 
             _listener = listener;
             _session = session;
@@ -214,14 +214,14 @@ namespace MissionControl.UI
             
             // Mid panel
             DSectionTitle valvesTitle = new DSectionTitle("Valves");
-            DSectionTitle tareLoadTitle = new DSectionTitle("Tare load");
+            DSectionTitle tareLoadTitle = new DSectionTitle("Reset load");
             DSectionTitle tankFillTitle = new DSectionTitle("IPA Tank [kg]", 14);
             midPanel.PackStart(valvesTitle, false, false, 0);
             midPanel.PackStart(_valveWidget, false, false, 10);
             midPanel.PackStart(tankFillTitle, false, false, 0);
             midPanel.PackStart(tankFillContainer, false, false, 0);
             midPanel.PackStart(tareLoadTitle, false, false, 0);
-            midPanel.PackStart(_tareLoadBtn, false, false, 0);
+            midPanel.PackStart(_tareLoadBtn, false, false, 10);
             
 
             // Right panel
@@ -339,10 +339,9 @@ namespace MissionControl.UI
         public void UpdateControls() {
             UpdateLastConnectionLabel();
 
-            _valveWidget.Sensitive = !_btnLock.Active && !_session.IsAutoSequence;
+            _valveWidget.Sensitive = !_btnLock.Active && !_session.IsAutoSequence && _session.Connected;
             
             _stateWidget.SetCurrentState(_session.State, _session.IsAutoSequence);
-            _stateWidget.Sensitive = !_btnLock.Active && !_session.IsAutoSequence;
 
             _btnConnect.Sensitive = !_btnLock.Active && !_session.Connected;
             _btnDisconnect.Sensitive = !_btnLock.Active && _session.Connected;
@@ -352,7 +351,6 @@ namespace MissionControl.UI
            
             _btnLock.Sensitive = !_session.IsAutoSequence;
             
-           
         }
 
         public void UpdateSVG() {
