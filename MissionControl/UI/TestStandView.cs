@@ -13,7 +13,6 @@ namespace MissionControl.UI
     {
         void OnMenuSettingsPressed();
         void OnMenuPlotViewerPressed();
-        void OnStatePressed(State state);
         void OnServoPressed(ServoComponent servo, float value);
         void OnSolenoidPressed(SolenoidComponent solenoid, bool open);
         void OnLogStartPressed();
@@ -30,7 +29,7 @@ namespace MissionControl.UI
 
     }
 
-    public partial class TestStandView : Window, ILockable, IValveControlListener, IStateControlListener
+    public partial class TestStandView : Window, ILockable, IValveControlListener
     {
         
         SVGView _svgWidget;
@@ -85,10 +84,10 @@ namespace MissionControl.UI
 
             _svgWidget = new SVGView(@"Resources/TestStand.svg", ref _session);
             _valveWidget = new ValveControlWidget(_session.Mapping.Components(), this);
-            _stateWidget = new StateControlWidget(_session.Mapping.States(), this);
+            _stateWidget = new StateControlWidget(_session.Mapping.States());
             _stateWidget.SetCurrentState(_session.State, false);
 
-            VBox midPanel = new VBox(false, 8);
+            VBox midPanel = new VBox(false, 10);
             VBox rightPanel = new VBox(false, 8);
 
             // Logging
@@ -216,24 +215,24 @@ namespace MissionControl.UI
             DSectionTitle valvesTitle = new DSectionTitle("Valves");
             DSectionTitle tareLoadTitle = new DSectionTitle("Reset load");
             DSectionTitle tankFillTitle = new DSectionTitle("IPA Tank [kg]", 14);
+            DSectionTitle autoSequenceTitle = new DSectionTitle("Auto Sequence");
             midPanel.PackStart(valvesTitle, false, false, 0);
             midPanel.PackStart(_valveWidget, false, false, 10);
             midPanel.PackStart(tankFillTitle, false, false, 0);
             midPanel.PackStart(tankFillContainer, false, false, 0);
-            midPanel.PackStart(tareLoadTitle, false, false, 0);
-            midPanel.PackStart(_tareLoadBtn, false, false, 10);
+            midPanel.PackStart(autoSequenceTitle, false, false, 0);
+            midPanel.PackStart(autoSequenceButtons, false, false, 0);
             
 
             // Right panel
             DSectionTitle statesTitle = new DSectionTitle("States");
-            DSectionTitle autoSequenceTitle = new DSectionTitle("Auto Sequence");
             rightPanel.PackStart(statesTitle, false, false, 0);
-            rightPanel.PackStart(_stateWidget, false, false, 20);
-            rightPanel.PackStart(autoSequenceTitle, false, false, 0);
-            rightPanel.PackStart(autoSequenceButtons, false, false, 0);
-            rightPanel.PackStart(connectionContainer, false, false, 0);
-            rightPanel.PackStart(logButtonContainer, false, false, 20);
-            rightPanel.PackStart(_btnLock, false, false, 20);
+            rightPanel.PackStart(_stateWidget, false, false, 10);
+            rightPanel.PackStart(tareLoadTitle, false, false, 0);
+            rightPanel.PackStart(_tareLoadBtn, false, false, 0);
+            rightPanel.PackStart(connectionContainer, false, false, 5);
+            rightPanel.PackStart(logButtonContainer, false, false, 5);
+            rightPanel.PackStart(_btnLock, false, false, 5);
 
             // Horizonal layout
             HBox horizontalLayout = new HBox(false, 0);
@@ -346,7 +345,7 @@ namespace MissionControl.UI
             _btnConnect.Sensitive = !_btnLock.Active && !_session.Connected;
             _btnDisconnect.Sensitive = !_btnLock.Active && _session.Connected;
             
-            _btnStartSequence.Sensitive = !_btnLock.Active && !_session.IsAutoSequence;
+            _btnStartSequence.Sensitive = !_btnLock.Active && !_session.IsAutoSequence && _session.Connected;
             _btnStopSequence.Sensitive = !_btnLock.Active && _session.IsAutoSequence;
            
             _btnLock.Sensitive = !_session.IsAutoSequence;
@@ -422,11 +421,6 @@ namespace MissionControl.UI
                 dialog.Destroy();
                 a.RetVal = true;
             }            
-        }
-
-        public void OnStatePressed(State state)
-        {
-            _listener.OnStatePressed(state);
         }
 
         public void OnServoPressed(ServoComponent servo, float value)

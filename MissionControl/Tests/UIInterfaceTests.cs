@@ -58,21 +58,33 @@ namespace MissionControl.Tests
             
             AutoParameters param = new AutoParameters()
             {
-                startTime = 100,
-                ignitionTime = 300,
-                fuelState1Time = 500,
-                fuelState1Percentage = 30,
-                oxidState1Time = 500,
-                oxidState1Percentage = 40,
-                fuelState2Time = 1000,
-                fuelState2Percentage = 60,
-                oxidState2Time = 1000,
-                oxidState2Percentage = 60,
-                fuelState3Time = 2000,
-                fuelState3Percentage = 100,
-                oxidState3Time = 2000,
-                oxidState3Percentage = 100,
-                endTime = 3000,
+                StartDelay = 20000, // 0x4E20
+                PreStage1Time = 500, // 0x01F4
+                PreStage2MaxTime = 3000, // 0x0BB8
+                PreStage2StableTime = 250, // 0x00FA
+                RampUpStableTime = 250, // 0x00FA
+                RampUpMaxTime = 1500, // 0x05DC
+                BurnTime = 13000, // 0x32C8
+                Shutdown1Time = 500, // 0x01F4
+                Shutdown2Time = 500, // 0x01F4
+                FlushTime = 2000, // 0x07D0
+
+                PreStage1FuelPosition = 30.0f, // 0x4CCD
+                PreStage2FuelPosition = 30.0f, // 0x4CCD
+                RampUpFuelPosition = 100.0f, // 0xFFFF
+                Shutdown1FuelPosition = 0.0f, // 0x0000
+                Shutdown2FuelPosition = 0.0f, // 0x0000
+                
+                PreStage1OxidPosition = 0.0f, // 0x0000
+                PreStage2OxidPosition = 30.0f, // 0x4CCD
+                RampUpOxidPosition = 100.0f, // 0xFFFF
+                Shutdown1OxidPosition = 0.0f, // 0x0000
+                Shutdown2OxidPosition = 0.0f, // 0x0000
+        
+                PreStage2StablePressure = 4.0f, // 0x0004
+                ChamberPressurePressure = 17.0f, // 0x0011
+                EmtpyFuelFeedPressureThreshold = 10.0f, // 0x000A
+                EmtpyOxidFeedPressureThreshold = 10.0f // 0x000A
             };
             
             p.OnAutoParametersSet(param);
@@ -80,14 +92,36 @@ namespace MissionControl.Tests
             byte[] expected = 
             {
                 0xCB,
-                0x00, 0x64, 0x01, 0x2C,
-                0x01, 0xF4, 0x4C, 0xCD, 0x01, 0xF4, 0x66, 0x66,
-                0x03, 0xE8, 0x99, 0x99, 0x03, 0xE8, 0x99, 0x99,
-                0x07, 0xD0, 0xFF, 0xFF, 0x07, 0xD0, 0xFF, 0xFF,
-                0x0B, 0xB8
+                
+                0x4E, 0x20,
+                0x01, 0xF4,
+                0x0B, 0xB8,
+                0x00, 0xFA,
+                0x00, 0xFA,
+                0x05, 0xDC,
+                0x32, 0xC8,
+                0x01, 0xF4,
+                0x01, 0xF4,
+                0x07, 0xD0,
+                
+                0x4C, 0xCD,
+                0x4C, 0xCD,
+                0xFF, 0xFF,
+                0x00, 0x00,
+                0x00, 0x00,
+                0x00, 0x00,
+                0x4C, 0xCD,
+                0xFF, 0xFF,
+                0x00, 0x00,
+                0x00, 0x00,
+                
+                0x00, 0x04,
+                0x00, 0x11,
+                0x00, 0x0A,
+                0x00, 0x0A
             };
-            
-            Assert.AreEqual(ioThread.Commands[0].ToByteData(), expected);
+            byte[] actual = ioThread.Commands[0].ToByteData();
+            Assert.AreEqual(actual, expected);
         }
         
         [Test]

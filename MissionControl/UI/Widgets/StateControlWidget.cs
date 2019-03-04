@@ -7,21 +7,13 @@ using MissionControl.Data;
 namespace MissionControl.UI.Widgets
 {
 
-    public interface IStateControlListener
-    {
-        void OnStatePressed(State command);
-    }
-
     [System.ComponentModel.ToolboxItem(true)]
     public partial class StateControlWidget : Bin
     {
-
-        IStateControlListener _listener;
         Dictionary<EventBox, State> _stateTexts;
 
-        public StateControlWidget(List<State> states, IStateControlListener listener)
+        public StateControlWidget(List<State> states)
         {
-            _listener = listener ?? throw new ArgumentNullException(nameof(listener), "A listener was not provided");
 
             Build();
             VBox container = new VBox(false, 5);

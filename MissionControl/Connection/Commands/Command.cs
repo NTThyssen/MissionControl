@@ -18,6 +18,12 @@ namespace MissionControl.Connection.Commands
             double r = Math.Round(d, MidpointRounding.AwayFromZero);
             return Convert.ToUInt16(r);
         }
+        
+        protected ushort FloatByte(float value)
+        {
+            double r = Math.Round(value, MidpointRounding.AwayFromZero);
+            return Convert.ToUInt16(r);
+        }
     }
    
     

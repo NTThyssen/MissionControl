@@ -153,12 +153,6 @@ namespace MissionControl.UI
             _listener.OnTarePressed();
         }
 
-        public void OnStatePressed(State state)
-        {
-            StateCommand command = new StateCommand(state.StateID);
-            _listener.OnCommand(command);
-        }
-
         public void OnServoPressed(ServoComponent servo, float value)
         {
             ServoCommand command = new ServoCommand(servo.BoardID, value);

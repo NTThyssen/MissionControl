@@ -56,14 +56,6 @@ namespace MissionControl
         public void OnCommand(Command command)
         {
             _ioThread.SendCommand(command);
-
-            if (command is StateCommand sc)
-            {
-                // Fake response
-                State state = _dataStore.GetCurrentSession().Mapping.States().Find((State obj) => obj.StateID == sc.StateID);
-                if (state != null) _dataStore.GetCurrentSession().State = state;
-            }
-
         }
 
         public void OnValvePressed(ValveCommand command)
@@ -78,8 +70,6 @@ namespace MissionControl
 
         public void OnEmergencyState()
         {
-            StateCommand command = new StateCommand(_dataStore.GetCurrentSession().Mapping.EmergencyState.StateID);
-            _ioThread.SendEmergency(command);
         }
 
         public void OnLogStartPressed()

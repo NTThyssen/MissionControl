@@ -8,47 +8,67 @@ namespace MissionControl.Connection.Commands
 {
     public struct AutoParameters
     {
-        private const int N = 15;
+        private const int N = 24;
         
-        public ushort startTime;
-        public ushort ignitionTime;
-        public ushort fuelState1Time;
-        public float fuelState1Percentage;
-        public ushort oxidState1Time;
-        public float oxidState1Percentage;
-        public ushort fuelState2Time;
-        public float fuelState2Percentage;
-        public ushort oxidState2Time;
-        public float oxidState2Percentage;
-        public ushort fuelState3Time;
-        public float fuelState3Percentage;
-        public ushort oxidState3Time;
-        public float oxidState3Percentage;
-        public ushort endTime;
+        public ushort StartDelay;
+        public ushort PreStage1Time;
+        public ushort PreStage2MaxTime;
+        public ushort PreStage2StableTime;
+        public ushort RampUpStableTime;
+        public ushort RampUpMaxTime;
+        public ushort BurnTime;
+        public ushort Shutdown1Time;
+        public ushort Shutdown2Time;
+        public ushort FlushTime;
+
+        public float PreStage1FuelPosition;
+        public float PreStage2FuelPosition;
+        public float RampUpFuelPosition;
+        public float Shutdown1FuelPosition;
+        public float Shutdown2FuelPosition;
+        
+        public float PreStage1OxidPosition;
+        public float PreStage2OxidPosition;
+        public float RampUpOxidPosition;
+        public float Shutdown1OxidPosition;
+        public float Shutdown2OxidPosition;
+
+        public float PreStage2StablePressure;
+        public float ChamberPressurePressure;
+        public float EmtpyFuelFeedPressureThreshold;
+        public float EmtpyOxidFeedPressureThreshold;
 
         public string Serialize()
         {
             string[] s =
             {
-                startTime.ToString(),
-                ignitionTime.ToString(),
+                StartDelay.ToString(),
+                PreStage1Time.ToString(),
+                PreStage2MaxTime.ToString(),
+                PreStage2StableTime.ToString(),
+                RampUpStableTime.ToString(),
+                RampUpMaxTime.ToString(),
+                BurnTime.ToString(),
+                Shutdown1Time.ToString(),
+                Shutdown2Time.ToString(),
+                FlushTime.ToString(),
+        
+                PreStage1FuelPosition.ToString(CultureInfo.InvariantCulture),
+                PreStage2FuelPosition.ToString(CultureInfo.InvariantCulture),
+                RampUpFuelPosition.ToString(CultureInfo.InvariantCulture),
+                Shutdown1FuelPosition.ToString(CultureInfo.InvariantCulture),
+                Shutdown2FuelPosition.ToString(CultureInfo.InvariantCulture),
                 
-                fuelState1Time.ToString(),
-                fuelState1Percentage.ToString(CultureInfo.InvariantCulture),
-                oxidState1Time.ToString(),
-                oxidState1Percentage.ToString(CultureInfo.InvariantCulture),
-                
-                fuelState2Time.ToString(),
-                fuelState2Percentage.ToString(CultureInfo.InvariantCulture),
-                oxidState2Time.ToString(),
-                oxidState2Percentage.ToString(CultureInfo.InvariantCulture),
-                
-                fuelState3Time.ToString(),
-                fuelState3Percentage.ToString(CultureInfo.InvariantCulture),
-                oxidState3Time.ToString(),
-                oxidState3Percentage.ToString(CultureInfo.InvariantCulture),
-                
-                endTime.ToString()
+                PreStage1OxidPosition.ToString(CultureInfo.InvariantCulture),
+                PreStage2OxidPosition.ToString(CultureInfo.InvariantCulture),
+                RampUpOxidPosition.ToString(CultureInfo.InvariantCulture),
+                Shutdown1OxidPosition.ToString(CultureInfo.InvariantCulture),
+                Shutdown2OxidPosition.ToString(CultureInfo.InvariantCulture),
+
+                PreStage2StablePressure.ToString(CultureInfo.InvariantCulture),
+                ChamberPressurePressure.ToString(CultureInfo.InvariantCulture),
+                EmtpyFuelFeedPressureThreshold.ToString(CultureInfo.InvariantCulture),
+                EmtpyOxidFeedPressureThreshold.ToString(CultureInfo.InvariantCulture)
             };
 
             return string.Join(",", s);
@@ -63,27 +83,34 @@ namespace MissionControl.Connection.Commands
                 AutoParameters ap = new AutoParameters();
                 bool error = false;
                 string errorMsg = "";
-                error |= ValidateTime(param[0],"startTime", 0, ref errorMsg, out ap.startTime);
-                error |= ValidateTime(param[1], "ignitionTime",ap.startTime, ref errorMsg, out ap.ignitionTime);
-            
-                error |= ValidateTime(param[2], "fuelState1Time",ap.startTime, ref errorMsg, out ap.fuelState1Time);
-                error |= ValidatePosition(param[3], "fuelState1Percentage",ref errorMsg, out ap.fuelState1Percentage);
-                error |= ValidateTime(param[4], "oxidState1Time",ap.startTime, ref errorMsg, out ap.oxidState1Time);
-                error |= ValidatePosition(param[5],"oxidState1Percentage", ref errorMsg, out ap.oxidState1Percentage);
                 
+                error |= ValidateTime(param[0],nameof(ap.StartDelay), ref errorMsg, out ap.StartDelay);
+                error |= ValidateTime(param[0],nameof(ap.PreStage1Time), ref errorMsg, out ap.PreStage1Time);
+                error |= ValidateTime(param[0],nameof(ap.PreStage2MaxTime), ref errorMsg, out ap.PreStage2MaxTime);
+                error |= ValidateTime(param[0],nameof(ap.PreStage2StableTime), ref errorMsg, out ap.PreStage2StableTime);
+                error |= ValidateTime(param[0],nameof(ap.RampUpStableTime), ref errorMsg, out ap.RampUpStableTime);
+                error |= ValidateTime(param[0],nameof(ap.RampUpMaxTime), ref errorMsg, out ap.RampUpMaxTime);
+                error |= ValidateTime(param[0],nameof(ap.BurnTime), ref errorMsg, out ap.BurnTime);
+                error |= ValidateTime(param[0],nameof(ap.Shutdown1Time), ref errorMsg, out ap.Shutdown1Time);
+                error |= ValidateTime(param[0],nameof(ap.Shutdown2Time), ref errorMsg, out ap.Shutdown2Time);
+                error |= ValidateTime(param[0],nameof(ap.FlushTime), ref errorMsg, out ap.FlushTime);
                 
-                error |= ValidateTime(param[6], "fuelState2Time",ap.fuelState1Time, ref errorMsg, out ap.fuelState2Time);
-                error |= ValidatePosition(param[7], "fuelState2Percentage",ref errorMsg, out ap.fuelState2Percentage);
-                error |= ValidateTime(param[8], "oxidState2Time",ap.oxidState1Time, ref errorMsg, out ap.oxidState2Time);
-                error |= ValidatePosition(param[9],"oxidState2Percentage", ref errorMsg, out ap.oxidState2Percentage);
-            
-                error |= ValidateTime(param[10], "fuelState3Time",ap.fuelState2Time, ref errorMsg, out ap.fuelState3Time);
-                error |= ValidatePosition(param[11], "fuelState3Percentage",ref errorMsg, out ap.fuelState3Percentage);
-                error |= ValidateTime(param[12], "oxidState3Time",ap.oxidState2Time, ref errorMsg, out ap.oxidState3Time);
-                error |= ValidatePosition(param[13], "oxidState3Percentage",ref errorMsg, out ap.oxidState3Percentage);
+                error |= ValidatePosition(param[0],nameof(ap.PreStage1FuelPosition), ref errorMsg, out ap.PreStage1FuelPosition);
+                error |= ValidatePosition(param[0],nameof(ap.PreStage2FuelPosition), ref errorMsg, out ap.PreStage2FuelPosition);
+                error |= ValidatePosition(param[0],nameof(ap.RampUpFuelPosition), ref errorMsg, out ap.RampUpFuelPosition);
+                error |= ValidatePosition(param[0],nameof(ap.Shutdown1FuelPosition), ref errorMsg, out ap.Shutdown1FuelPosition);
+                error |= ValidatePosition(param[0],nameof(ap.Shutdown2FuelPosition), ref errorMsg, out ap.Shutdown2FuelPosition);
                 
-                error |= ValidateTime(param[14], "endTime",Math.Max(ap.fuelState3Time, ap.oxidState3Time), ref errorMsg, out ap.endTime);
+                error |= ValidatePosition(param[0],nameof(ap.PreStage1OxidPosition), ref errorMsg, out ap.PreStage1OxidPosition);
+                error |= ValidatePosition(param[0],nameof(ap.PreStage2OxidPosition), ref errorMsg, out ap.PreStage2OxidPosition);
+                error |= ValidatePosition(param[0],nameof(ap.RampUpOxidPosition), ref errorMsg, out ap.RampUpOxidPosition);
+                error |= ValidatePosition(param[0],nameof(ap.Shutdown1OxidPosition), ref errorMsg, out ap.Shutdown1OxidPosition);
+                error |= ValidatePosition(param[0],nameof(ap.Shutdown2OxidPosition), ref errorMsg, out ap.Shutdown2OxidPosition);
 
+                error |= ValidatePressure(param[0],nameof(ap.PreStage2StablePressure), ref errorMsg, out ap.PreStage2StablePressure);
+                error |= ValidatePressure(param[0],nameof(ap.ChamberPressurePressure), ref errorMsg, out ap.ChamberPressurePressure);
+                error |= ValidatePressure(param[0],nameof(ap.EmtpyFuelFeedPressureThreshold), ref errorMsg, out ap.EmtpyFuelFeedPressureThreshold);
+                error |= ValidatePressure(param[0],nameof(ap.EmtpyOxidFeedPressureThreshold), ref errorMsg, out ap.EmtpyOxidFeedPressureThreshold);
                 if (!error)
                 {
                     return ap;
@@ -93,19 +120,12 @@ namespace MissionControl.Connection.Commands
             return new AutoParameters();
         }
         
-        public static bool ValidateTime(string input, string name, int lowerTime, ref string errMsg, out ushort time)
+        public static bool ValidateTime(string input, string name, ref string errMsg, out ushort time)
         {
             if (UInt16.TryParse(input, out ushort result))
             {
-                if (result >= lowerTime)
-                {
-                    time = result;
-                    return false;
-                }
-                
-                time = 0;
-                errMsg += $"\"{name}\" was smaller than required\n";
-                return true;
+                time = result;
+                return false;
             }
 
             time = 0;
@@ -129,6 +149,26 @@ namespace MissionControl.Connection.Commands
             }
             
             position = 0;
+            errMsg += $"\"{name}\" was not a floating point number\n";
+            return true;
+        }
+        
+        public static bool ValidatePressure(string input, string name, ref string errMsg, out float pressure)
+        {
+            if (float.TryParse(input, out float result))
+            {
+                if (result >= 0.0)
+                {
+                    pressure = result;
+                    return false;
+                }
+                
+                pressure = 0;
+                errMsg += $"\"{name}\" was not 0.0 or above\n";
+                return true;
+            }
+            
+            pressure = 0;
             errMsg += $"\"{name}\" was not a floating point number\n";
             return true;
         }

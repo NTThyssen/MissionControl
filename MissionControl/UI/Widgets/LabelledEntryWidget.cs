@@ -7,7 +7,6 @@ namespace MissionControl.UI.Widgets
     public partial class LabelledEntryWidget : Bin
     {
 
-        private HBox _box;
         private Label _label;
         private Entry _text;
 
@@ -23,21 +22,27 @@ namespace MissionControl.UI.Widgets
             set { _text.Text = value; }
         }
 
-        public LabelledEntryWidget()
+        public LabelledEntryWidget(bool stacked = false)
         {
             this.Build();
-
-            _box = new HBox(false, 20);
+            Box box;
             _label = new Label();
-            _text = new Entry
+            _text = new Entry();
+            
+            if (stacked)
             {
-                WidthRequest = 60
-            };
-
-            _box.PackStart(_label, false, false, 30);
-            _box.PackEnd(_text, false, false, 30);
-
-            Add(_box);
+                box = new VBox(false, 5);
+                box.PackStart(_label, false, false, 0);
+                box.PackStart(_text, false, false, 0);
+            }
+            else
+            {
+                box = new HBox(false, 20);
+                box.PackStart(_label, false, false, 30);
+                box.PackEnd(_text, false, false, 30);
+            }
+            
+            Add(box);
         }
 
         public LabelledEntryWidget(string label) : this()
@@ -45,7 +50,7 @@ namespace MissionControl.UI.Widgets
             _label.Text = label;
         }
         
-        public LabelledEntryWidget(float xalign, float yalign) : this()
+        public LabelledEntryWidget(float xalign, float yalign) : this(true)
         {
             _label.SetAlignment(xalign, yalign);
         }

@@ -90,7 +90,6 @@
     <Compile Include="Data\Session.cs" />
     <Compile Include="Connection\Commands\Command.cs" />
     <Compile Include="Connection\Commands\ValveCommand.cs" />
-    <Compile Include="Connection\Commands\StateCommand.cs" />
     <Compile Include="Data\DataPacket.cs" />
     <Compile Include="Data\Components\Component.cs" />
     <Compile Include="Data\Components\PressureComponent.cs" />
