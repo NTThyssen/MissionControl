@@ -80,7 +80,42 @@ namespace MissionControl.Connection
         const int endLows = 1;
         const int bufsize = 8;
         int highs, lows;
+        
+        byte[] startFence = {0xFD, 0xFF, 0xFF, 0xFF, 0xFF};
+        byte[] endFence = {0xFE, 0xFF, 0xFF, 0xFF, 0xFF};
 
+        private Queue<byte> _fenceQueue = new Queue<byte>();
+
+        public void AddToFenceQueue(byte b, int size)
+        {
+            _fenceQueue.Enqueue(b);
+            int dif = Math.Max(_fenceQueue.Count - size, 0);
+            for (int i = 0; i < dif; i++)
+            {
+                _fenceQueue.Dequeue();
+            }
+        }
+        
+        public bool IsFence(Queue<byte> actual, byte[] expected)
+        {
+            byte[] actualBytes = actual.ToArray();
+            
+            if (actualBytes.Length != expected.Length)
+            {
+                return false;
+            }
+
+            for (int i = 0; i < actualBytes.Length; i++)
+            {
+                if (actualBytes[i] != expected[i])
+                {
+                    return false;
+                }
+            }
+
+            return true;
+        }
+        
         //byte[] fakeBuffer = { 0xA, 0xFF, 0xC, 0xFF, 0x01, 0x14, 0x0B, 0xD0, 0xC8, 0x02, 0xC9, 0x00, 0x00, 0x27, 0x10, 0x01, 0xFF, 0xFF, 0xFF, 0xFF, 0xA };
 
         public void RunMethod()
@@ -130,8 +165,7 @@ namespace MissionControl.Connection
         {
             while (_commands.Count > 0)
             {
-                byte[] startFence = {0xFF, 0x01};
-                byte[] endFence = {0x01, 0xFF, 0xFF, 0xFF, 0xFF};
+                
                 byte[] byteData = _commands.Dequeue().ToByteData();
                 byte[] wbuffer = new byte[startFence.Length + endFence.Length + byteData.Length];
                 Array.Copy(startFence, 0, wbuffer, 0, startFence.Length);
@@ -168,12 +202,6 @@ namespace MissionControl.Connection
                     int bytes = Math.Min(_port.BytesToRead, 8);
                     buf = new byte[bytes];
                     bytesRead = _port.Read(buf, 0, bytes);
-                    /*Console.Write("Read: ");
-                    foreach (byte b in buf)
-                    {
-                        Console.Write("{0:X} ", b);
-                    }
-                    Console.WriteLine();*/
                 }
             } catch (IOException)
             {
@@ -187,92 +215,24 @@ namespace MissionControl.Connection
             {
                 byte b = buf[i];
                 // Search for starts and ends
+                
                 if (reading)
                 {
-                    if (lows == 1)
+                    AddToFenceQueue(b, endFence.Length);
+                    if (IsFence(_fenceQueue, endFence))
                     {
-                        if (b == HIGH && highs == endHighs - 1)
-                        {
-                            // Stop reading. Previous data was stop code
-                            int outslice = endHighs - 1 + endLows;
-                            buffered.RemoveRange(buffered.Count - outslice, outslice);
-                            reading = false;
-                            lows = 0;
-                            highs = 0;
-                            PackageDone();
-                        }
-                        else if (b == HIGH && highs < endHighs - 1)
-                        {
-                            // Maybe inside stop code, add anyways
-                            buffered.Add(b);
-                            highs++;
-                            reading = true;
-                        }
-                        else
-                        {
-                            // Low was data, continue reading. 
-                            buffered.Add(b);
-                            reading = true;
-                            highs = 0;
-                            lows = 0;
-                        }
+                        reading = false;
+                        PackageDone();
                     }
                     else
                     {
-                        if (b == LOW)
-                        {
-                            // Potential end, add anyways
-                            buffered.Add(b);
-                            reading = true;
-                            lows = 1;
-                            highs = 0;
-                        }
-                        else
-                        {
-                            // Was data, continue reading
-                            buffered.Add(b);
-                            reading = true;
-                            highs = 0;
-                            lows = 0;
-                        }
+                        buffered.Add(b);    
                     }
                 }
                 else
                 {
-                    if (highs == 1)
-                    {
-                        if (b == LOW)
-                        {
-                            // Start reading
-                            reading = true;
-                            highs = 0;
-                            lows = 0;
-                        }
-                        else
-                        {
-                            // Reset search
-                            reading = false;
-                            highs = 0;
-                            lows = 0;
-                        }
-                    }
-                    else
-                    {
-                        if (b == HIGH)
-                        {
-                            // Has potential start
-                            reading = false;
-                            highs = 1;
-                            lows = 0;
-                        }
-                        else
-                        {
-                            // Noise, reset search
-                            reading = false;
-                            highs = 0;
-                            lows = 0;
-                        }
-                    }
+                    AddToFenceQueue(b, startFence.Length);
+                    reading = IsFence(_fenceQueue, startFence); 
                 }
                 
             }

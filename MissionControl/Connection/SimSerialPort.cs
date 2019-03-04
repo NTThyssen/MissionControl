@@ -91,8 +91,8 @@ namespace MissionControl.Connection
         public static byte[] GenerateFakeBytes(int time, ComponentMapping mapping)
         {
             byte[] startNoise = { 0xA, 0xFF, 0xC };
-            byte[] startCode = { 0xFF, 0x01 };
-            byte[] endCode = { 0x01, 0xFF, 0xFF, 0xFF, 0xFF };
+            byte[] startCode = { 0xFD, 0xFF, 0xFF, 0xFF, 0xFF };
+            byte[] endCode = { 0xFE, 0xFF, 0xFF, 0xFF, 0xFF };
             byte[] endNoise = { 0x0B, 0x0C, 0x0D };
 
             Random random = new Random();

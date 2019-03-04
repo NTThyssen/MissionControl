@@ -189,7 +189,7 @@ namespace MissionControl.Tests
 
 
             Mock<ISerialPort> serialMock = new Mock<ISerialPort>();
-            byte[] buffer = { 0xAA, 0xBB, 0xFF, 0x01, ID, valMSB, valLSB, 0x01, 0xFF, 0xFF, 0xFF, 0xFF, 0xAA, 0xBB };
+            byte[] buffer = { 0xAA, 0xBB, 0xFD, 0xFF, 0xFF, 0xFF, 0xFF, ID, valMSB, valLSB, 0xFE, 0xFF, 0xFF, 0xFF, 0xFF, 0xAA, 0xBB };
             int i = 0;
 
             serialMock.Setup(x => x.IsOpen).Returns(true).Callback(() => Console.WriteLine("IsOpen called"));
