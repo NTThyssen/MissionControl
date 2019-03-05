@@ -13,7 +13,7 @@ namespace MissionControl.UI
 {
     public interface ISessionSettingsViewListener
     {
-        void OnSave(Session session);
+        void OnSave(Preferences preferences);
     }
 
     public partial class SessionSettingsView : Window
@@ -65,7 +65,7 @@ namespace MissionControl.UI
             VBox machinePage = new VBox(false, 20);
 
             // Log file path
-            _chosenFilePath = session.Setting.LogFilePath.Value ?? _chosenFilePath;
+            _chosenFilePath = PreferenceManager.Manager.Preferences.System.LogFilePath ?? _chosenFilePath;
             
 
             HBox filepathContainer = new HBox(false, 0);
@@ -83,9 +83,9 @@ namespace MissionControl.UI
             HBox portBox = new HBox(false, 10);
             _portDropdown = new DropdownWidget(null);
             PortRefreshPressed(null, null);
-            if (session.Setting.PortName.Value != null)
+            if (PreferenceManager.Manager.Preferences.System.Serial.PortName != null)
             {
-                _portDropdown.Set(session.Setting.PortName.Value);
+                _portDropdown.Set(PreferenceManager.Manager.Preferences.System.Serial.PortName);
             }
 
             _btnPortRefresh = new Button(Stock.Refresh);
@@ -94,12 +94,12 @@ namespace MissionControl.UI
             portBox.PackStart(_btnPortRefresh, false, false, 0);
 
             _baudRateDropdown = new DropdownWidget("Baud rate", bauds.Select(x => x.ToString()).ToArray());
-            _baudRateDropdown.Set(session.Setting.BaudRate.Value.ToString());
+            _baudRateDropdown.Set(PreferenceManager.Manager.Preferences.System.Serial.BaudRate.ToString());
 
             _chkSettingsOnStartup = new LabelledCheckboxWidget
             {
                 LabelText = "Show settings on startup",
-                Checked =  session.Setting.ShowSettingsOnStartup.Value
+                Checked =  PreferenceManager.Manager.Preferences.Visual.ShowSettingsOnStartup
             };
             
             machinePage.PackStart(new Label("Serial port:"), false, false, 10);
@@ -150,37 +150,37 @@ namespace MissionControl.UI
             oxidValveCoefficient = new LabelledEntryWidget()
             {
                 LabelText = "Oxidizer valve flow coefficient (CV)",
-                EntryText = session.Setting.OxidCV.ToString() ?? ""
+                EntryText = PreferenceManager.Manager.Preferences.Fluid.Oxid.CV.ToString() ?? ""
             };
                        
             oxidDensity = new LabelledEntryWidget()
             {
                 LabelText = "Oxidizer density [kg/m^3]",
-                EntryText = session.Setting.OxidDensity.ToString() ?? ""
+                EntryText = PreferenceManager.Manager.Preferences.Fluid.Oxid.Density.ToString() ?? ""
             };
 
             fuelValveCoefficient = new LabelledEntryWidget()
             {
                 LabelText = "Fuel valve flow coefficient (CV)",
-                EntryText = session.Setting.FuelCV.ToString() ?? ""
+                EntryText = PreferenceManager.Manager.Preferences.Fluid.Fuel.CV.ToString() ?? ""
             };
 
             fuelDensity = new LabelledEntryWidget()
             {
                 LabelText = "Fuel density [kg/m^3]",
-                EntryText = session.Setting.FuelDensity.ToString() ?? ""
+                EntryText = PreferenceManager.Manager.Preferences.Fluid.Fuel.Density.ToString() ?? ""
             };
 
             todaysPressure = new LabelledEntryWidget()
             {
                 LabelText = "Today's pressure [bar]",
-                EntryText = session.Setting.TodayPressure.ToString() ?? ""
+                EntryText = PreferenceManager.Manager.Preferences.Fluid.TodaysPressure.ToString() ?? ""
             };
 
             showAbsolutePressure = new LabelledRadioWidget
             {
                 LabelText = "Pressure measure: ",
-                ShowAbsolutePressure = session.Setting.ShowAbsolutePressure.Value
+                ShowAbsolutePressure = PreferenceManager.Manager.Preferences.Visual.ShowAbsolutePressure
             };
 
             fluidPage.PackStart(new Label("Fluid system values"), false, false, 0);
@@ -306,11 +306,13 @@ namespace MissionControl.UI
 
         void SavePressed(object sender, EventArgs e)
         {
-            Session newSession = new Session(_session.Mapping);
+            
+            //Session newSession = new Session(_session.Mapping);
+            Preferences prefs = new Preferences();
 
             bool hasErrors = false;
             string errorMessage = "";
-
+            
             // Verify user has selected save path
             if (_chosenFilePath == null)
             {
@@ -319,7 +321,7 @@ namespace MissionControl.UI
             }
             else
             {
-                newSession.Setting.LogFilePath.Value = _chosenFilePath;
+                prefs.System.LogFilePath = _chosenFilePath;
 
             }
 
@@ -331,13 +333,13 @@ namespace MissionControl.UI
             }
             else
             {
-                newSession.Setting.PortName.Value = _portDropdown.ActiveText;
+                prefs.System.Serial.PortName = _portDropdown.ActiveText;
             }
 
             // Save chosen baud rate
             if (int.TryParse(_baudRateDropdown.ActiveText, out int baud))
             {
-                newSession.Setting.BaudRate.Value = baud;
+                prefs.System.Serial.BaudRate = baud;
             }
             else
             {
@@ -346,11 +348,15 @@ namespace MissionControl.UI
             }
             
             // Show settings on startup
-            newSession.Setting.ShowSettingsOnStartup.Value = _chkSettingsOnStartup.Checked;
+            prefs.Visual.ShowSettingsOnStartup = _chkSettingsOnStartup.Checked;
 
             // Update sensor component settings
             foreach (ComponentSettingWidget widget in _componentWidgets)
             {
+                SensorSettings sensorSettings = new SensorSettings();
+                sensorSettings.Enabled = widget.Enabled;
+                //newSession.Mapping.ComponentsByID()[widget.Component.BoardID].Enabled = widget.Enabled;
+                
                 if (ValidateSensorLimits(widget, out float min, out float max, out string err))
                 {
                     hasErrors = true;
@@ -358,30 +364,32 @@ namespace MissionControl.UI
                 }
                 else
                 {
-                    if (newSession.Mapping.ComponentsByID()[widget.Component.BoardID] is IWarningLimits sc)
+                    if (_session.Mapping.ComponentsByID()[widget.Component.BoardID] is IWarningLimits sc)
                     {
-                        sc.MinLimit = min;
-                        sc.MaxLimit = max;
+                        //sc.MinLimit = min;
+                        //sc.MaxLimit = max;
+                        sensorSettings.Min = min;
+                        sensorSettings.Max = max;
                     }
                 }
 
-                newSession.Mapping.ComponentsByID()[widget.Component.BoardID].Enabled = widget.Enabled;
+                prefs.Visual.SensorVisuals[widget.Component.BoardID] = sensorSettings;
             }
 
             // Fluid page's field validation
-            newSession.Setting.OxidCV.Value = ParseLabellelEntryAsFloat(oxidValveCoefficient, ref hasErrors, ref errorMessage, out float oxcv) ? oxcv : newSession.Setting.OxidCV.Value;
-            newSession.Setting.OxidDensity.Value = ParseLabellelEntryAsFloat(oxidDensity, ref hasErrors, ref errorMessage, out float oxd) ? oxd : newSession.Setting.OxidDensity.Value;
+            prefs.Fluid.Oxid.CV = ParseLabellelEntryAsFloat(oxidValveCoefficient, ref hasErrors, ref errorMessage, out float oxcv) ? oxcv : 0; 
+            prefs.Fluid.Oxid.Density = ParseLabellelEntryAsFloat(oxidDensity, ref hasErrors, ref errorMessage, out float oxd) ? oxd : 0;
 
-            newSession.Setting.FuelCV.Value = ParseLabellelEntryAsFloat(fuelValveCoefficient, ref hasErrors, ref errorMessage, out float flcv) ? flcv : newSession.Setting.OxidCV.Value;
-            newSession.Setting.FuelDensity.Value = ParseLabellelEntryAsFloat(fuelDensity, ref hasErrors, ref errorMessage, out float fld) ? fld : newSession.Setting.FuelDensity.Value;
+            prefs.Fluid.Fuel.CV = ParseLabellelEntryAsFloat(fuelValveCoefficient, ref hasErrors, ref errorMessage, out float flcv) ? flcv : 0;
+            prefs.Fluid.Fuel.Density= ParseLabellelEntryAsFloat(fuelDensity, ref hasErrors, ref errorMessage, out float fld) ? fld : 0;
 
-            newSession.Setting.TodayPressure.Value = ParseLabellelEntryAsFloat(todaysPressure, ref hasErrors, ref errorMessage, out float tp) ? tp : newSession.Setting.OxidCV.Value;
-            newSession.Setting.ShowAbsolutePressure.Value = showAbsolutePressure.ShowAbsolutePressure;
+            prefs.Fluid.TodaysPressure = ParseLabellelEntryAsFloat(todaysPressure, ref hasErrors, ref errorMessage, out float tp) ? tp : 0;
+            prefs.Visual.ShowAbsolutePressure = showAbsolutePressure.ShowAbsolutePressure;
 
             // Save if no errors
             if (!hasErrors)
             {
-                _listener.OnSave(newSession);
+                _listener.OnSave(prefs);
             }
             else
             {

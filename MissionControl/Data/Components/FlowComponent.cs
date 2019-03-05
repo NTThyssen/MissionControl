@@ -12,18 +12,18 @@ namespace MissionControl.Data.Components
         public float MaxLimit { get; set; } = float.NaN;
         public float MinLimit { get; set; } = float.NaN;
 
-        PressureComponent _pressure1, _pressure2;
-        public string SettingsConstantName { get; }
+        private PressureComponent _pressure1, _pressure2;
+        private Func<Fluid> _fluid { get; }
 
         public override string TypeName => "Flow";
 
         public float MassFlow { get; private set; }
 
-        public FlowComponent(byte boardID, string graphicID, string name, ref PressureComponent p1, ref PressureComponent p2, string settingsConstantName) : base(boardID, graphicID, name)
+        public FlowComponent(byte boardID, string graphicID, string name, ref PressureComponent p1, ref PressureComponent p2, Func<Fluid> fluid) : base(boardID, graphicID, name)
         {
             _pressure1 = p1;
             _pressure2 = p2;
-            SettingsConstantName = settingsConstantName;
+            _fluid = fluid;
         }
 
         public string LogHeader()
@@ -46,8 +46,10 @@ namespace MissionControl.Data.Components
             return !nonNominal;
         }
 
-      public void Compute(float cv, float density)
+        public void Compute()
         {
+            float cv = _fluid().CV;
+            float density = _fluid().Density;
             float pDelta = Math.Abs(_pressure1.Relative() - _pressure2.Relative());
             float gl = density / 1000.0f;
             float volumeFlow = (float) (cv / (1.17 * Math.Sqrt(gl / pDelta)));

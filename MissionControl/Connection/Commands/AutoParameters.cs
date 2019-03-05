@@ -6,7 +6,7 @@ using MissionControl.UI.Widgets;
 
 namespace MissionControl.Connection.Commands
 {
-    public struct AutoParameters
+    public class AutoParameters
     {
         private const int N = 24;
         

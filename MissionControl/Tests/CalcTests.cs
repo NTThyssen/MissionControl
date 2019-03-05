@@ -15,12 +15,12 @@ namespace MissionControl.Tests
             TestStandMapping mapping = new TestStandMapping();
             Session session = new Session(mapping);
 
-            session.Setting.FuelCV.Value = 0.0738f;
-            session.Setting.FuelDensity.Value = 786;
+            PreferenceManager.Manager.Preferences.Fluid.Fuel.CV = 0.0738f;
+            PreferenceManager.Manager.Preferences.Fluid.Fuel.Density = 786;
 
             (mapping.ComponentsByID()[19] as PressureComponent).Set(24);
             (mapping.ComponentsByID()[21] as PressureComponent).Set(8);
-            (mapping.ComponentsByID()[100] as FlowComponent).Compute(session.Setting.FuelCV.Value, session.Setting.FuelDensity.Value);
+            (mapping.ComponentsByID()[100] as FlowComponent).Compute();
 
             float flow = (mapping.ComponentsByID()[100] as FlowComponent).MassFlow;
             Assert.IsTrue(Math.Abs(flow - 0.06213542364) < 0.0001);
@@ -45,23 +45,23 @@ namespace MissionControl.Tests
             p2.Set(0);
             
             p1.Set(10);
-            fl.Compute(fuelCV, fuelDens);
+            fl.Compute();
             tc.Compute(0);
             
             p1.Set(12);
-            fl.Compute(fuelCV, fuelDens);
+            fl.Compute();
             tc.Compute(750);
             
             p1.Set(14);
-            fl.Compute(fuelCV, fuelDens);
+            fl.Compute();
             tc.Compute(1500);
             
             p1.Set(16);
-            fl.Compute(fuelCV, fuelDens);
+            fl.Compute();
             tc.Compute(2250);
             
             p1.Set(18);
-            fl.Compute(fuelCV, fuelDens);
+            fl.Compute();
             tc.Compute(3000);
 
             float volume = tc.CurrentVolume;

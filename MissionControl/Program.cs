@@ -36,6 +36,7 @@ namespace MissionControl
 
         public static void Main(string[] args)
         {
+            PreferenceManager manager = PreferenceManager.Manager;
             TestStandMapping mapping = new TestStandMapping();
             Session session = new Session(mapping);
             DataStore dataStore = new DataStore(session);
@@ -63,9 +64,9 @@ namespace MissionControl
             _ioThread.SendCommand(command);
         }
 
-        public void OnSessionSettingsUpdated(Session session)
+        public void OnSessionSettingsUpdated(Preferences preferences)
         {
-            _dataStore.UpdateSession(session);
+            _dataStore.UpdateSession(preferences);
         }
 
         public void OnEmergencyState()
@@ -95,7 +96,8 @@ namespace MissionControl
             }
             else
             {
-                port = new SerialPort(currentSession.Setting.PortName.Value, currentSession.Setting.BaudRate.Value);
+                SerialSettings serial = PreferenceManager.Manager.Preferences.System.Serial;
+                port = new SerialPort(serial.PortName, serial.BaudRate);
             }
             _ioThread.StartConnection(port);
         }
@@ -141,11 +143,9 @@ namespace MissionControl
         {
             AutoParametersCommand command = new AutoParametersCommand(ap);
             _ioThread.SendCommand(command);
-
-            string serialized = ap.Serialize();
-            _dataStore.GetCurrentSession().Setting.AutoParameters.Value = serialized;
-            PreferenceManager.Set(_dataStore.GetCurrentSession().Setting.AutoParameters.PreferenceKey, serialized);
-            PreferenceManager.Preferences.Save();
+            
+            PreferenceManager.Manager.Preferences.AutoSequence = ap;
+            PreferenceManager.Manager.Save();
         }
 
         public void OnTarePressed()

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Text.RegularExpressions;
+using Newtonsoft.Json;
 
 namespace MissionControl.Data
 {
@@ -13,23 +14,27 @@ namespace MissionControl.Data
     public sealed class PreferenceManager
     {
   
-        private string _filepath;
-        private Dictionary<string, string> _preferences;
+        private readonly string _filepath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"preferences.json");
+        //private Dictionary<string, string> _preferences;
+        private readonly Preferences _preferences;
+        
+        public static PreferenceManager Manager { get; } = new PreferenceManager();
 
-        public static PreferenceManager Preferences { get; } = new PreferenceManager();
+        public Preferences Preferences => _preferences;
 
-        public string this [string key]
+        /* public string this [string key]
         {
             get {
                 return _preferences.ContainsKey(key) ? _preferences[key] : null;
             }
             set { _preferences[key] = value; }
-        }
+        }*/
 
         static PreferenceManager()
         {
         }
 
+        /*
         public PreferenceManager()
         {
             _filepath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"preferences.txt");
@@ -54,28 +59,66 @@ namespace MissionControl.Data
                     _preferences.Add(values[1], values[2]);
                 }
             }
+        }*/
+        
+        public PreferenceManager()
+        {
+            
+            //_preferences = new Dictionary<string, string>();
+            _preferences = new Preferences();
+
+            if (File.Exists(_filepath))
+            {
+                string file = File.ReadAllText(_filepath);
+                _preferences = JsonConvert.DeserializeObject<Preferences>(file);
+            }
+            else
+            {
+                _preferences = new Preferences();
+            }
         }
 
-        public void Remove(string key)
+        /*public void Remove(string key)
         {
             if (_preferences.ContainsKey(key))
             {
                 _preferences.Remove(key);
             }
-        }
+        }*/
 
         public void Save()
         {
             using (StreamWriter sw = new StreamWriter(_filepath, false))
             {
-                foreach (KeyValuePair<string, string> kv in _preferences)
+                string text = JsonConvert.SerializeObject(_preferences);
+                sw.Write(text);
+                /*foreach (KeyValuePair<string, string> kv in _preferences)
                 {
                     sw.WriteLine("{0}:{1}", kv.Key, kv.Value);
-                }
+                }*/
             }
         }
 
-        public static int GetIfExists(string key, int defaultValue)
+        public static SensorSettings GetSensorSettings(byte key)
+        {
+            return Manager.Preferences.Visual.SensorVisuals.TryGetValue(key, out SensorSettings value) ? value : new SensorSettings();
+        }
+
+        public static void UpdatePreferences(Preferences updated)
+        {
+            for (int i = 0; i < updated.Bools.Length; i++) { Manager.Preferences.Bools[i] = updated.Bools[i]; }
+            for (int i = 0; i < updated.Floats.Length; i++) { Manager.Preferences.Floats[i] = updated.Floats[i]; }
+            for (int i = 0; i < updated.Strings.Length; i++) { Manager.Preferences.Strings[i] = updated.Strings[i]; }
+            for (int i = 0; i < updated.Integers.Length; i++) { Manager.Preferences.Integers[i] = updated.Integers[i]; }
+
+            foreach (KeyValuePair<byte, SensorSettings> kv in updated.Visual.SensorVisuals)
+            {
+                Manager.Preferences.Visual.SensorVisuals[kv.Key] = kv.Value;
+            }
+            
+        }
+
+        /*public static int GetIfExists(string key, int defaultValue)
         {
             string sval = Preferences[key];
             return (sval != null && int.TryParse(sval, out int ival)) ? ival : defaultValue;
@@ -116,7 +159,7 @@ namespace MissionControl.Data
         public static void Set(string key, bool value)
         {
             Preferences[key] = Convert.ToString(value);
-        }
+        }*/
 
     }
 }

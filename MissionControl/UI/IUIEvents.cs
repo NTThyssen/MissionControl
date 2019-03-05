@@ -8,7 +8,7 @@ namespace MissionControl.UI
     public interface IUIEvents
     {
         void OnCommand(Command command);
-        void OnSessionSettingsUpdated(Session session);
+        void OnSessionSettingsUpdated(Preferences preferences);
         void OnEmergencyState();
         void OnLogStartPressed();
         void OnLogStopPressed();
