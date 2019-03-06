@@ -41,7 +41,7 @@ namespace MissionControl.UI
             Application.Init();
 
             _listener = listener;
-            if (_session.Setting.ShowSettingsOnStartup.Value)
+            if (PreferenceManager.Manager.Preferences.Visual.ShowSettingsOnStartup)
             {
                 ShowSessionSettings(true);
             }
@@ -114,12 +114,12 @@ namespace MissionControl.UI
         {
             if (_autoRunConfigView == null)
             {
-                _autoRunConfigView = new AutoRunConfigView(this, _session.Setting.AutoParameters.Value);
+                _autoRunConfigView = new AutoRunConfigView(this, PreferenceManager.Manager.Preferences.AutoSequence);
             }
             else
             {
                 _autoRunConfigView.Destroy();
-                _autoRunConfigView = new AutoRunConfigView(this, _session.Setting.AutoParameters.Value);
+                _autoRunConfigView = new AutoRunConfigView(this, PreferenceManager.Manager.Preferences.AutoSequence);
             }
             _autoRunConfigView.DeleteEvent += (object o, DeleteEventArgs args) => _updateSVGTimer = SetUpdateSVGFrequency(_updateSVGTimer, UPDATE_FREQ_FOREGROUND);
             _updateSVGTimer = SetUpdateSVGFrequency(_updateSVGTimer, UPDATE_FREQ_BACKGROUND);
@@ -165,11 +165,11 @@ namespace MissionControl.UI
             _listener.OnCommand(command);
         }
 
-        public void OnSave(Session session)
+        public void OnSave(Preferences preferences)
         {
             if (_listener != null)
             {
-                _listener.OnSessionSettingsUpdated(session);
+                _listener.OnSessionSettingsUpdated(preferences);
             }
 
             if (_newSessionView != null) _newSessionView.Destroy();

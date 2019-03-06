@@ -58,26 +58,24 @@ namespace MissionControl.UI
         
         private Button _btnAutoRunConfigSave;
         
-        public AutoRunConfigView(IAutoParameterListener listener, string param) : base(WindowType.Toplevel)
+        public AutoRunConfigView(IAutoParameterListener listener, AutoParameters ap) : base(WindowType.Toplevel)
         {
             _listener = listener;
             Title = "Auto Sequence Config";
             
             //SetSizeRequest(950, 350);
             SetPosition(WindowPosition.Center);
-            
-            AutoParameters ap = AutoParameters.Deserialize(param);
 
-            _startDelay = CreateWidget("Start Delay [s]", GetValueString(ap.StartDelay));
-            _preStage1Time = CreateWidget("Pre Stage 1 Time [s]", GetValueString(ap.PreStage1Time));
-            _preStage2MaxTime = CreateWidget("Pre Stage 2 Max Time [s]", GetValueString(ap.PreStage2MaxTime));
-            _preStage2StableTime = CreateWidget("Pre Stage 2 Stable Time [s]", GetValueString(ap.PreStage2StableTime));
-            _rampUpStableTime = CreateWidget("Ramp Up Stable Time [s]", GetValueString(ap.RampUpStableTime));
-            _rampUpMaxTime = CreateWidget("Ramp Up Max Time [s]", GetValueString(ap.RampUpMaxTime));
-            _burnTime = CreateWidget("Burn Time [s]", GetValueString(ap.BurnTime));
-            _shutdown1Time = CreateWidget("Shutdown 1 Time [s]", GetValueString(ap.Shutdown1Time));
-            _shutdown2Time = CreateWidget("Shutdown 2 Time [s]", GetValueString(ap.Shutdown2Time));
-            _flushTime = CreateWidget("Flush Time [s]", GetValueString(ap.FlushTime));
+            _startDelay = CreateWidget("Start Delay [ms]", GetValueString(ap.StartDelay));
+            _preStage1Time = CreateWidget("Pre Stage 1 Time [ms]", GetValueString(ap.PreStage1Time));
+            _preStage2MaxTime = CreateWidget("Pre Stage 2 Max Time [ms]", GetValueString(ap.PreStage2MaxTime));
+            _preStage2StableTime = CreateWidget("Pre Stage 2 Stable Time [ms]", GetValueString(ap.PreStage2StableTime));
+            _rampUpStableTime = CreateWidget("Ramp Up Stable Time [ms]", GetValueString(ap.RampUpStableTime));
+            _rampUpMaxTime = CreateWidget("Ramp Up Max Time [ms]", GetValueString(ap.RampUpMaxTime));
+            _burnTime = CreateWidget("Burn Time [ms]", GetValueString(ap.BurnTime));
+            _shutdown1Time = CreateWidget("Shutdown 1 Time [ms]", GetValueString(ap.Shutdown1Time));
+            _shutdown2Time = CreateWidget("Shutdown 2 Time [ms]", GetValueString(ap.Shutdown2Time));
+            _flushTime = CreateWidget("Flush Time [ms]", GetValueString(ap.FlushTime));
             
             _preStage1FuelPosition = CreateWidget("Pre Stage 1 Fuel Pos. [%]", GetValueString(ap.PreStage1FuelPosition));
             _preStage2FuelPosition = CreateWidget("Pre Stage 2 Fuel Pos. [%]", GetValueString(ap.PreStage2FuelPosition));

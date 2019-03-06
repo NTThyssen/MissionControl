@@ -11,14 +11,15 @@ namespace MissionControl.Data
         public long SystemTime { get; set; }
         public DateTime LastReceived;
         public bool Connected { get; set; }
-        public Settings Setting { get; set; }
+        //public Settings Setting { get; set; }
         public bool IsAutoSequence { get; set; } = false;
 
         public Session(ComponentMapping map)
         {
             Mapping = map;
             State = map.States()[0];
-            Setting = new Settings();
+            //Setting = new Settings();
+           
         }
 
         public void UpdateComponents(byte[] bytes)
@@ -152,9 +153,7 @@ namespace MissionControl.Data
                 switch (c)
                 {
                     case FlowComponent fc:
-                        float cv = (Setting.PropertiesByID()[fc.SettingsConstantName + "FluidCV"] as FloatProperty).Value;
-                        float density = (Setting.PropertiesByID()[fc.SettingsConstantName + "FluidDensity"] as FloatProperty).Value;
-                        fc.Compute(cv, density);
+                        fc.Compute();
                         break;
                     case TankComponent tc:
                         tc.Compute(SystemTime);

@@ -124,10 +124,12 @@ namespace MissionControl.UI.Widgets
                 switch (component)
                 {
                     case PressureComponent pt:
-                        if (_session.Setting.ShowAbsolutePressure.Value)
+                        bool showAbsolute = PreferenceManager.Manager.Preferences.Visual.ShowAbsolutePressure;
+                        if (showAbsolute)
                         {
-                            text.Text = Component.ToRounded(pt.Absolute(_session.Setting.TodayPressure.Value), 2) + " bara";
-                            text.Color = pt.IsNominal(pt.Absolute(_session.Setting.TodayPressure.Value)) ? nominalColor : warningColor;
+                            float pressure = pt.Absolute(PreferenceManager.Manager.Preferences.Fluid.TodaysPressure);
+                            text.Text = Component.ToRounded(pressure, 2) + " bara";
+                            text.Color = pt.IsNominal(pressure) ? nominalColor : warningColor;
                         }
                         else
                         {

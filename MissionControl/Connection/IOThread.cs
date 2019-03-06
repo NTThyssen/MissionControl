@@ -212,25 +212,45 @@ namespace MissionControl.Connection
                 byte b = buf[i];
                 // Search for starts and ends
                 
+                AddToFenceQueue(b, startFence.Length);
+
                 if (reading)
                 {
-                    AddToFenceQueue(b, endFence.Length);
-                    if (IsFence(_fenceQueue, endFence))
+                    if (IsFence(_fenceQueue, startFence))
+                    {
+                        reading = true;
+                        buffered.Clear();
+                    } 
+                    else if (IsFence(_fenceQueue, endFence))
                     {
                         reading = false;
-                        PackageDone();
-                    }
-                    else
-                    {
-                        buffered.Add(b);    
+                        int removeIndex = buffered.Count - endFence.Length;
+                        if (removeIndex > 0)
+                        {
+                            buffered.RemoveRange(removeIndex, endFence.Length);
+                            PackageDone();
+                        }
+                        else
+                        {
+                            // Wrong package
+                            buffered.Clear();
+                        }
                     }
                 }
                 else
                 {
-                    AddToFenceQueue(b, startFence.Length);
-                    reading = IsFence(_fenceQueue, startFence); 
+                    if (IsFence(_fenceQueue, startFence))
+                    {
+                        // Ready for new package
+                        reading = true;
+                        buffered.Clear();    
+                    } 
+                    else if (IsFence(_fenceQueue, endFence))
+                    {
+                        reading = false;
+                        buffered.Clear();
+                    }
                 }
-                
             }
         }
 
