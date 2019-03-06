@@ -88,7 +88,7 @@ namespace MissionControl.UI
                 _portDropdown.Set(PreferenceManager.Manager.Preferences.System.Serial.PortName);
             }
 
-            _btnPortRefresh = new Button(Stock.Refresh);
+            _btnPortRefresh = new Button {Label = "Refresh"};
             _btnPortRefresh.Pressed += PortRefreshPressed;
             portBox.PackStart(_portDropdown, false, false, 10);
             portBox.PackStart(_btnPortRefresh, false, false, 0);
@@ -150,31 +150,31 @@ namespace MissionControl.UI
             oxidValveCoefficient = new LabelledEntryWidget()
             {
                 LabelText = "Oxidizer valve flow coefficient (CV)",
-                EntryText = PreferenceManager.Manager.Preferences.Fluid.Oxid.CV.ToString() ?? ""
+                EntryText = FloatValue(PreferenceManager.Manager.Preferences.Fluid.Oxid.CV)
             };
                        
             oxidDensity = new LabelledEntryWidget()
             {
                 LabelText = "Oxidizer density [kg/m^3]",
-                EntryText = PreferenceManager.Manager.Preferences.Fluid.Oxid.Density.ToString() ?? ""
+                EntryText = FloatValue(PreferenceManager.Manager.Preferences.Fluid.Oxid.Density)
             };
 
             fuelValveCoefficient = new LabelledEntryWidget()
             {
                 LabelText = "Fuel valve flow coefficient (CV)",
-                EntryText = PreferenceManager.Manager.Preferences.Fluid.Fuel.CV.ToString() ?? ""
+                EntryText = FloatValue(PreferenceManager.Manager.Preferences.Fluid.Fuel.CV)
             };
 
             fuelDensity = new LabelledEntryWidget()
             {
                 LabelText = "Fuel density [kg/m^3]",
-                EntryText = PreferenceManager.Manager.Preferences.Fluid.Fuel.Density.ToString() ?? ""
+                EntryText = FloatValue(PreferenceManager.Manager.Preferences.Fluid.Fuel.Density)
             };
 
             todaysPressure = new LabelledEntryWidget()
             {
                 LabelText = "Today's pressure [bar]",
-                EntryText = PreferenceManager.Manager.Preferences.Fluid.TodaysPressure.ToString() ?? ""
+                EntryText = FloatValue(PreferenceManager.Manager.Preferences.Fluid.TodaysPressure)
             };
 
             showAbsolutePressure = new LabelledRadioWidget
@@ -441,9 +441,16 @@ namespace MissionControl.UI
             return error;
         }
 
+        public string FloatValue(float f)
+        {
+            return (f > 0.00001) ? f.ToString(CultureInfo.InvariantCulture) : "";
+        }
+
         public bool ParseLabellelEntryAsFloat(LabelledEntryWidget entry, ref bool errors, ref string errmsg, out float val)
         {
-            if (float.TryParse(entry.EntryText, NumberStyles.Any, CultureInfo.InvariantCulture,  out float value))
+
+            string input = entry.EntryText.Replace(',', '.');
+            if (float.TryParse(input, NumberStyles.Any, CultureInfo.InvariantCulture,  out float value))
             {
                 val = value;
                 return true;

@@ -26,7 +26,6 @@ namespace MissionControl.Data.Components
 
         public override void Set(int val)
         {
-            Console.WriteLine("Servo value: {0}", val);
             _rawPosition = val;
         }
 

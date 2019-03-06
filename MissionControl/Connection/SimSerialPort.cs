@@ -139,13 +139,13 @@ namespace MissionControl.Connection
                     case ServoComponent servo:
                         ushort randVal = (ushort) random.Next(0, ushort.MaxValue);
                         value = BitConverter.GetBytes(randVal);
-                        Console.WriteLine("Name: {0} Random value: {1}. Bytes: {2:X} {3:X}", c.Name, randVal, value[1], value[0]);
+                        //Console.WriteLine("Name: {0} Random value: {1}. Bytes: {2:X} {3:X}", c.Name, randVal, value[1], value[0]);
                         break;
                     case SolenoidComponent solenoid:
                         value = BitConverter.GetBytes((short)random.Next(0, 2));
                         break;
                     case VoltageComponent battery:
-                        value = BitConverter.GetBytes((short)random.Next(12, 14));
+                        value = BitConverter.GetBytes((ushort)random.Next(12, 14));
                         break;
                 }
 

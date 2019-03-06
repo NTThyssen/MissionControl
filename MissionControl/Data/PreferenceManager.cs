@@ -106,15 +106,33 @@ namespace MissionControl.Data
 
         public static void UpdatePreferences(Preferences updated)
         {
-            for (int i = 0; i < updated.Bools.Length; i++) { Manager.Preferences.Bools[i] = updated.Bools[i]; }
-            for (int i = 0; i < updated.Floats.Length; i++) { Manager.Preferences.Floats[i] = updated.Floats[i]; }
-            for (int i = 0; i < updated.Strings.Length; i++) { Manager.Preferences.Strings[i] = updated.Strings[i]; }
-            for (int i = 0; i < updated.Integers.Length; i++) { Manager.Preferences.Integers[i] = updated.Integers[i]; }
+            
+            Manager.Preferences.System.UseSerial = updated.System.UseSerial;
+            Manager.Preferences.System.LogFilePath = updated.System.LogFilePath;
+            
+            Manager.Preferences.System.Serial.BaudRate = updated.System.Serial.BaudRate;
+            Manager.Preferences.System.Serial.PortName = updated.System.Serial.PortName;
+            
+            Manager.Preferences.System.Ethernet.Port = updated.System.Ethernet.Port;
+            Manager.Preferences.System.Ethernet.IPAddress = updated.System.Ethernet.IPAddress;
 
+            Manager.Preferences.Fluid.Fuel.Density = updated.Fluid.Fuel.Density;
+            Manager.Preferences.Fluid.Fuel.CV = updated.Fluid.Fuel.CV;
+            
+            Manager.Preferences.Fluid.Oxid.Density = updated.Fluid.Oxid.Density;
+            Manager.Preferences.Fluid.Oxid.CV = updated.Fluid.Oxid.CV;
+
+            Manager.Preferences.Fluid.TodaysPressure = updated.Fluid.TodaysPressure;
+
+            Manager.Preferences.Visual.ShowAbsolutePressure = updated.Visual.ShowAbsolutePressure;
+            Manager.Preferences.Visual.ShowSettingsOnStartup = updated.Visual.ShowSettingsOnStartup;
+            
             foreach (KeyValuePair<byte, SensorSettings> kv in updated.Visual.SensorVisuals)
             {
                 Manager.Preferences.Visual.SensorVisuals[kv.Key] = kv.Value;
             }
+            
+            Manager.Save();
             
         }
 

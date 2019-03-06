@@ -116,9 +116,6 @@ namespace MissionControl.Data
                     }    
                 }
             }
-         
-            PreferenceManager.Manager.Save();
-
         }
 
         public void EnableLogging()

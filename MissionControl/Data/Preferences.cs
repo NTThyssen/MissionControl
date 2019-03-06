@@ -10,18 +10,13 @@ namespace MissionControl.Data
         public VisualSettings Visual { get; } = new VisualSettings();
         
         public AutoParameters AutoSequence { get; set; } = new AutoParameters();
-        
-        public bool[] Bools => new bool[]{};
-        public float[] Floats => new float[]{};
-        public string[] Strings => new string[]{};
-        public int[] Integers => new int[]{};
     }
 
     public class FluidSettings
     {
 
-        public Fluid Oxid { get; set; } = new Fluid {CV = 0.2323f, Density = 1980};
-        public Fluid Fuel { get; set; } = new Fluid {CV = 0.0738f, Density = 786};
+        public Fluid Oxid { get; } = new Fluid {CV = 0.2323f, Density = 1980};
+        public Fluid Fuel { get; } = new Fluid {CV = 0.0738f, Density = 786};
         public float TodaysPressure { get; set; } = 1.020f;
     }
 
@@ -35,15 +30,15 @@ namespace MissionControl.Data
     {
         public string LogFilePath  { get; set; }
         public bool UseSerial { get; set; } = true;
-        public SerialSettings Serial { get; set; } = new SerialSettings();
-        public EthernetSettings Ethernet { get; set; } = new EthernetSettings();
+        public SerialSettings Serial { get; } = new SerialSettings();
+        public EthernetSettings Ethernet { get; } = new EthernetSettings();
     }
 
     public class VisualSettings
     {
-        public bool ShowSettingsOnStartup  { get; set; }
-        public bool ShowAbsolutePressure  { get; set; }
-        public Dictionary<byte, SensorSettings> SensorVisuals { get; set; } = new Dictionary<byte, SensorSettings>();
+        public bool ShowSettingsOnStartup { get; set; } = true;
+        public bool ShowAbsolutePressure { get; set; } = true;
+        public Dictionary<byte, SensorSettings> SensorVisuals { get; } = new Dictionary<byte, SensorSettings>();
     }
 
     public class SensorSettings
