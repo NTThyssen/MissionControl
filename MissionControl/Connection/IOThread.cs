@@ -157,7 +157,7 @@ namespace MissionControl.Connection
             StopConnection();
         }
 
-        private void WriteAll()
+        public void WriteAll()
         {
             while (_commands.Count > 0)
             {
@@ -216,6 +216,7 @@ namespace MissionControl.Connection
 
                 if (reading)
                 {
+                    buffered.Add(b);
                     if (IsFence(_fenceQueue, startFence))
                     {
                         reading = true;

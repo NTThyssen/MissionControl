@@ -18,7 +18,7 @@ namespace MissionControl.Connection.Commands
             {
                 Array.Reverse(bval);
             }
-            return new byte[] { _boardID, bval[1], bval[0] };
+            return new byte[] { _boardID, bval[0], bval[1] };
         }
 
         public override string ToString()

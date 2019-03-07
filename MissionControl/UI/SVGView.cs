@@ -107,6 +107,11 @@ namespace MissionControl.UI.Widgets
         {
             foreach (Component component in _session.Mapping.Components())
             {
+                if (component.GraphicID == null)
+                {
+                    continue;
+                }
+                
                 SvgText text = (SvgText)_svgElements[component.GraphicID];
 
                 if (!component.Enabled)
@@ -116,10 +121,8 @@ namespace MissionControl.UI.Widgets
                     text.Color = disabledColor;
                     continue;
                 }
-                else
-                {
-                    FindTextByID(component.GraphicID + "_NAME").Color = nominalColor;
-                }
+                
+                FindTextByID(component.GraphicID + "_NAME").Color = nominalColor;
 
                 switch (component)
                 {

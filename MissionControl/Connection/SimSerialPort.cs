@@ -137,9 +137,12 @@ namespace MissionControl.Connection
                         value = BitConverter.GetBytes((short)random.Next(0, (int)tank.Total + 1));
                         break;
                     case ServoComponent servo:
-                        ushort randVal = (ushort) random.Next(0, ushort.MaxValue);
-                        value = BitConverter.GetBytes(randVal);
-                        //Console.WriteLine("Name: {0} Random value: {1}. Bytes: {2:X} {3:X}", c.Name, randVal, value[1], value[0]);
+                        ushort randServoVal = (ushort) random.Next(0, ushort.MaxValue);
+                        value = BitConverter.GetBytes(randServoVal);
+                        break;
+                    case ServoTargetComponent servoTarget:
+                        ushort randServoTargetVal = (ushort) random.Next(0, ushort.MaxValue);
+                        value = BitConverter.GetBytes(randServoTargetVal);
                         break;
                     case SolenoidComponent solenoid:
                         value = BitConverter.GetBytes((short)random.Next(0, 2));
