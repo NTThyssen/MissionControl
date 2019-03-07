@@ -150,7 +150,7 @@ namespace MissionControl.UI
 
         private LabelledEntryWidget CreateWidget(string label, string value)
         {
-            return new LabelledEntryWidget(0.0f, 0.5f) { LabelText = label , EntryText = value };
+            return new LabelledEntryWidget(0.0f, 0.0f) {  LabelText = label , EntryText = value, };
         }
 
         private void AddToTable(Table table, LabelledEntryWidget w, uint l, uint r, uint t, uint b)
