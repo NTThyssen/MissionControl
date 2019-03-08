@@ -140,12 +140,12 @@ namespace MissionControl.Tests
             
             Assert.AreEqual(0,l.Newtons());
             l.Set(10);
-            Assert.AreEqual(10 * l.Gravity,l.Newtons());
+            Assert.AreEqual(18.83217116,l.Newtons(), 0.01);
             l.Tare();
             l.Set(10);
-            Assert.AreEqual(0,l.Newtons());
+            Assert.AreEqual(0,l.Newtons(), 0.01);
             l.Set(200);
-            Assert.AreEqual(200 * l.Gravity - 10 * l.Gravity,l.Newtons());
+            Assert.AreEqual(357.8112522,l.Newtons(), 0.01);
         }
     }
 }

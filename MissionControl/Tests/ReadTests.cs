@@ -46,7 +46,7 @@ namespace MissionControl.Tests
         public void Pressure_Component_Is_Updated_Correctly ()
         {
             byte ID = 16;
-            PressureComponent expectedResult = new PressureComponent(0, "", "", x => x);
+            PressureComponent expectedResult = new PressureComponent(0, "", "", 50);
             expectedResult.Set(40000);
 
             TestStandMapping mapping = new TestStandMapping();
@@ -94,7 +94,7 @@ namespace MissionControl.Tests
             byte valLSB = 0x38;
             byte[] buffer = { ID, valMSB, valLSB };
             
-            LoadComponent expectedResult = new LoadComponent(0, "", "", x => x);
+            LoadComponent expectedResult = new LoadComponent(0, "", "");
             session.UpdateComponents(buffer);
             expectedResult.Set(-200);
 
@@ -119,7 +119,7 @@ namespace MissionControl.Tests
             byte valMSB = 0x05;
             byte valLSB = 0x39;
 
-            LoadComponent expectedResult = new LoadComponent(0, "", "", x => x);
+            LoadComponent expectedResult = new LoadComponent(0, "", "");
             expectedResult.Set(1337);
 
             TestStandMapping mapping = new TestStandMapping();
@@ -139,7 +139,7 @@ namespace MissionControl.Tests
             byte valMSB = 0x00;
             byte valLSB = 0xFA;
 
-            LoadComponent expectedResult = new LoadComponent(0, "", "", x => x);
+            LoadComponent expectedResult = new LoadComponent(0, "", "");
             expectedResult.Set(250);
 
             TestStandMapping mapping = new TestStandMapping();
@@ -159,7 +159,7 @@ namespace MissionControl.Tests
             byte valMSB = 0xFA;
             byte valLSB = 0xC7;
 
-            LoadComponent expectedResult = new LoadComponent(0,"", "", x => x);
+            LoadComponent expectedResult = new LoadComponent(0,"", "");
             expectedResult.Set(-1337);
 
             TestStandMapping mapping = new TestStandMapping();
@@ -179,7 +179,7 @@ namespace MissionControl.Tests
             byte valMSB = 0x05;
             byte valLSB = 0x39;
 
-            LoadComponent expectedResult = new LoadComponent(0, "", "", x => x);
+            LoadComponent expectedResult = new LoadComponent(0, "", "");
             expectedResult.Set(1337);
 
             TestStandMapping mapping = new TestStandMapping();

@@ -125,13 +125,13 @@ namespace MissionControl.Connection
                 switch (c)
                 {
                     case PressureComponent pt:
-                        value = BitConverter.GetBytes((short)random.Next(10, 30));
+                        value = BitConverter.GetBytes((short)random.Next(400, 1900));
                         break;
                     case TemperatureComponent tc:
                         value = BitConverter.GetBytes((short)random.Next(-50, 300));
                         break;
                     case LoadComponent load:
-                        value = BitConverter.GetBytes((short)random.Next(0, 311));
+                        value = BitConverter.GetBytes((short)random.Next(0, 2124));
                         break;
                     case LevelComponent tank:
                         value = BitConverter.GetBytes((short)random.Next(0, (int)tank.Total + 1));
