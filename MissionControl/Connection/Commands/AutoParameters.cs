@@ -11,6 +11,7 @@ namespace MissionControl.Connection.Commands
         private const int N = 24;
         
         public ushort StartDelay;
+        public ushort IgnitionTime;
         public ushort PreStage1Time;
         public ushort PreStage2MaxTime;
         public ushort PreStage2StableTime;

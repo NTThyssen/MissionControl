@@ -359,7 +359,8 @@ namespace MissionControl.UI
         public void UpdateLastConnectionLabel ()
         {
             double time = Math.Floor(10 * (DateTime.Now - _session.LastReceived).TotalMilliseconds / 1000.0) / 10;
-            _lastConnection.Text = string.Format("Time since package:\n{0} s", time);
+            //double time = Component.ToRounded(DateTime.Now - _session.LastReceived, 1);
+            _lastConnection.Text = string.Format("Data received: {0} s\nQueue count: {1}", time, _session.QueueSize);
             _lastConnection.ModifyFg(StateType.Normal, (time < 4) ? _clrGoodConnection : _clrBadConnection);
         }
 

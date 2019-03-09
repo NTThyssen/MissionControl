@@ -9,7 +9,8 @@ namespace MissionControl.Data
         public ComponentMapping Mapping { get; }
         public State State { get; set; }
         public long SystemTime { get; set; }
-        public DateTime LastReceived;
+        public DateTime LastReceived { get; set; } = DateTime.Now;
+        public int QueueSize { get; set; }
         public bool Connected { get; set; }
         //public Settings Setting { get; set; }
         public bool IsAutoSequence { get; set; } = false;

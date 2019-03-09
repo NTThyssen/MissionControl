@@ -59,6 +59,7 @@ namespace MissionControl.Tests
             AutoParameters param = new AutoParameters()
             {
                 StartDelay = 20000, // 0x4E20
+                IgnitionTime = 4000, // 0x0FA0
                 PreStage1Time = 500, // 0x01F4
                 PreStage2MaxTime = 3000, // 0x0BB8
                 PreStage2StableTime = 250, // 0x00FA
@@ -94,6 +95,7 @@ namespace MissionControl.Tests
                 0xCB,
                 
                 0x4E, 0x20,
+                0x0F, 0xA0,
                 0x01, 0xF4,
                 0x0B, 0xB8,
                 0x00, 0xFA,

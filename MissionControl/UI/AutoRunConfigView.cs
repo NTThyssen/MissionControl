@@ -29,6 +29,7 @@ namespace MissionControl.UI
         private IAutoParameterListener _listener;
         
         private LabelledEntryWidget _startDelay;
+        private LabelledEntryWidget _ignitionTime;
         private LabelledEntryWidget _preStage1Time;
         private LabelledEntryWidget _preStage2MaxTime;
         private LabelledEntryWidget _preStage2StableTime;
@@ -67,6 +68,7 @@ namespace MissionControl.UI
             SetPosition(WindowPosition.Center);
 
             _startDelay = CreateWidget("Start Delay [ms]", GetValueString(ap.StartDelay));
+            _ignitionTime = CreateWidget("Ignition Time [ms]", GetValueString(ap.IgnitionTime));
             _preStage1Time = CreateWidget("Pre Stage 1 Time [ms]", GetValueString(ap.PreStage1Time));
             _preStage2MaxTime = CreateWidget("Pre Stage 2 Max Time [ms]", GetValueString(ap.PreStage2MaxTime));
             _preStage2StableTime = CreateWidget("Pre Stage 2 Stable Time [ms]", GetValueString(ap.PreStage2StableTime));
@@ -110,9 +112,10 @@ namespace MissionControl.UI
             Table layout = new Table(6, 7, false);
             
             AddToTable(layout, _startDelay, 0, 1, 0, 1);
-            AddToTable(layout, _preStage1Time, 0, 1, 1, 2);
-            AddToTable(layout, _preStage1FuelPosition, 0, 1, 2, 3);
-            AddToTable(layout, _preStage1OxidPosition, 0, 1, 3, 4);
+            AddToTable(layout, _ignitionTime, 0, 1, 1, 2);
+            AddToTable(layout, _preStage1Time, 0, 1, 2, 3);
+            AddToTable(layout, _preStage1FuelPosition, 0, 1, 3, 4);
+            AddToTable(layout, _preStage1OxidPosition, 0, 1, 4, 5);
             
             AddToTable(layout, _preStage2MaxTime, 1, 2, 0, 1);
             AddToTable(layout, _preStage2StableTime, 1, 2, 1, 2);
@@ -166,6 +169,7 @@ namespace MissionControl.UI
             AutoParameters ap = new AutoParameters();
             
             error |= AutoParameters.ValidateTime(_startDelay.EntryText,nameof(ap.StartDelay), ref errorMsg, out ap.StartDelay);
+            error |= AutoParameters.ValidateTime(_ignitionTime.EntryText,nameof(ap.PreStage1Time), ref errorMsg, out ap.IgnitionTime);
             error |= AutoParameters.ValidateTime(_preStage1Time.EntryText,nameof(ap.PreStage1Time), ref errorMsg, out ap.PreStage1Time);
             error |= AutoParameters.ValidateTime(_preStage2MaxTime.EntryText,nameof(ap.PreStage2MaxTime), ref errorMsg, out ap.PreStage2MaxTime);
             error |= AutoParameters.ValidateTime(_preStage2StableTime.EntryText,nameof(ap.PreStage2StableTime), ref errorMsg, out ap.PreStage2StableTime);
@@ -220,16 +224,6 @@ namespace MissionControl.UI
         private string GetValueString(float value)
         {
             return (value != 0) ? value.ToString(CultureInfo.InvariantCulture) : "";
-        }
-        
-
-       
-       
-       
-        
-        
+        }   
     }
-  
-    
-    
 }

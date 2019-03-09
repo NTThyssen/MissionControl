@@ -14,6 +14,7 @@ namespace MissionControl.Connection.Commands
             values = new List<ushort>()
             {
                 ap.StartDelay,
+                ap.IgnitionTime,
                 ap.PreStage1Time,
                 ap.PreStage2MaxTime,
                 ap.PreStage2StableTime,

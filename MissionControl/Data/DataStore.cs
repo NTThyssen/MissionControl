@@ -28,7 +28,7 @@ namespace MissionControl.Data
         private Session _session;
        
         private bool _isLogging = false;
-
+        
         public DataStore(Session session)
         {
             _data = new Queue<DataPacket>();
@@ -38,6 +38,7 @@ namespace MissionControl.Data
 
         public void Enqueue(DataPacket packet) {
             _session.LastReceived = packet.ReceivedTime;
+            _session.QueueSize = _data.Count;
             if (_isLogging)
             {
                 _data.Enqueue(packet);

@@ -149,10 +149,12 @@ namespace MissionControl.Connection
             catch (IOException e)
             {
                 Console.WriteLine("Serial IO error: {0}", e.Message);
+                StopConnection();
             }
             catch (InvalidOperationException e)
             {
                 Console.WriteLine("Serial invalid operation error: {0}", e.Message);
+                StopConnection();
             }
             StopConnection();
         }

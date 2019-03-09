@@ -136,48 +136,5 @@ namespace MissionControl.Data
             
         }
 
-        /*public static int GetIfExists(string key, int defaultValue)
-        {
-            string sval = Preferences[key];
-            return (sval != null && int.TryParse(sval, out int ival)) ? ival : defaultValue;
-        }
-
-        public static float GetIfExists(string key, float defaultValue)
-        {
-            string sval = Preferences[key];
-            return (sval != null && float.TryParse(sval, NumberStyles.Any, CultureInfo.InvariantCulture, out float fval)) ? fval : defaultValue;
-        }
-
-        public static string GetIfExists(string key, string defaultValue)
-        {
-            return Preferences[key] ?? defaultValue;
-        }
-
-        public static bool GetIfExists(string key, bool defaultValue)
-        {
-            string sval = Preferences[key];
-            return (sval != null && bool.TryParse(sval, out bool bval)) ? bval : defaultValue;
-        }
-
-        public static void Set(string key, string value)
-        {
-            Preferences[key] = value;
-        }
-
-        public static void Set(string key, int value)
-        {
-            Preferences[key] = Convert.ToString(value);
-        }
-
-        public static void Set(string key, float value)
-        {
-            Preferences[key] = Convert.ToString(value, CultureInfo.InvariantCulture);
-        }
-
-        public static void Set(string key, bool value)
-        {
-            Preferences[key] = Convert.ToString(value);
-        }*/
-
     }
 }
