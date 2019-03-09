@@ -14,6 +14,7 @@ namespace MissionControl.UI
         void OnMenuSettingsPressed();
         void OnMenuPlotViewerPressed();
         void OnServoPressed(ServoComponent servo, float value);
+        void OnServoTimed(ServoComponent servo, float startValue, float endValue, int delayMillis);
         void OnSolenoidPressed(SolenoidComponent solenoid, bool open);
         void OnLogStartPressed();
         void OnLogStopPressed();
@@ -100,7 +101,7 @@ namespace MissionControl.UI
                 HeightRequest = 40
             };
             _btnLogStart.Pressed += LogStartPressed;
-            _btnLogStart.ModifyBg(StateType.Insensitive, new Gdk.Color(70, 70, 70));
+            _btnLogStart.ModifyBg(StateType.Insensitive, Colors.ButtonDisabled);
 
             _btnLogStop = new Button
             {
@@ -109,7 +110,7 @@ namespace MissionControl.UI
             };
             _btnLogStop.Pressed += LogStopPressed;
             _btnLogStop.Sensitive = false;
-            _btnLogStop.ModifyBg(StateType.Insensitive, new Gdk.Color(70, 70, 70));
+            _btnLogStop.ModifyBg(StateType.Insensitive, Colors.ButtonDisabled);
 
             logButtons.PackStart(_btnLogStart, false, true, 0);
             logButtons.PackStart(_btnLogStop, false, true, 0);
@@ -132,7 +133,7 @@ namespace MissionControl.UI
                 _listener.OnConnectPressed();
                 _btnConnect.Sensitive = false;
             };
-            _btnConnect.ModifyBg(StateType.Insensitive, new Gdk.Color(70, 70, 70));
+            _btnConnect.ModifyBg(StateType.Insensitive, Colors.ButtonDisabled);
             
             _btnDisconnect = new Button
             {
@@ -146,7 +147,7 @@ namespace MissionControl.UI
                 _btnConnect.Sensitive = !_btnLock.Active && !_session.Connected;
                 _btnDisconnect.Sensitive = !_btnLock.Active && _session.Connected;;
             };
-            _btnDisconnect.ModifyBg(StateType.Insensitive, new Gdk.Color(70, 70, 70));
+            _btnDisconnect.ModifyBg(StateType.Insensitive, Colors.ButtonDisabled);
 
             HBox connectionButtons = new HBox(false, 8);
             connectionButtons.PackStart(_btnConnect, true, true, 0);
@@ -163,7 +164,7 @@ namespace MissionControl.UI
 
             _btnLock = new DToggleButton(100, 40, "Enable controls", "Disable controls", DToggleButton.ToggleState.Inactive);
             _btnLock.Pressed += LockButtonPressed;
-            _btnLock.ModifyBg(StateType.Insensitive, new Gdk.Color(140, 140, 140));
+            _btnLock.ModifyBg(StateType.Insensitive, Colors.ButtonDisabled);
 
             HBox autoSequenceButtons = new HBox(false, 8);
             _btnStartSequence = new Button
@@ -173,7 +174,7 @@ namespace MissionControl.UI
             };
             
             _btnStartSequence.Pressed += (sender, args) => _listener.OnStartAutoSequencePressed();
-            _btnStartSequence.ModifyBg(StateType.Insensitive, new Gdk.Color(70, 70, 70));
+            _btnStartSequence.ModifyBg(StateType.Insensitive, Colors.ButtonDisabled);
             
             _btnStopSequence = new Button
             {
@@ -181,7 +182,7 @@ namespace MissionControl.UI
                 HeightRequest = 40
             };
             _btnStopSequence.Pressed += (sender, args) => _listener.OnStopAutoSequencePressed();
-            _btnStopSequence.ModifyBg(StateType.Insensitive, new Gdk.Color(70, 70, 70));
+            _btnStopSequence.ModifyBg(StateType.Insensitive, Colors.ButtonDisabled);
 
             autoSequenceButtons.PackStart(_btnStartSequence, true, true, 0);
             autoSequenceButtons.PackStart(_btnStopSequence, true, true, 0);
@@ -193,7 +194,7 @@ namespace MissionControl.UI
                 Label = "Set",
                 HeightRequest = 40
             };
-           
+            _btnFuelTankSet.ModifyBg(StateType.Insensitive, Colors.ButtonDisabled);
             _btnFuelTankSet.Pressed += BtnFuelTankSetOnPressed;
             
             _fuelTankInput = new Entry
@@ -201,13 +202,16 @@ namespace MissionControl.UI
                 HeightRequest = 40,
                 WidthChars = 10
             };
+            _fuelTankInput.ModifyBase(StateType.Insensitive, Colors.ButtonDisabled);
+            
             _tareLoadBtn = new Button
             {
                 Label = "Tare",
                 HeightRequest = 40
             };
-            
+            _tareLoadBtn.ModifyBg(StateType.Insensitive, Colors.ButtonDisabled);
             _tareLoadBtn.Pressed += BtnTarePressed;
+            
             tankFillContainer.PackStart(_fuelTankInput, false, false, 0);
             tankFillContainer.PackStart(_btnFuelTankSet, true, true, 0);
             
@@ -349,7 +353,14 @@ namespace MissionControl.UI
             _btnStopSequence.Sensitive = !_btnLock.Active && _session.IsAutoSequence;
            
             _btnLock.Sensitive = !_session.IsAutoSequence;
-            
+
+            _tareLoadBtn.Sensitive = !_btnLock.Active;
+            _btnFuelTankSet.Sensitive = !_btnLock.Active;
+            _fuelTankInput.Sensitive = !_btnLock.Active;
+
+            _btnLogStart.Sensitive = !_logRunning && !_btnLock.Active;
+            _btnLogStop.Sensitive = _logRunning && !_btnLock.Active;
+
         }
 
         public void UpdateSVG() {
@@ -360,7 +371,7 @@ namespace MissionControl.UI
         {
             double time = Math.Floor(10 * (DateTime.Now - _session.LastReceived).TotalMilliseconds / 1000.0) / 10;
             //double time = Component.ToRounded(DateTime.Now - _session.LastReceived, 1);
-            _lastConnection.Text = string.Format("Data received: {0} s\nQueue count: {1}", time, _session.QueueSize);
+            _lastConnection.Text = (_session.Connected) ? string.Format("Data received: {0} s\nQueue count: {1}", time, _session.QueueSize) : "Not connected";
             _lastConnection.ModifyFg(StateType.Normal, (time < 4) ? _clrGoodConnection : _clrBadConnection);
         }
 
@@ -428,6 +439,11 @@ namespace MissionControl.UI
         {
             _listener.OnServoPressed(servo, value);
 
+        }
+
+        public void OnServoTimed(ServoComponent servo, float startValue, float endValue, int delayMillis)
+        {
+            _listener.OnServoTimed(servo, startValue, endValue, delayMillis);
         }
 
         public void OnSolenoidPressed(SolenoidComponent solenoid, bool open)

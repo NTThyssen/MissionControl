@@ -159,7 +159,7 @@ namespace MissionControl.Connection
             StopConnection();
         }
 
-        public void WriteAll()
+        private void WriteAll()
         {
             while (_commands.Count > 0)
             {

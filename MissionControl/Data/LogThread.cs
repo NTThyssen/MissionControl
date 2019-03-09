@@ -101,8 +101,8 @@ namespace MissionControl.Data
                             _dataLog.GetCurrentSession().UpdateComponents(packet.Bytes);
 
                             // Write pretty
-                            //string pretty = FormatWriter.PrettyLine(_dataLog.GetCurrentSession().SystemTime, packet.Bytes, _dataLog.GetCurrentSession().Mapping.Loggables());
-                            string pretty = FormatWriter.PrettyLine(stopWatch.ElapsedMilliseconds, packet.Bytes, _dataLog.GetCurrentSession().Mapping.Loggables());
+                            string pretty = FormatWriter.PrettyLine(_dataLog.GetCurrentSession().SystemTime, packet.Bytes, _dataLog.GetCurrentSession().Mapping.Loggables());
+                            //string pretty = FormatWriter.PrettyLine(stopWatch.ElapsedMilliseconds, packet.Bytes, _dataLog.GetCurrentSession().Mapping.Loggables());
                             sw.WriteLine(pretty);
                         }
                     }

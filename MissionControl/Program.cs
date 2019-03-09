@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Globalization;
+using System.Timers;
 using Gtk;
 using MissionControl.Connection;
 using MissionControl.Connection.Commands;
@@ -59,9 +60,17 @@ namespace MissionControl
             _ioThread.SendCommand(command);
         }
 
-        public void OnValvePressed(ValveCommand command)
+        public void OnTimedCommand(Command cmd1, Command cmd2, int delayMillis)
         {
-            _ioThread.SendCommand(command);
+            _ioThread.SendCommand(cmd1);
+            Timer timer = new Timer();
+            timer.Interval = delayMillis;
+            timer.Elapsed += (sender, args) =>
+            {
+                _ioThread.SendCommand(cmd2);
+                timer.Stop();
+            };
+            timer.Start();
         }
 
         public void OnSessionSettingsUpdated(Preferences preferences)

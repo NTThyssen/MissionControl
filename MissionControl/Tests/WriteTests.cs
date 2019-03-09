@@ -1,3 +1,4 @@
+using System;
 using System.Threading;
 using MissionControl.Connection;
 using MissionControl.Connection.Commands;
@@ -29,6 +30,7 @@ namespace MissionControl.Tests
             byte[] actual = {};
                 
             Mock<ISerialPort> serial = new Mock<ISerialPort>();
+            serial.Setup(x => x.IsOpen).Returns(true);
             serial.Setup(x => x.Write(It.IsAny<byte[]>(), It.IsAny<int>(), It.IsAny<int>()))
                 .Callback((byte[] b, int o, int c) =>
                 {
@@ -36,8 +38,7 @@ namespace MissionControl.Tests
                 });
 
             ioThread.StartConnection(serial.Object);
-            p.OnValvePressed(sc);
-            ioThread.WriteAll();
+            p.OnCommand(sc);
             
             Thread.Sleep(500);
             ioThread.StopConnection();
@@ -52,6 +53,56 @@ namespace MissionControl.Tests
             Assert.AreEqual(expected, actual);
 
         }   
+        
+        [Test]
+        public void Verify_Timed_Servo_Command()
+        {
+            TestStandMapping mapping = new TestStandMapping();
+            Session session = new Session(mapping);
+            DataStore dataStore = new DataStore(session);
+            
+            Mock<IUserInterface> ui = new Mock<IUserInterface>();
+            Mock<LogThread> logThread = new Mock<LogThread>(dataStore);
+            IOThread ioThread = new IOThread(dataStore,ref session);
+
+            Program p = new Program(dataStore, logThread.Object, ioThread, ui.Object);
+            ServoCommand cmd1 = new ServoCommand(6, 69.0f);
+            ServoCommand cmd2 = new ServoCommand(6, 0.0f);
+            
+            byte[] actual = {};
+                
+            Mock<ISerialPort> serial = new Mock<ISerialPort>();
+            serial.Setup(x => x.IsOpen).Returns(true);
+            serial.Setup(x => x.Write(It.IsAny<byte[]>(), It.IsAny<int>(), It.IsAny<int>()))
+                .Callback((byte[] b, int o, int c) =>
+                {
+                    actual = b;
+                });
+
+            ioThread.StartConnection(serial.Object);
+            p.OnTimedCommand(cmd1, cmd2, 2000);
+            
+            Thread.Sleep(500);
+            byte[] expected1 =
+            {
+                0xFD, 0xFF, 0xFF, 0xFF, 0xFF,
+                0x06, 0xB0, 0xA3,
+                0xFE, 0xFF, 0xFF, 0xFF, 0xFF
+            };
+            Assert.AreEqual(expected1, actual);
+            
+            Thread.Sleep(1500);
+            byte[] expected2 =
+            {
+                0xFD, 0xFF, 0xFF, 0xFF, 0xFF,
+                0x06, 0x00, 0x00,
+                0xFE, 0xFF, 0xFF, 0xFF, 0xFF
+            };
+            Assert.AreEqual(expected2, actual);
+            
+            ioThread.StopConnection();
+
+        } 
         
         [Test]
         public void Verify_Solenoid_Open_Command()
@@ -70,6 +121,7 @@ namespace MissionControl.Tests
             byte[] actual = {};
                 
             Mock<ISerialPort> serial = new Mock<ISerialPort>();
+            serial.Setup(x => x.IsOpen).Returns(true);
             serial.Setup(x => x.Write(It.IsAny<byte[]>(), It.IsAny<int>(), It.IsAny<int>()))
                 .Callback((byte[] b, int o, int c) =>
                 {
@@ -77,8 +129,7 @@ namespace MissionControl.Tests
                 });
 
             ioThread.StartConnection(serial.Object);
-            p.OnValvePressed(sc);
-            ioThread.WriteAll();
+            p.OnCommand(sc);
             
             Thread.Sleep(500);
             ioThread.StopConnection();
@@ -111,6 +162,7 @@ namespace MissionControl.Tests
             byte[] actual = {};
                 
             Mock<ISerialPort> serial = new Mock<ISerialPort>();
+            serial.Setup(x => x.IsOpen).Returns(true);
             serial.Setup(x => x.Write(It.IsAny<byte[]>(), It.IsAny<int>(), It.IsAny<int>()))
                 .Callback((byte[] b, int o, int c) =>
                 {
@@ -118,8 +170,7 @@ namespace MissionControl.Tests
                 });
 
             ioThread.StartConnection(serial.Object);
-            p.OnValvePressed(sc);
-            ioThread.WriteAll();
+            p.OnCommand(sc);
             
             Thread.Sleep(500);
             ioThread.StopConnection();

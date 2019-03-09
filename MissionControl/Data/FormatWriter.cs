@@ -10,16 +10,13 @@ namespace MissionControl.Data
 
         public static byte[] ToRaw( byte[] data)
         {
-            int length = 7 + data.Length;
-            byte[] stored = new byte[length];
-            stored[0] = 0xFF;
-            stored[1] = 0x01;
-            stored[length - 5] = 0x01;
-            stored[length - 4] = 0xFF;
-            stored[length - 3] = 0xFF;
-            stored[length - 2] = 0xFF;
-            stored[length - 1] = 0xFF;
-            return stored;
+            byte[] start = new byte[] {0xFD, 0xFF, 0xFF, 0xFF, 0xFF};
+            byte[] end   = new byte[] {0xFE, 0xFF, 0xFF, 0xFF, 0xFF};
+            byte[] wbuffer = new byte[start.Length + end.Length + data.Length];
+            Array.Copy(start, 0, wbuffer, 0, start.Length);
+            Array.Copy(data, 0, wbuffer, start.Length, data.Length);
+            Array.Copy(end, 0, wbuffer, start.Length + data.Length, end.Length);
+            return wbuffer;
         }
 
         public static string PrettyHeader(List<ILoggable> components)

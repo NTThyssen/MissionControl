@@ -10,6 +10,7 @@ namespace MissionControl.UI.Widgets
     public interface IValveControlListener
     {
         void OnServoPressed(ServoComponent servo, float value);
+        void OnServoTimed(ServoComponent servo, float startValue, float endValue, int delayMillis);
         void OnSolenoidPressed(SolenoidComponent solenoid, bool active);
         void OnControlEnter(ValveComponent component);
         void OnControlLeave(ValveComponent component);
@@ -34,7 +35,7 @@ namespace MissionControl.UI.Widgets
             {
                 if (c is ServoComponent servo)
                 {
-                    ServoControlWidget servoWidget = new ServoControlWidget(servo, listener.OnServoPressed);
+                    ServoControlWidget servoWidget = new ServoControlWidget(servo, listener.OnServoPressed, listener.OnServoTimed);
 
                     servoWidget.EnterNotifyEvent += (o, args) => { listener.OnControlEnter(servo); args.RetVal = false; };
                     servoWidget.LeaveNotifyEvent += (o, args) => { listener.OnControlLeave(servo); args.RetVal = false; };

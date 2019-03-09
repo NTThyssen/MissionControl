@@ -103,9 +103,9 @@ namespace MissionControl.Connection
             btime[0] = 0xC9;
             Array.Copy(timeValue, 0, btime, 1, timeValue.Length);
 
-            byte stateValue = (byte) random.Next(0, 3);
+            byte stateValue = (byte) random.Next(0, 10);
             byte[] bstate = { 0xC8, stateValue };
-            byte[] bauto = { 0xCA, (byte) random.Next(0, 2) };
+            byte[] bauto = { 0xCA, (byte) random.Next(0, 1) };
 
             List<byte[]> data = new List<byte[]>
             {

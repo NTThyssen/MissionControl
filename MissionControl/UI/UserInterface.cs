@@ -159,6 +159,13 @@ namespace MissionControl.UI
             _listener.OnCommand(command);
         }
 
+        public void OnServoTimed(ServoComponent servo, float startValue, float endValue, int delayMillis)
+        {
+            ServoCommand command1 = new ServoCommand(servo.BoardID, startValue);
+            ServoCommand command2 = new ServoCommand(servo.BoardID, endValue);
+            _listener.OnTimedCommand(command1, command2, delayMillis);
+        }
+
         public void OnSolenoidPressed(SolenoidComponent solenoid, bool open)
         {
             SolenoidCommand command = new SolenoidCommand(solenoid.BoardID, open);
