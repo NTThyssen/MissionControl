@@ -10,8 +10,8 @@ namespace MissionControl.Data.Components
         private readonly float _minADC = 372.36f;
         private readonly float _maxADC = 1861.81f;
         private readonly float _maxPressure;
-        private float Calibrated => _maxPressure * (_rawPressure - _minADC) / (_maxADC - _minADC);
-        //private float Calibrated => _rawPressure;
+        //private float Calibrated => _maxPressure * (_rawPressure - _minADC) / (_maxADC - _minADC);
+        private float Calibrated => _rawPressure;
         public override string TypeName => "Pressure";
         public override int ByteSize => 2;
         public override bool Signed => false;

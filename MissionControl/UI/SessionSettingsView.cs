@@ -29,7 +29,7 @@ namespace MissionControl.UI
         private LabelledCheckboxWidget _chkSettingsOnStartup;
 
         // Serial port
-        private readonly int[] bauds = { 9600, 14400, 19200, 38400, 57600, 115200, 128000, 256000, 512000 };
+        private readonly int[] bauds = { 9600, 14400, 19200, 38400, 57600, 115200, 128000, 256000, 512000, 921600 };
         private DropdownWidget _portDropdown;
         private DropdownWidget _baudRateDropdown;
         private Button _btnPortRefresh;

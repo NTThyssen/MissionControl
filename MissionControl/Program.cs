@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Globalization;
 using System.Timers;
+using GLib;
 using Gtk;
 using MissionControl.Connection;
 using MissionControl.Connection.Commands;
@@ -67,6 +68,10 @@ namespace MissionControl
             timer.Interval = delayMillis;
             timer.Elapsed += (sender, args) =>
             {
+                _ioThread.SendCommand(cmd2);
+                _ioThread.SendCommand(cmd2);
+                _ioThread.SendCommand(cmd2);
+                _ioThread.SendCommand(cmd2);
                 _ioThread.SendCommand(cmd2);
                 timer.Stop();
             };

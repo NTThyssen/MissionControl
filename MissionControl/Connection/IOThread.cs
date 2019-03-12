@@ -19,6 +19,13 @@ namespace MissionControl.Connection
         void StopConnection();
     }
 
+    public enum ConnectionStatus
+    {
+        DISCONNECTED, 
+        CONNECTING,
+        CONNECTED
+    }
+
     public class IOThread : IIOThread
     {
         Thread t;
@@ -111,21 +118,26 @@ namespace MissionControl.Connection
 
             return true;
         }
-        
-        //byte[] fakeBuffer = { 0xA, 0xFF, 0xC, 0xFF, 0x01, 0x14, 0x0B, 0xD0, 0xC8, 0x02, 0xC9, 0x00, 0x00, 0x27, 0x10, 0x01, 0xFF, 0xFF, 0xFF, 0xFF, 0xA };
 
         public void RunMethod()
         {
             buffered = new List<byte>();
             _commands.Clear();
-            Open();
 
-            while (_shouldRun && _port.IsOpen)
+            while (_shouldRun)
             {
-                WriteAll();
-                ReadAll();
+                if (_port.IsOpen)
+                {
+                    WriteAll();
+                    ReadAll();    
+                }
+                else
+                {
+                    Open();
+                    Thread.Sleep(1000);
+                }
             }
-
+            
             _session.Connected = false;
             try
             {
@@ -133,12 +145,13 @@ namespace MissionControl.Connection
             }
             catch (IOException e)
             {
-                Console.WriteLine("Serial IO error: {0}", e.Message);
+                Console.WriteLine("Serial IO error in closing: {0}", e.Message);
             }
         }
 
         private void Open()
         {
+            //_session.IsTryingConnect = true;
             try
             {
                 _port.Open();
@@ -148,15 +161,17 @@ namespace MissionControl.Connection
             }
             catch (IOException e)
             {
-                Console.WriteLine("Serial IO error: {0}", e.Message);
+                Console.WriteLine("Serial IO error in opening: {0}", e.Message);
+                _session.Connected = false;
                 StopConnection();
+                return;
             }
             catch (InvalidOperationException e)
             {
                 Console.WriteLine("Serial invalid operation error: {0}", e.Message);
-                StopConnection();
             }
             StopConnection();
+            _session.Connected = false;
         }
 
         private void WriteAll()
@@ -259,11 +274,11 @@ namespace MissionControl.Connection
 
         private void PackageDone()
         {
-            foreach (byte b in buffered)
+            /*foreach (byte b in buffered)
             {
                 Console.Write("{0:X} ", b);
             }
-            Console.WriteLine();
+            Console.WriteLine();*/
 
             DataPacket packet = new DataPacket(buffered.ToArray());
             _dataLog.Enqueue(packet);

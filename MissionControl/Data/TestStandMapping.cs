@@ -24,9 +24,9 @@ namespace MissionControl.Data
 
         public TestStandMapping()
         {
-            PT_N2 = new PressureComponent(16,  "PT_N2", "PT-N2", 50);
+            PT_N2 = new PressureComponent(16,  "PT_N2", "PT-N2", 400);
             PT_IPA = new PressureComponent(17, "PT_IPA", "PT-IPA", 50);
-            PT_N2O = new PressureComponent(18,  "PT_N2O", "PT-N2O", 400);
+            PT_N2O = new PressureComponent(18,  "PT_N2O", "PT-N2O", 50);
             PT_FUEL = new PressureComponent(19,  "PT_FUEL", "PT-FUEL", 50);
             PT_OX = new PressureComponent(20,  "PT_OX", "PT-OX", 50);
             PT_CHAM = new PressureComponent(21, "PT_CHAM", "PT-CHAM", 50);

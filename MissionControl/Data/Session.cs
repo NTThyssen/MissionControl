@@ -1,4 +1,5 @@
 ﻿using System;
+using MissionControl.Connection;
 using MissionControl.Data.Components;
 
 namespace MissionControl.Data
@@ -12,6 +13,8 @@ namespace MissionControl.Data
         public DateTime LastReceived { get; set; } = DateTime.Now;
         public int QueueSize { get; set; }
         public bool Connected { get; set; }
+
+        public ConnectionStatus ConnectionStatus;
         //public Settings Setting { get; set; }
         public bool IsAutoSequence { get; set; } = false;
 

@@ -95,7 +95,7 @@ namespace MissionControl.Data
                             // Write raw as backup
                             byte[] raw = FormatWriter.ToRaw(packet.Bytes);
                             fs.Write(raw, 0, raw.Length);
-                            Console.WriteLine("Raw length written: {0}", raw.Length);
+                            //Console.WriteLine("Raw length written: {0}", raw.Length);
 
                             // Update components
                             _dataLog.GetCurrentSession().UpdateComponents(packet.Bytes);

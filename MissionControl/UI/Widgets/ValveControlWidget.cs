@@ -82,5 +82,13 @@ namespace MissionControl.UI.Widgets
 
             ShowAll();
         }
+
+        public void UpdateControls(List<SolenoidComponent> valves)
+        {
+            foreach (SolenoidComponent valve in valves)
+            {
+                
+            }
+        } 
     }
 }
