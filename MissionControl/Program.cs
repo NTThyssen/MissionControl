@@ -69,10 +69,10 @@ namespace MissionControl
             timer.Elapsed += (sender, args) =>
             {
                 _ioThread.SendCommand(cmd2);
+                /*_ioThread.SendCommand(cmd2);
                 _ioThread.SendCommand(cmd2);
                 _ioThread.SendCommand(cmd2);
-                _ioThread.SendCommand(cmd2);
-                _ioThread.SendCommand(cmd2);
+                _ioThread.SendCommand(cmd2);*/
                 timer.Stop();
             };
             timer.Start();

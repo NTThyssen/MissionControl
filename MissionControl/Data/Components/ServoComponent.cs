@@ -11,6 +11,7 @@ namespace MissionControl.Data.Components
         public override string TypeName => "Servo";
         public override int ByteSize => 2;
         public override bool Signed => false;
+        public override int Raw => _rawPosition;
 
         public ServoComponent(byte boardID, string graphicID, string name, float closePosition, float openPosition, string graphicIDSymbol) : base(boardID, graphicID, name, graphicIDSymbol)
         {

@@ -10,6 +10,7 @@ namespace MissionControl.Data.Components
 
         public override int ByteSize => 2;
         public override bool Signed => false;
+        public override int Raw => _rawVolume;
         public String GraphicIDGradient { get; }
         public float Total { get; }
         

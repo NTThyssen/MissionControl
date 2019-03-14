@@ -91,7 +91,7 @@ namespace MissionControl.Tests
             };
             Assert.AreEqual(expected1, actual);
             
-            Thread.Sleep(1500);
+            Thread.Sleep(1600);
             byte[] expected2 =
             {
                 0xFD, 0xFF, 0xFF, 0xFF, 0xFF,

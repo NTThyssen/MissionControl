@@ -13,6 +13,7 @@ namespace MissionControl.Data.Components
         public override string TypeName => "Voltage";
         public override int ByteSize => 2;
         public override bool Signed => false;
+        public override int Raw => _rawVoltage;
 
         public VoltageComponent(byte boardID, string graphicID, string name, float minVoltage, float maxVoltage) : base(boardID, graphicID, name)
         {

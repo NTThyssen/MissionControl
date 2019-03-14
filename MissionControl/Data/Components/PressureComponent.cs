@@ -7,18 +7,24 @@ namespace MissionControl.Data.Components
     {
         private int _rawPressure = 373;
 
-        private readonly float _minADC = 372.36f;
-        private readonly float _maxADC = 1861.81f;
-        private readonly float _maxPressure;
+        private const int _minADC = 373;
+        private const int _maxADC = 1862;
+        private static int _maxPressure = 50;
+
+        private  Scaler DefaultScaler = x => { return _maxPressure * (x - _minADC) / (_maxADC - _minADC); };
         //private float Calibrated => _maxPressure * (_rawPressure - _minADC) / (_maxADC - _minADC);
-        private float Calibrated => _rawPressure;
+        private readonly Scaler _scaler;
+        private float Calibrated => _scaler(_rawPressure);
+        
         public override string TypeName => "Pressure";
         public override int ByteSize => 2;
         public override bool Signed => false;
+        public override int Raw => _rawPressure;
 
-        public PressureComponent(byte boardID, string graphicID, string name, float maxPressure) : base(boardID, graphicID, name)
+        public PressureComponent(byte boardID, string graphicID, string name, int maxPressure, Scaler scaler) : base(boardID, graphicID, name)
         {
             _maxPressure = maxPressure;
+            _scaler = scaler ?? DefaultScaler;
         }
 
         public float Relative()

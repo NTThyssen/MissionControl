@@ -11,6 +11,7 @@ namespace MissionControl.Data.Components
         public override string TypeName => "Temperature";
         public override int ByteSize => 2;
         public override bool Signed => true;
+        public override int Raw => _rawTemperature;
 
         public TemperatureComponent(byte boardID, string graphicID, string name, Scaler scaler) : base(boardID, graphicID, name)
         {

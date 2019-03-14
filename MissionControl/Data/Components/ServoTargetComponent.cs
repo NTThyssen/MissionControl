@@ -13,6 +13,8 @@ namespace MissionControl.Data.Components
 
         public override int ByteSize => 2;
         public override bool Signed => false;
+        public override int Raw => _rawPosition;
+
         public override void Set(int val)
         {
             _rawPosition = val;
