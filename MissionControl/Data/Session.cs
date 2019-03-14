@@ -107,10 +107,13 @@ namespace MissionControl.Data
                                 byte[] valBytes = new byte[4];
                                 Array.Copy(bytes, i + 1, valBytes, 4 - size, size);
 
-                                byte sign = (byte)(((valBytes[4 - size] & 0b10000000) == 0) ? 0 : 0xFF);
-                                for (int j = 0; j < 4 - size; j++)
+                                if (component.Signed)
                                 {
-                                    valBytes[j] = (component.Signed) ? sign : valBytes[j];
+                                    byte sign = (byte)(((valBytes[4 - size] & 0b10000000) == 0) ? 0 : 0xFF);
+                                    for (int j = 0; j < 4 - size; j++)
+                                    {
+                                        valBytes[j] = sign;
+                                    }
                                 }
 
                                 if (BitConverter.IsLittleEndian)
