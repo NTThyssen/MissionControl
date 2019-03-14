@@ -10,7 +10,7 @@ namespace MissionControl.Data
         public ComponentMapping Mapping { get; }
         public State State { get; set; }
         public long SystemTime { get; set; }
-        public DateTime LastReceived { get; set; } = DateTime.Now;
+        public DateTime LastReceived { get; set; } = DateTime.Now - TimeSpan.FromMinutes(1);
         public int QueueSize { get; set; }
         public bool Connected { get; set; }
 

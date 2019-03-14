@@ -19,7 +19,8 @@ namespace MissionControl.UI.Widgets
     [System.ComponentModel.ToolboxItem(true)]
     public partial class ValveControlWidget : Gtk.Bin
     {
-        List<Widget> _widgets;
+        private List<ServoControlWidget> _servos;
+        private List<SolenoidControlWidget> _solenoids;
 
         public ValveControlWidget(List<Component> components, IValveControlListener listener)
         {
@@ -28,8 +29,8 @@ namespace MissionControl.UI.Widgets
             Build();
 
             VBox controls = new VBox(false, 15);
-            List<ServoControlWidget> servos = new List<ServoControlWidget>();
-            List<SolenoidControlWidget> solenoids = new List<SolenoidControlWidget>();
+            _servos = new List<ServoControlWidget>();
+            _solenoids = new List<SolenoidControlWidget>();
 
             foreach (Component c in components)
             {
@@ -40,7 +41,7 @@ namespace MissionControl.UI.Widgets
                     servoWidget.EnterNotifyEvent += (o, args) => { listener.OnControlEnter(servo); args.RetVal = false; };
                     servoWidget.LeaveNotifyEvent += (o, args) => { listener.OnControlLeave(servo); args.RetVal = false; };
 
-                    servos.Add(servoWidget);
+                    _servos.Add(servoWidget);
                 } 
                 else if (c is SolenoidComponent solenoid)
                 {
@@ -49,22 +50,22 @@ namespace MissionControl.UI.Widgets
                     solWidget.EnterNotifyEvent += (o, args) => { listener.OnControlEnter(solenoid); args.RetVal = false; };
                     solWidget.LeaveNotifyEvent += (o, args) => { listener.OnControlLeave(solenoid); args.RetVal = false; };
 
-                    solenoids.Add(solWidget);
+                    _solenoids.Add(solWidget);
                 }
             }
             
             List<HBox> solPairs = new List<HBox>();
-            for (int i = 0; i < solenoids.Count; i++)
+            for (int i = 0; i < _solenoids.Count; i++)
             {
                 if (i % 2 == 0)
                 {
                     HBox box = new HBox(true,15);
-                    box.PackStart(solenoids[i]);
+                    box.PackStart(_solenoids[i]);
                     solPairs.Add(box);
                 }
                 else
                 {
-                    solPairs[solPairs.Count - 1].PackStart(solenoids[i]);
+                    solPairs[solPairs.Count - 1].PackStart(_solenoids[i]);
                 }
             }
             
@@ -73,7 +74,7 @@ namespace MissionControl.UI.Widgets
                 controls.PackStart(solPair, false, false, 0);
             }
 
-            foreach (ServoControlWidget servoWidget in servos)
+            foreach (ServoControlWidget servoWidget in _servos)
             {
                 controls.PackStart(servoWidget, false, false, 0);
             }
@@ -83,11 +84,15 @@ namespace MissionControl.UI.Widgets
             ShowAll();
         }
 
-        public void UpdateControls(List<SolenoidComponent> valves)
+        public void UpdateControls(Dictionary<byte, Component> components)
         {
-            foreach (SolenoidComponent valve in valves)
+            foreach (SolenoidControlWidget solenoid in _solenoids)
             {
-                
+                byte id = solenoid.ComponentID;
+                if (components.ContainsKey(id) && components[id] is SolenoidComponent sc)
+                {
+                    solenoid.Set(sc.Open);   
+                }
             }
         } 
     }

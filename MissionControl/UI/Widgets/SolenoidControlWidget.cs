@@ -16,6 +16,7 @@ namespace MissionControl.UI.Widgets
 
         private SolenoidCallback _callback;
         private SolenoidComponent _component;
+        public byte ComponentID => _component.BoardID;
 
         private DToggleButton _toggle;
 
@@ -51,6 +52,11 @@ namespace MissionControl.UI.Widgets
         {
             _toggle.Toggle();
             _callback(_component, _toggle.Active);
+        }
+
+        public void Set(bool open)
+        {
+            _toggle.Set(open ? DToggleButton.ToggleState.Active : DToggleButton.ToggleState.Inactive);
         }
 
     }

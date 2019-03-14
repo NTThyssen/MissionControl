@@ -343,6 +343,7 @@ namespace MissionControl.UI
             UpdateLastConnectionLabel();
 
             _valveWidget.Sensitive = !_btnLock.Active && !_session.IsAutoSequence && _session.Connected;
+            _valveWidget.UpdateControls(_session.Mapping.ComponentsByID());
             
             _stateWidget.SetCurrentState(_session.State, _session.IsAutoSequence);
 
