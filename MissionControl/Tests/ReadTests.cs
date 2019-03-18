@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using MissionControl.Data;
 using NUnit.Framework;
 using Moq;
@@ -56,12 +57,6 @@ namespace MissionControl.Tests
             session.UpdateComponents(new byte[]{ ID, 0x9C, 0x40 });
 
             Assert.AreEqual(expectedResult.Relative(), ((PressureComponent) mapping.ComponentsByID()[ID]).Relative());
-        }
-
-        [Test]
-        public void Load_Cell_Tare()
-        {
-            
         }
         
         [Test]
@@ -189,7 +184,7 @@ namespace MissionControl.Tests
 
 
             Mock<ISerialPort> serialMock = new Mock<ISerialPort>();
-            byte[] buffer = { 0xAA, 0xBB, 0xFD, 0xFF, 0xFF, 0xFF, 0xFF, ID, valMSB, valLSB, 0xFE, 0xFF, 0xFF, 0xFF, 0xFF, 0xAA, 0xBB };
+            byte[] buffer = { 0xAA, 0xBB, 0xFD, 0xFF, 0xFF, 0xFF, 0xFF, 0x00, 0x00, 0x00, 0x03, ID, valMSB, valLSB, 0xFE, 0xFF, 0xFF, 0xFF, 0xFF, 0xAA, 0xBB };
             int i = 0;
 
             serialMock.Setup(x => x.IsOpen).Returns(true).Callback(() => Console.WriteLine("IsOpen called"));
@@ -214,7 +209,9 @@ namespace MissionControl.Tests
             });
             conn.StartConnection(serialMock.Object);
             Console.WriteLine("Thread started");
-            while (wait)
+            Stopwatch watch = new Stopwatch();
+            watch.Start();
+            while (wait && watch.ElapsedMilliseconds < 2000)
             {
                 Thread.Sleep(100);
             }
