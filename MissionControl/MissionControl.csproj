@@ -76,6 +76,7 @@
     <Compile Include="Connection\Commands\AutoParametersCommand.cs" />
     <Compile Include="Connection\EthernetPort.cs" />
     <Compile Include="Data\Components\ServoTargetComponent.cs" />
+    <Compile Include="Data\Components\StackHealthComponent.cs" />
     <Compile Include="Data\Components\TankComponent.cs" />
     <Compile Include="Data\Preferences.cs" />
     <Compile Include="gtk-gui\generated.cs" />

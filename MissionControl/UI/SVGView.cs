@@ -11,6 +11,7 @@ using MissionControl.Data;
 using MissionControl.Data.Components;
 using Svg;
 using Svg.Transforms;
+using Color = Gdk.Color;
 
 namespace MissionControl.UI.Widgets
 {
@@ -86,6 +87,11 @@ namespace MissionControl.UI.Widgets
                         _svgElements.Add(component.GraphicID, FindTextByID(component.GraphicID));
                         _svgElements.Add(v.GraphicIDSymbol, _svg.GetElementById(v.GraphicIDSymbol));
                         FindTextByID(component.GraphicID + "_NAME").Text = component.Name;
+                        break;
+                    case StackHealthComponent health:
+                        _svgElements.Add(health.graphicID2, _svg.GetElementById(health.graphicID2));
+                        _svgElements.Add(health.graphicID3, _svg.GetElementById(health.graphicID3));
+                        _svgElements.Add(health.graphicID4, _svg.GetElementById(health.graphicID4));
                         break;
                 }
             }
@@ -183,6 +189,11 @@ namespace MissionControl.UI.Widgets
                         text.Text = flow.ToDisplay() + " kg/s";
                         text.Color = flow.IsNominal(flow.MassFlow) ? nominalColor : warningColor;
                         break;
+                    case StackHealthComponent health:
+                        SvgRectangle rectangle = (SvgRectangle)_svgElements[health.graphicID2];
+                        rectangle.Fill = new SvgColourServer(System.Drawing.Color.Green);
+                        break;
+                    
                 }
             }
             SvgText ofRatioText = FindTextByID("MASS_FLOW_RATIO");
@@ -218,7 +229,7 @@ namespace MissionControl.UI.Widgets
     //            imageView.Pixbuf = new Pixbuf(ms.ToArray());
                 CairoHelper.SetSourcePixbuf(cr, new Pixbuf(ms.ToArray()), 0,0);
             }
-
+            
             cr.Paint();
             cr.Restore();
 

@@ -19,6 +19,8 @@ namespace MissionControl.Data
         TankComponent T_IPA;
         VoltageComponent BATTERY;
         FlowComponent FLO_IPA, FLO_N2O;
+        private StackHealthComponent STACK_HEALTH;
+        
 
         List<State> _states;
 
@@ -61,6 +63,10 @@ namespace MissionControl.Data
             T_IPA = new TankComponent(24, "FUEL", "FUEL", "FUEL_GRADIENT", ref FLO_IPA, "Fuel");
             T_N2O = new LevelComponent(1, "OXID", "OXID", "OXID_GRADIENT", 20);
             
+            STACK_HEALTH = new StackHealthComponent(23, "STACK_MAIN", "STACK_ACTUATOR", "STACK_SENSOR", "STACK-HEALTH");
+            
+            
+            
             _states = new List<State>
             {
                 new State(0, "Idle"),
@@ -92,7 +98,8 @@ namespace MissionControl.Data
 
         public override List<MeasuredComponent> MeasuredComponents()
         {
-            return new List<MeasuredComponent> { PT_N2, PT_IPA, PT_N2O, PT_FUEL, PT_OX, PT_CHAM, TC_IPA, TC_N2O, TC_1, TC_2, TC_3, TC_4, TC_5, TC_6, LOAD, SV_IPA, SV_N2O, SN_FLUSH, SN_N2O_FILL, MV_IPA, MV_N2O, TARGET_MV_IPA, TARGET_MV_N2O, BATTERY, T_N2O};
+            return new List<MeasuredComponent> { PT_N2, PT_IPA, PT_N2O, PT_FUEL, PT_OX, PT_CHAM, TC_IPA, TC_N2O, TC_1, TC_2, TC_3, TC_4, TC_5, TC_6,
+                LOAD, SV_IPA, SV_N2O, SN_FLUSH, SN_N2O_FILL, MV_IPA, MV_N2O, TARGET_MV_IPA, TARGET_MV_N2O, BATTERY, T_N2O, STACK_HEALTH};
         }
 
         public override List<State> States()

@@ -10,7 +10,7 @@ namespace MissionControl.Data.Components
             _graphicIDSymbol = graphicIDSymbol;
         }
 
-        public string GraphicIDSymbol { get { return _graphicIDSymbol; } }
+        public string GraphicIDSymbol => _graphicIDSymbol;
     }
 
 }
