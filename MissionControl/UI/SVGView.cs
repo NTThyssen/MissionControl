@@ -29,6 +29,7 @@ namespace MissionControl.UI.Widgets
         SvgColourServer nominalColor = new SvgColourServer(System.Drawing.Color.FromArgb(255, 255, 255));
         SvgColourServer warningColor = new SvgColourServer(System.Drawing.Color.FromArgb(255, 0, 0));
         SvgColourServer disabledColor = new SvgColourServer(System.Drawing.Color.FromArgb(150, 150, 150));
+        SvgColourServer aliveColor = new SvgColourServer(System.Drawing.Color.FromArgb(0, 255, 0));
 
 
         Cairo.Color cNominalColor = new Cairo.Color(1, 1, 1);
@@ -89,9 +90,9 @@ namespace MissionControl.UI.Widgets
                         FindTextByID(component.GraphicID + "_NAME").Text = component.Name;
                         break;
                     case StackHealthComponent health:
-                        _svgElements.Add(health.graphicID2, _svg.GetElementById(health.graphicID2));
-                        _svgElements.Add(health.graphicID3, _svg.GetElementById(health.graphicID3));
-                        _svgElements.Add(health.graphicID4, _svg.GetElementById(health.graphicID4));
+                        _svgElements.Add(health.GraphicId2, _svg.GetElementById(health.GraphicId2));
+                        _svgElements.Add(health.GraphicId3, _svg.GetElementById(health.GraphicId3));
+                        _svgElements.Add(health.GraphicId4, _svg.GetElementById(health.GraphicId4));
                         break;
                 }
             }
@@ -115,8 +116,17 @@ namespace MissionControl.UI.Widgets
             {
                 if (component.GraphicID == null)
                 {
+                    if (component is StackHealthComponent health)
+                    {
+                        _svgElements[health.GraphicId2].Fill = health.IsMainAlive ? aliveColor : warningColor;
+                        _svgElements[health.GraphicId3].Fill = health.IsSensorAlive ? aliveColor : warningColor;
+                        _svgElements[health.GraphicId4].Fill = health.IsActuatorAlive ? aliveColor : warningColor;
+                    }
                     continue;
                 }
+                
+                
+                
                 
                 SvgText text = (SvgText)_svgElements[component.GraphicID];
 
@@ -190,8 +200,7 @@ namespace MissionControl.UI.Widgets
                         text.Color = flow.IsNominal(flow.MassFlow) ? nominalColor : warningColor;
                         break;
                     case StackHealthComponent health:
-                        SvgRectangle rectangle = (SvgRectangle)_svgElements[health.graphicID2];
-                        rectangle.Fill = new SvgColourServer(System.Drawing.Color.Green);
+                        
                         break;
                     
                 }

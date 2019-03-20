@@ -7,9 +7,9 @@ namespace MissionControl.Data.Components
     {
         public StackHealthComponent(byte boardID, string graphicID2, string graphicID3, string graphicID4, string name) : base(boardID, null, name)
         {
-            this.graphicID2 = graphicID2;
-            this.graphicID3 = graphicID3;
-            this.graphicID4 = graphicID4;
+            GraphicId2 = graphicID2;
+            GraphicId3 = graphicID3;
+            GraphicId4 = graphicID4;
         }
 
 
@@ -18,25 +18,32 @@ namespace MissionControl.Data.Components
         {
             throw new NotImplementedException();
         }
-        public string graphicID2 { get;  }
-        public string graphicID3 { get;  }
-        public string graphicID4 { get;  }
+        public string GraphicId2 { get;  }
+        public string GraphicId3 { get;  }
+        public string GraphicId4 { get;  }
+        public bool IsMainAlive { get; private set; }
+        public bool IsSensorAlive { get; private set; }
+        public bool IsActuatorAlive { get; private set; }
         public override int ByteSize => 1;
         public override bool Signed { get; }
         public override int Raw { get; }
         public override void Set(int val)
         {
-            throw new NotImplementedException();
-        }
+           
+            IsMainAlive = (val  & 1) == 1 ;
+            IsActuatorAlive = ((val >> 1) & 1) == 1;
+            IsSensorAlive = ((val >> 2) & 1) == 1; 
+         
+         }
 
         public string ToLog()
         {
-           return Name + "Health";
+           return Name + "Hp";
         }
 
         public string LogHeader()
         {
-            throw new NotImplementedException();
+            return "Stack";
         }
     }
 }

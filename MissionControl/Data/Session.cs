@@ -89,6 +89,7 @@ namespace MissionControl.Data
                         // Error
                         Console.WriteLine("Not enough value bytes for time");
                         break;
+                    
                 }
 
                 // If sensor/component

@@ -26,6 +26,7 @@ namespace MissionControl.Data
 
         public TestStandMapping()
         {
+            
             PT_N2 = new PressureComponent(16,  "PT_N2", "PT-N2", 400, null);
             PT_IPA = new PressureComponent(17, "PT_IPA", "PT-IPA", 50, null);
             PT_N2O = new PressureComponent(18,  "PT_N2O", "PT-N2O", 50, null);
@@ -64,9 +65,6 @@ namespace MissionControl.Data
             T_N2O = new LevelComponent(1, "OXID", "OXID", "OXID_GRADIENT", 20);
             
             STACK_HEALTH = new StackHealthComponent(23, "STACK_MAIN", "STACK_ACTUATOR", "STACK_SENSOR", "STACK-HEALTH");
-            
-            
-            
             _states = new List<State>
             {
                 new State(0, "Idle"),
