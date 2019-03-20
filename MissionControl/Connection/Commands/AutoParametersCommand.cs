@@ -1,5 +1,7 @@
 using System;
 using System.Collections.Generic;
+using MissionControl.Data;
+using MissionControl.Data.Components;
 
 namespace MissionControl.Connection.Commands
 {
@@ -9,8 +11,16 @@ namespace MissionControl.Connection.Commands
         
         private const byte ID = 0xCB;
         
-        public AutoParametersCommand(AutoParameters ap)
+        public AutoParametersCommand(AutoParameters ap, ComponentMapping mapping)
         {
+            Dictionary<byte, Component> components = mapping.ComponentsByID();
+            PressureComponent chamber = (PressureComponent)
+                components[PreferenceManager.Manager.Preferences.AutoSequenceComponentIDs.ChamberPressureID];
+            PressureComponent fuelLine = (PressureComponent)
+                components[PreferenceManager.Manager.Preferences.AutoSequenceComponentIDs.ChamberPressureID];
+            PressureComponent oxidLine = (PressureComponent)
+                components[PreferenceManager.Manager.Preferences.AutoSequenceComponentIDs.ChamberPressureID];
+            
             values = new List<ushort>()
             {
                 ap.StartDelay,
@@ -37,11 +47,16 @@ namespace MissionControl.Connection.Commands
                 PercentageByte(ap.Shutdown1OxidPosition),
                 PercentageByte(ap.Shutdown2OxidPosition),
         
-                FloatByte(ap.PreStage2StablePressure),
-                FloatByte(ap.ChamberPressurePressure),
-                FloatByte(ap.EmtpyFuelFeedPressureThreshold),
-                FloatByte(ap.EmtpyOxidFeedPressureThreshold)
+                PressureByte(ap.PreStage2StablePressure, chamber),
+                PressureByte(ap.ChamberPressurePressure, chamber),
+                PressureByte(ap.EmptyFuelFeedPressureThreshold, fuelLine),
+                PressureByte(ap.EmptyOxidFeedPressureThreshold, oxidLine)
             };
+        }
+
+        public ushort PressureByte(float val, PressureComponent component)
+        {
+            return FloatByte(component.UncalibratedValue(val));
         }
         
         public override byte[] ToByteData()

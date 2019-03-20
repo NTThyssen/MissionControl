@@ -24,12 +24,12 @@ namespace MissionControl.Data
 
         public TestStandMapping()
         {
-            PT_N2 = new PressureComponent(16,  "PT_N2", "PT-N2", 400, null);
-            PT_IPA = new PressureComponent(17, "PT_IPA", "PT-IPA", 50, null);
-            PT_N2O = new PressureComponent(18,  "PT_N2O", "PT-N2O", 50, null);
-            PT_FUEL = new PressureComponent(19,  "PT_FUEL", "PT-FUEL", 50, null);
-            PT_OX = new PressureComponent(20,  "PT_OX", "PT-OX", 50, null);
-            PT_CHAM = new PressureComponent(21, "PT_CHAM", "PT-CHAM", 50, null);
+            PT_N2 = new PressureComponent(16,  "PT_N2", "PT-N2", 400);
+            PT_IPA = new PressureComponent(17, "PT_IPA", "PT-IPA", 50);
+            PT_N2O = new PressureComponent(18,  "PT_N2O", "PT-N2O", 50);
+            PT_FUEL = new PressureComponent(19,  "PT_FUEL", "PT-FUEL", 50);
+            PT_OX = new PressureComponent(20,  "PT_OX", "PT-OX", 50);
+            PT_CHAM = new PressureComponent(21, "PT_CHAM", "PT-CHAM", 50);
 
             TC_IPA = new TemperatureComponent(8,  "TC_IPA", "TC-IPA", x => x);
             TC_N2O = new TemperatureComponent(9,  "TC_N2O", "TC-N2O", x => x);
@@ -73,8 +73,12 @@ namespace MissionControl.Data
                 new State(7, "Shutdown 2"),
                 new State(8, "Flush")
             };
-            EmergencyState = _states[5];
+            EmergencyState = _states[6];
 
+            PreferenceManager.Manager.Preferences.AutoSequenceComponentIDs.ChamberPressureID = PT_CHAM.BoardID;
+            PreferenceManager.Manager.Preferences.AutoSequenceComponentIDs.FuelLinePressureID = PT_FUEL.BoardID;
+            PreferenceManager.Manager.Preferences.AutoSequenceComponentIDs.OxidizerLinePressureID = PT_OX.BoardID;
+            
         }
 
         public override List<Component> Components()

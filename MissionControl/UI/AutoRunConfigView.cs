@@ -93,8 +93,8 @@ namespace MissionControl.UI
             
             _preStage2StablePressure = CreateWidget("Pre Stage 2 Stable Pres. [bara]", GetValueString(ap.PreStage2StablePressure));
             _chamberPressurePressure = CreateWidget("Cham. Pres. Thres. [bara]", GetValueString(ap.ChamberPressurePressure));
-            _emptyFuelFeedPressureThreshold = CreateWidget("Empty Fuel Pres. [bara]", GetValueString(ap.EmtpyFuelFeedPressureThreshold));
-            _emtpyOxidFeedPressureThreshold = CreateWidget("Empty Oxid Pres. [bara]", GetValueString(ap.EmtpyOxidFeedPressureThreshold));
+            _emptyFuelFeedPressureThreshold = CreateWidget("Empty Fuel Pres. [bara]", GetValueString(ap.EmptyFuelFeedPressureThreshold));
+            _emtpyOxidFeedPressureThreshold = CreateWidget("Empty Oxid Pres. [bara]", GetValueString(ap.EmptyOxidFeedPressureThreshold));
             
             _btnAutoRunConfigSave = new Button{Label = "Save", WidthRequest = 80, HeightRequest = 40};
             
@@ -194,8 +194,8 @@ namespace MissionControl.UI
 
             error |= AutoParameters.ValidatePressure(_preStage2StablePressure.EntryText,nameof(ap.PreStage2StablePressure), ref errorMsg, out ap.PreStage2StablePressure);
             error |= AutoParameters.ValidatePressure(_chamberPressurePressure.EntryText,nameof(ap.ChamberPressurePressure), ref errorMsg, out ap.ChamberPressurePressure);
-            error |= AutoParameters.ValidatePressure(_emptyFuelFeedPressureThreshold.EntryText,nameof(ap.EmtpyFuelFeedPressureThreshold), ref errorMsg, out ap.EmtpyFuelFeedPressureThreshold);
-            error |= AutoParameters.ValidatePressure(_emtpyOxidFeedPressureThreshold.EntryText,nameof(ap.EmtpyOxidFeedPressureThreshold), ref errorMsg, out ap.EmtpyOxidFeedPressureThreshold);
+            error |= AutoParameters.ValidatePressure(_emptyFuelFeedPressureThreshold.EntryText,nameof(ap.EmptyFuelFeedPressureThreshold), ref errorMsg, out ap.EmptyFuelFeedPressureThreshold);
+            error |= AutoParameters.ValidatePressure(_emtpyOxidFeedPressureThreshold.EntryText,nameof(ap.EmptyOxidFeedPressureThreshold), ref errorMsg, out ap.EmptyOxidFeedPressureThreshold);
         
 
             if (error)

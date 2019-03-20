@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using MissionControl.Connection.Commands;
+using MissionControl.Data.Components;
 
 namespace MissionControl.Data
 {
@@ -10,6 +11,7 @@ namespace MissionControl.Data
         public VisualSettings Visual { get; } = new VisualSettings();
         
         public AutoParameters AutoSequence { get; set; } = new AutoParameters();
+        public AutoSequenceComponentIDs AutoSequenceComponentIDs { get; set; } = new AutoSequenceComponentIDs();
     }
 
     public class FluidSettings
@@ -39,6 +41,13 @@ namespace MissionControl.Data
         public bool ShowSettingsOnStartup { get; set; } = true;
         public bool ShowAbsolutePressure { get; set; } = true;
         public Dictionary<byte, SensorSettings> SensorVisuals { get; } = new Dictionary<byte, SensorSettings>();
+    }
+
+    public class AutoSequenceComponentIDs
+    {
+        public byte ChamberPressureID { get; set; }
+        public byte FuelLinePressureID { get; set; }
+        public byte OxidizerLinePressureID { get; set; }
     }
 
     public class SensorSettings

@@ -47,7 +47,7 @@ namespace MissionControl.Tests
         public void Pressure_Component_Is_Updated_Correctly ()
         {
             byte ID = 16;
-            PressureComponent expectedResult = new PressureComponent(0, "", "", 50, null);
+            PressureComponent expectedResult = new PressureComponent(0, "", "", 50);
             expectedResult.Set(40000);
 
             TestStandMapping mapping = new TestStandMapping();
@@ -207,7 +207,7 @@ namespace MissionControl.Tests
                 conn.StopConnection();
                 wait = false;
             });
-            conn.StartConnection(serialMock.Object);
+            conn.StartConnection(serialMock.Object, null);
             Console.WriteLine("Thread started");
             Stopwatch watch = new Stopwatch();
             watch.Start();

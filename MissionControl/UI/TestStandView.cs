@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Globalization;
+using System.Timers;
 using Gtk;
 using MissionControl.Connection.Commands;
 using MissionControl.Data;
@@ -55,6 +56,8 @@ namespace MissionControl.UI
         Button _btnFuelTankSet;
         Entry _fuelTankInput;
 
+        private Label _timerLabel;
+
         Gdk.Color _clrGoodConnection = new Gdk.Color(0, 255, 0);
         Gdk.Color _clrBadConnection = new Gdk.Color(255, 0, 0);
 
@@ -74,7 +77,6 @@ namespace MissionControl.UI
             KeyPressEvent += WindowKeyPress;
             KeyReleaseEvent += WindowKeyRelease;
             ShowAll();
-                
         }
 
         public void Layout()
@@ -214,6 +216,9 @@ namespace MissionControl.UI
             
             tankFillContainer.PackStart(_fuelTankInput, false, false, 0);
             tankFillContainer.PackStart(_btnFuelTankSet, true, true, 0);
+
+            _timerLabel = new DSectionTitle("", 24);
+            UpdateAutoSequenceTimer(PreferenceManager.Manager.Preferences.AutoSequence.StartDelay * -1);
             
             // Mid panel
             DSectionTitle valvesTitle = new DSectionTitle("Valves");
@@ -226,6 +231,7 @@ namespace MissionControl.UI
             midPanel.PackStart(tankFillContainer, false, false, 0);
             midPanel.PackStart(autoSequenceTitle, false, false, 0);
             midPanel.PackStart(autoSequenceButtons, false, false, 0);
+            midPanel.PackStart(_timerLabel, false, false, 0);
             
 
             // Right panel
@@ -362,8 +368,38 @@ namespace MissionControl.UI
             _btnLogStart.Sensitive = !_logRunning && !_btnLock.Active;
             _btnLogStop.Sensitive = _logRunning && !_btnLock.Active;
 
+            if (_session.IsAutoSequence)
+            {
+                UpdateAutoSequenceTimer(_session.AutoSequenceTime);
+            }
         }
 
+
+        public void StartAutoSequenceTimer()
+        {
+            
+        }
+
+        public void StopAutoSequenceTimer()
+        {
+            
+        }
+        
+        public void UpdateAutoSequenceTimer(int time)
+        {
+            time = _session.AutoSequenceTime;
+            char sign = time > 0 ? '+' : '-';
+            time = Math.Abs(time);
+            int minutes = time / 60000;
+            int seconds = (time % 60000) / 1000;
+            int millis = (time % 60000) % 1000;
+
+            string m = minutes.ToString().PadLeft(2, '0');
+            string s = seconds.ToString().PadLeft(2, '0');
+            string ms = millis.ToString().PadLeft(3, '0');
+            _timerLabel.Text = string.Format("T{0}{1}:{2}:{3}", sign, m, s, ms);
+        }
+        
         public void UpdateSVG() {
             _svgWidget.Refresh();
         }

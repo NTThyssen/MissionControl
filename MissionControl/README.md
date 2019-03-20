@@ -9,6 +9,7 @@ The software is split into several parts
 - The IO thread which handles communication
 
 ### Features missing
+- Error log in file and display
 - Stack Health (component)
 - Port to GTK3 (not officially supported in Mono)
 - Acknowledgment for commands (requires update of the protocol in Software TMX: https://docs.google.com/spreadsheets/d/1u9g2ocEuqxOUPhXzBdTgOuVGiXR6YIJVcAL6W5GDAEI/edit#gid=0)
@@ -18,3 +19,4 @@ The software is split into several parts
 - Simple measure component for logging arbitrary data points
 
 ### Known bugs
+- Some times crashes, but this cannot be fixed.

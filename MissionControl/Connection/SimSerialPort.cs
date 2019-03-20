@@ -22,10 +22,10 @@ namespace MissionControl.Connection
             _mapping = mapping;
             _protocol = new Protocol(PackageHandler);
             _buffer = new Queue<byte>();
-            Timer t = new Timer { Interval = 1000 };
+            Timer t = new Timer { Interval = 759 };
             t.Elapsed += (sender, args) =>
             {
-               _time += 1000;
+               _time += 759;
                byte[] bytes = GenerateFakeBytes(_time, _mapping);
                lock (_buffer)
                {
@@ -49,7 +49,6 @@ namespace MissionControl.Connection
                     _buffer.Enqueue(b);
                 }
             }
-            
         }
 
         public string PortName { get; set; }
@@ -132,8 +131,8 @@ namespace MissionControl.Connection
             List<byte[]> payload = new List<byte[]>
             {
                 btime,
-                bstate,
-                bauto
+                bstate
+                //bauto
             };
 
             foreach (MeasuredComponent c in mapping.MeasuredComponents())
@@ -148,7 +147,7 @@ namespace MissionControl.Connection
                         value = BitConverter.GetBytes((short)random.Next(400, 1900));
                         break;
                     case TemperatureComponent tc:
-                        value = BitConverter.GetBytes((short)random.Next(-50, 300));
+                        value = BitConverter.GetBytes((short)random.Next(short.MinValue, short.MaxValue));
                         break;
                     case LoadComponent load:
                         value = BitConverter.GetBytes((short)random.Next(0, 2124));

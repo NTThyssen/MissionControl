@@ -15,10 +15,15 @@ namespace MissionControl.Connection
     {
         void SendCommand(Command cmd);
         void SendEmergency(Command cmd);
-        void StartConnection(ISerialPort port);
+        void StartConnection(ISerialPort port, IConnectionListener listener);
         void StopConnection();
     }
 
+    public interface IConnectionListener
+    {
+        void OnAcknowledge(Acknowledgement acknowledgement);
+    }
+    
     public enum ConnectionStatus
     {
         DISCONNECTED, 
@@ -32,7 +37,6 @@ namespace MissionControl.Connection
         private Dictionary<byte, Acknowledgement> _waitingForAcknowledment;
         private byte _commandID;
 
-        private const int _headerLength = 4;
         public const int AckWaitMillis = 150;
         
         bool _shouldRun;
@@ -42,6 +46,7 @@ namespace MissionControl.Connection
         Session _session;
         ISerialPort _port;
         private Protocol _protocol;
+        private IConnectionListener _listener;
 
         public List<Command> Commands => _commands.ToList();
 
@@ -53,13 +58,14 @@ namespace MissionControl.Connection
             _session = session;
         }
 
-        public void StartConnection(ISerialPort port) {
+        public void StartConnection(ISerialPort port, IConnectionListener listener) {
             if (t != null && t.ThreadState == ThreadState.Running)
             {
                 StopConnection();
             }
 
             _port = port;
+            _listener = listener;
             t = new Thread(RunMethod) { Name = "IO Thread" };
             _shouldRun = true;
             t.Start(); 
@@ -227,7 +233,9 @@ namespace MissionControl.Connection
                     {
                         // We have received acknowledgement, remove from waiting dictionary
                         Console.WriteLine("Command {0} was acknowledged!", package.CommandID);
-                        _waitingForAcknowledment.Remove(package.CommandID);    
+                        Acknowledgement ack = _waitingForAcknowledment[package.CommandID];
+                        _waitingForAcknowledment.Remove(package.CommandID);
+                        _listener?.OnAcknowledge(ack);
                     }
                     else
                     {

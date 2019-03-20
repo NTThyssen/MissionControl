@@ -120,15 +120,15 @@ namespace MissionControl.Connection
 
                 package.PayloadLength = (ushort) (bytes.Length - HeaderLength);
                 ushort payloadLength = BitConverter.ToUInt16(lengthBytes, 0);
-                
+                /*
                 if (payloadLength != package.PayloadLength)
                 {
                     Console.WriteLine("Package did not have correct payload length");
                     return;
-                }
+                }*/
                 
-                package.Payload = new byte[payloadLength];
-                Array.Copy(bytes, HeaderLength, package.Payload, 0, payloadLength);
+                package.Payload = new byte[package.PayloadLength];
+                Array.Copy(bytes, HeaderLength, package.Payload, 0, package.PayloadLength);
                 _packageHandler(package);
             }
             else
