@@ -31,7 +31,6 @@ namespace MissionControl.UI.Widgets
         SvgColourServer disabledColor = new SvgColourServer(System.Drawing.Color.FromArgb(150, 150, 150));
         SvgColourServer aliveColor = new SvgColourServer(System.Drawing.Color.FromArgb(0, 255, 0));
 
-
         Cairo.Color cNominalColor = new Cairo.Color(1, 1, 1);
         Cairo.Color cWarningColor = new Cairo.Color(1, 0, 0);
         Cairo.Color cDisabledColor = new Cairo.Color(150 / 255.0, 150 / 255.0, 150 / 255.0);

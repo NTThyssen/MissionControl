@@ -14,7 +14,9 @@ namespace MissionControl.UI
         public static Color ButtonDisabled = new Color(140, 140, 140);
         public static Color ButtonNormalText = new Color(0, 0, 0);
         public static Color ButtonHighlightText = new Color(255, 255, 255); 
-        public static Color StackHealthColor = new Color(0,255,0);
+        public static Color GreenText = new Color(0,255,0);
+        public static Color RedText = new Color(255,0,0);
+        public static Color WhiteText = new Color(255,255,255);
         
     }
 }

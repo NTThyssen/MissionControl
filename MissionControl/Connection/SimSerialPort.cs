@@ -22,10 +22,10 @@ namespace MissionControl.Connection
             _mapping = mapping;
             _protocol = new Protocol(PackageHandler);
             _buffer = new Queue<byte>();
-            Timer t = new Timer { Interval = 759 };
+            Timer t = new Timer { Interval = 359 };
             t.Elapsed += (sender, args) =>
             {
-               _time += 759;
+               _time += 359;
                byte[] bytes = GenerateFakeBytes(_time, _mapping);
                lock (_buffer)
                {
@@ -170,10 +170,7 @@ namespace MissionControl.Connection
                         value = BitConverter.GetBytes((ushort)random.Next(12, 14));
                         break;
                     case StackHealthComponent stack:
-                        value = new []
-                        {
-                            (byte) random.Next(0, 8)
-                        };
+                        value = new [] { (byte) random.Next(0, 8)};
                         break;
                 }
 

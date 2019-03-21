@@ -19,7 +19,10 @@ namespace MissionControl.Data
         //public Settings Setting { get; set; }
         public bool IsAutoSequence { get; set; } = false;
         public long AutoSequenceStartTime { get; set; }
-        public int AutoSequenceTime => (int) (SystemTime - AutoSequenceStartTime - PreferenceManager.Manager.Preferences.AutoSequence.StartDelay);
+        public int AutoSequenceTime => (int) (
+            SystemTime - AutoSequenceStartTime 
+                       - (PreferenceManager.Manager.Preferences.AutoSequence.StartDelay
+                       + PreferenceManager.Manager.Preferences.AutoSequence.IgnitionTime));
 
         public Session(ComponentMapping map)
         {

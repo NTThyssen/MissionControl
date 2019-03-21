@@ -218,12 +218,12 @@ namespace MissionControl.UI
 
         private string GetValueString(ushort value)
         {
-            return (value != 0) ? value.ToString() : "";
+            return value.ToString();
         }
         
         private string GetValueString(float value)
         {
-            return (value != 0) ? value.ToString(CultureInfo.InvariantCulture) : "";
+            return value.ToString(CultureInfo.InvariantCulture);
         }   
     }
 }

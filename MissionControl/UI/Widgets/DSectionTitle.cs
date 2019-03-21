@@ -12,7 +12,7 @@ namespace MissionControl.UI.Widgets
             Text = title;
             Xalign = 0;
 
-            ModifyFg(StateType.Normal, new Gdk.Color(255, 255, 255));
+            ModifyFg(StateType.Normal, Colors.WhiteText);
             ModifyFont(new FontDescription
             {
                 Size = Convert.ToInt32(20 * Pango.Scale.PangoScale)

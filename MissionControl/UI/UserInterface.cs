@@ -12,7 +12,7 @@ namespace MissionControl.UI
         void ShowSessionSettings(bool initialWindow);
         void ShowPlotViewer();
         void StartUI(IUIEvents listener);
-        void SetAutoSequenceTimer(bool start);
+        void ResetAutoSequenceTimer();
     }
 
     public class UserInterface : IUserInterface, ITestStandViewListener, ISessionSettingsViewListener, IAutoParameterListener
@@ -70,16 +70,9 @@ namespace MissionControl.UI
             return true;
         }
 
-        public void SetAutoSequenceTimer(bool start)
+        public void ResetAutoSequenceTimer()
         {
-            if (start)
-            {
-                _testStandView.StartAutoSequenceTimer();
-            }
-            else
-            {
-                _testStandView.StopAutoSequenceTimer();
-            }
+            _testStandView.ResetTimer();
         }
 
         public void ShowSessionSettings(bool initialWindow)

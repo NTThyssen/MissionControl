@@ -57,6 +57,7 @@ namespace MissionControl.UI
         Entry _fuelTankInput;
 
         private Label _timerLabel;
+        private Label _timerInfoLabel;
 
         Gdk.Color _clrGoodConnection = new Gdk.Color(0, 255, 0);
         Gdk.Color _clrBadConnection = new Gdk.Color(255, 0, 0);
@@ -218,7 +219,8 @@ namespace MissionControl.UI
             tankFillContainer.PackStart(_btnFuelTankSet, true, true, 0);
 
             _timerLabel = new DSectionTitle("", 24);
-            UpdateAutoSequenceTimer(PreferenceManager.Manager.Preferences.AutoSequence.StartDelay * -1);
+            _timerInfoLabel = new DSectionTitle("", 18);
+            ResetTimer();
             
             // Mid panel
             DSectionTitle valvesTitle = new DSectionTitle("Valves");
@@ -232,7 +234,7 @@ namespace MissionControl.UI
             midPanel.PackStart(autoSequenceTitle, false, false, 0);
             midPanel.PackStart(autoSequenceButtons, false, false, 0);
             midPanel.PackStart(_timerLabel, false, false, 0);
-            
+            midPanel.PackStart(_timerInfoLabel, false, false, 0);
 
             // Right panel
             DSectionTitle statesTitle = new DSectionTitle("States");
@@ -372,32 +374,54 @@ namespace MissionControl.UI
             {
                 UpdateAutoSequenceTimer(_session.AutoSequenceTime);
             }
+            else
+            {
+                ResetTimer();
+            }
         }
 
-
-        public void StartAutoSequenceTimer()
+        public void ResetTimer()
         {
-            
-        }
-
-        public void StopAutoSequenceTimer()
-        {
-            
+            _timerInfoLabel.Text = "";
+            UpdateAutoSequenceTimer((
+                PreferenceManager.Manager.Preferences.AutoSequence.StartDelay 
+                + PreferenceManager.Manager.Preferences.AutoSequence.IgnitionTime) * -1
+            );
         }
         
         public void UpdateAutoSequenceTimer(int time)
         {
-            time = _session.AutoSequenceTime;
+            
             char sign = time > 0 ? '+' : '-';
-            time = Math.Abs(time);
-            int minutes = time / 60000;
-            int seconds = (time % 60000) / 1000;
-            int millis = (time % 60000) % 1000;
+            int absTime = Math.Abs(time);
+            int minutes = absTime / 60000;
+            int seconds = (absTime % 60000) / 1000;
+            int millis = (absTime % 60000) % 1000;
 
             string m = minutes.ToString().PadLeft(2, '0');
             string s = seconds.ToString().PadLeft(2, '0');
             string ms = millis.ToString().PadLeft(3, '0');
             _timerLabel.Text = string.Format("T{0}{1}:{2}:{3}", sign, m, s, ms);
+            
+            int ignitionTime = -1 * PreferenceManager.Manager.Preferences.AutoSequence.IgnitionTime;
+            if (time > ignitionTime && time < 0)
+            {
+                _timerLabel.ModifyFg(StateType.Normal, Colors.RedText);
+                _timerInfoLabel.ModifyFg(StateType.Normal, Colors.RedText);
+                _timerInfoLabel.Text = "Turn the key!";
+            } 
+            else if (time > 0)
+            {
+                _timerLabel.ModifyFg(StateType.Normal, Colors.GreenText);
+                _timerInfoLabel.ModifyFg(StateType.Normal, Colors.GreenText);
+                _timerInfoLabel.Text = "Sequence is running";
+            }
+            else
+            {
+                _timerLabel.ModifyFg(StateType.Normal, Colors.WhiteText);
+                _timerInfoLabel.ModifyFg(StateType.Normal, Colors.WhiteText);
+                _timerInfoLabel.Text = (_session.IsAutoSequence) ? "Get ready..." : "";
+            }
         }
         
         public void UpdateSVG() {

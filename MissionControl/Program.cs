@@ -176,12 +176,10 @@ namespace MissionControl
                     {
                         _dataStore.GetCurrentSession().IsAutoSequence = true;
                         _dataStore.GetCurrentSession().AutoSequenceStartTime = _dataStore.GetCurrentSession().SystemTime;
-                        _ui.SetAutoSequenceTimer(true);
                     }
                     else if (!asc.Auto && _dataStore.GetCurrentSession().IsAutoSequence)
                     {
                         _dataStore.GetCurrentSession().IsAutoSequence = false;
-                        _ui.SetAutoSequenceTimer(false);
                     }
                     break;
             } 
