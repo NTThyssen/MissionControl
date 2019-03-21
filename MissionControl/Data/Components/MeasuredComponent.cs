@@ -3,7 +3,8 @@ namespace MissionControl.Data.Components
 {
     public abstract class MeasuredComponent : Component
     {
-        public delegate float Scaler(float val);
+        public delegate float Calibrator(int val);
+        public delegate float Uncalibrator(float val);
         public abstract int ByteSize { get; }
         public abstract bool Signed { get; }
         public abstract int Raw { get; }

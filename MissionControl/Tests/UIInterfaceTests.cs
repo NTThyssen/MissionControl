@@ -55,6 +55,8 @@ namespace MissionControl.Tests
             IOThread ioThread = new IOThread(dataStore,ref session);
             
             Program p = new Program(dataStore, logThread.Object, ioThread, ui.Object);
+
+            PreferenceManager.Manager.Preferences.Fluid.TodaysPressure = 1.0f;
             
             AutoParameters param = new AutoParameters()
             {
@@ -82,10 +84,10 @@ namespace MissionControl.Tests
                 Shutdown1OxidPosition = 0.0f, // 0x0000
                 Shutdown2OxidPosition = 0.0f, // 0x0000
         
-                PreStage2StablePressure = 4.0f, // 0x0004
-                ChamberPressurePressure = 17.0f, // 0x0011
-                EmtpyFuelFeedPressureThreshold = 10.0f, // 0x000A
-                EmtpyOxidFeedPressureThreshold = 10.0f // 0x000A
+                PreStage2StablePressure = 4.0f, // barg 462 = 0x01CE
+                ChamberPressurePressure = 17.0f, // barg 849 = 0x0351
+                EmptyFuelFeedPressureThreshold = 10.0f, // barg 640 = 0x280
+                EmptyOxidFeedPressureThreshold = 10.0f // barg 640 = 0x280
             };
             
             p.OnAutoParametersSet(param);
@@ -117,10 +119,10 @@ namespace MissionControl.Tests
                 0x00, 0x00,
                 0x00, 0x00,
                 
-                0x00, 0x04,
-                0x00, 0x11,
-                0x00, 0x0A,
-                0x00, 0x0A
+                0x01, 0xCE,
+                0x03, 0x51,
+                0x02, 0x80,
+                0x02, 0x80
             };
             byte[] actual = ioThread.Commands[0].ToByteData();
             Assert.AreEqual(actual, expected);

@@ -15,10 +15,15 @@ namespace MissionControl.Connection
     {
         void SendCommand(Command cmd);
         void SendEmergency(Command cmd);
-        void StartConnection(ISerialPort port);
+        void StartConnection(ISerialPort port, IConnectionListener listener);
         void StopConnection();
     }
 
+    public interface IConnectionListener
+    {
+        void OnAcknowledge(Acknowledgement acknowledgement);
+    }
+    
     public enum ConnectionStatus
     {
         DISCONNECTED, 
@@ -28,12 +33,20 @@ namespace MissionControl.Connection
 
     public class IOThread : IIOThread
     {
+        private Queue<Command> _commands;
+        private Dictionary<byte, Acknowledgement> _waitingForAcknowledment;
+        private byte _commandID;
+
+        public const int AckWaitMillis = 150;
+        
+        bool _shouldRun;
+        
         Thread t;
         IDataLog _dataLog;
-        Queue<Command> _commands;
         Session _session;
         ISerialPort _port;
-        bool _shouldRun;
+        private Protocol _protocol;
+        private IConnectionListener _listener;
 
         public List<Command> Commands => _commands.ToList();
 
@@ -41,16 +54,18 @@ namespace MissionControl.Connection
         {
             _dataLog = dataLog;
             _commands = new Queue<Command>();
+            _waitingForAcknowledment = new Dictionary<byte, Acknowledgement>();
             _session = session;
         }
 
-        public void StartConnection(ISerialPort port) {
+        public void StartConnection(ISerialPort port, IConnectionListener listener) {
             if (t != null && t.ThreadState == ThreadState.Running)
             {
                 StopConnection();
             }
 
             _port = port;
+            _listener = listener;
             t = new Thread(RunMethod) { Name = "IO Thread" };
             _shouldRun = true;
             t.Start(); 
@@ -78,52 +93,11 @@ namespace MissionControl.Connection
             _commands.Enqueue(cmd);
         }
 
-        List<byte> buffered;
-        bool reading;
-
-        const int bufsize = 8;
-        int highs, lows;
-        
-        byte[] startFence = {0xFD, 0xFF, 0xFF, 0xFF, 0xFF};
-        byte[] endFence = {0xFE, 0xFF, 0xFF, 0xFF, 0xFF};
-
-        private Queue<byte> _fenceQueue = new Queue<byte>();
-
-        public void AddToFenceQueue(byte b, int size)
-        {
-            _fenceQueue.Enqueue(b);
-            int dif = Math.Max(_fenceQueue.Count - size, 0);
-            for (int i = 0; i < dif; i++)
-            {
-                _fenceQueue.Dequeue();
-            }
-        }
-        
-        public bool IsFence(Queue<byte> actual, byte[] expected)
-        {
-            byte[] actualBytes = actual.ToArray();
-            
-            if (actualBytes.Length != expected.Length)
-            {
-                return false;
-            }
-
-            for (int i = 0; i < actualBytes.Length; i++)
-            {
-                if (actualBytes[i] != expected[i])
-                {
-                    return false;
-                }
-            }
-
-            return true;
-        }
-
         public void RunMethod()
         {
-            buffered = new List<byte>();
             _commands.Clear();
-
+            _protocol = new Protocol(PackageFound);
+            
             while (_shouldRun)
             {
                 if (_port.IsOpen)
@@ -176,32 +150,53 @@ namespace MissionControl.Connection
 
         private void WriteAll()
         {
+            Dictionary<byte, Acknowledgement> newAcks = new Dictionary<byte, Acknowledgement>();
+            
+            foreach (KeyValuePair<byte, Acknowledgement> ack in _waitingForAcknowledment)
+            {
+                if (DateTime.Now - ack.Value.Time > TimeSpan.FromMilliseconds(AckWaitMillis))
+                {
+                    Command cmd = ack.Value.Command;
+                    Console.Write("Command {0} was not acknowledged fast enough. Resending.", ack.Key);
+                    Acknowledgement newAck = WriteCommand(cmd);
+                    newAcks.Add(newAck.CommandID, newAck);
+                }
+                else
+                {
+                    newAcks.Add(ack.Key, ack.Value);
+                }
+            }
+            
             while (_commands.Count > 0)
             {
-                
-                byte[] byteData = _commands.Dequeue().ToByteData();
-                byte[] wbuffer = new byte[startFence.Length + endFence.Length + byteData.Length];
-                Array.Copy(startFence, 0, wbuffer, 0, startFence.Length);
-                Array.Copy(byteData, 0, wbuffer, startFence.Length, byteData.Length);
-                Array.Copy(endFence, 0, wbuffer, startFence.Length + byteData.Length, endFence.Length);
-                
-                try
-                {
-                    _port.Write(wbuffer, 0, wbuffer.Length);   
-                    Console.Write("Writing: ");
-                    foreach (byte b in wbuffer)
-                    {
-                        Console.Write("{0:X} ", b);
-                    }
-                    Console.WriteLine();
-                } catch (IOException)
-                {
-                    Console.WriteLine("While writing an IOException occured");
-                    StopConnection();
-                    return;
-                }
-
+                Command cmd = _commands.Dequeue();
+                Acknowledgement newAck = WriteCommand(cmd);
+                newAcks.Add(newAck.CommandID, newAck);
             }
+
+            _waitingForAcknowledment = newAcks;
+        }
+
+        private Acknowledgement WriteCommand(Command cmd)
+        {
+            _commandID++;
+            Acknowledgement ack = new Acknowledgement(cmd, _commandID);
+
+            byte[] wbuffer = _protocol.GetWriteBytes(ack);
+            try
+            {
+                _port.Write(wbuffer, 0, wbuffer.Length);
+                Console.Write("Writing: ");
+                Protocol.PrintArray(wbuffer);
+            }
+            catch (IOException)
+            {
+                Console.WriteLine("While writing an IOException occured");
+                StopConnection();
+                return null;
+            }
+
+            return ack;
         }
 
         private void ReadAll()
@@ -222,70 +217,48 @@ namespace MissionControl.Connection
                 StopConnection();
                 return;
             }
+            _protocol.Add(buf);
+        }
 
-            //Console.WriteLine("{0} bytes read", bytesRead);
-            for (int i = 0; i < bytesRead; i++)
+        public void PackageFound(Package package)
+        {
+
+            if (package.IsAck)
             {
-                byte b = buf[i];
-                // Search for starts and ends
-                
-                AddToFenceQueue(b, startFence.Length);
-
-                if (reading)
+                if (_waitingForAcknowledment.ContainsKey(package.CommandID))
                 {
-                    buffered.Add(b);
-                    if (IsFence(_fenceQueue, startFence))
+                    Command cmd = _waitingForAcknowledment[package.CommandID].Command;
+
+                    if (Protocol.ArraysAreEqual(cmd.ToByteData(), package.Payload))
                     {
-                        reading = true;
-                        buffered.Clear();
-                    } 
-                    else if (IsFence(_fenceQueue, endFence))
+                        // We have received acknowledgement, remove from waiting dictionary
+                        Console.WriteLine("Command {0} was acknowledged!", package.CommandID);
+                        Acknowledgement ack = _waitingForAcknowledment[package.CommandID];
+                        _waitingForAcknowledment.Remove(package.CommandID);
+                        _listener?.OnAcknowledge(ack);
+                    }
+                    else
                     {
-                        reading = false;
-                        int removeIndex = buffered.Count - endFence.Length;
-                        if (removeIndex > 0)
-                        {
-                            buffered.RemoveRange(removeIndex, endFence.Length);
-                            PackageDone();
-                        }
-                        else
-                        {
-                            // Wrong package
-                            buffered.Clear();
-                        }
+                        Console.WriteLine("Acknowledgement for command {0} did not have the correct data", package.CommandID);
+                        return;
                     }
                 }
                 else
                 {
-                    if (IsFence(_fenceQueue, startFence))
-                    {
-                        // Ready for new package
-                        reading = true;
-                        buffered.Clear();    
-                    } 
-                    else if (IsFence(_fenceQueue, endFence))
-                    {
-                        reading = false;
-                        buffered.Clear();
-                    }
+                    Console.WriteLine("An non-existing command was acknowledged: {0}", package.CommandID);
                 }
+                
             }
-        }
-
-        private void PackageDone()
-        {
-            /*foreach (byte b in buffered)
+            else
             {
-                Console.Write("{0:X} ", b);
+                DataPacket packet = new DataPacket(package.Payload);
+                _dataLog.Enqueue(packet);
             }
-            Console.WriteLine();*/
-
-            DataPacket packet = new DataPacket(buffered.ToArray());
-            _dataLog.Enqueue(packet);
-
-            buffered.Clear();
         }
 
+
+
+        
 
     }
 }

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Timers;
 using MissionControl.Connection;
 using MissionControl.Data.Components;
 
@@ -17,13 +18,14 @@ namespace MissionControl.Data
         public ConnectionStatus ConnectionStatus;
         //public Settings Setting { get; set; }
         public bool IsAutoSequence { get; set; } = false;
+        public long AutoSequenceStartTime { get; set; }
+        public int AutoSequenceTime => (int) (SystemTime - AutoSequenceStartTime - PreferenceManager.Manager.Preferences.AutoSequence.StartDelay);
 
         public Session(ComponentMapping map)
         {
             Mapping = map;
             State = map.States()[0];
             //Setting = new Settings();
-           
         }
 
         public void UpdateComponents(byte[] bytes)

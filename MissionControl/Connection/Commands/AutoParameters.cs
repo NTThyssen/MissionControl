@@ -36,9 +36,8 @@ namespace MissionControl.Connection.Commands
 
         public float PreStage2StablePressure;
         public float ChamberPressurePressure;
-        public float EmtpyFuelFeedPressureThreshold;
-        public float EmtpyOxidFeedPressureThreshold;
-
+        public float EmptyFuelFeedPressureThreshold;
+        public float EmptyOxidFeedPressureThreshold;
         
         public static bool ValidateTime(string input, string name, ref string errMsg, out ushort time)
         {

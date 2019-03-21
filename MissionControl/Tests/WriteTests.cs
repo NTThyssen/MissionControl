@@ -37,15 +37,16 @@ namespace MissionControl.Tests
                     actual = b;
                 });
 
-            ioThread.StartConnection(serial.Object);
+            ioThread.StartConnection(serial.Object, null);
             p.OnCommand(sc);
             
-            Thread.Sleep(500);
+            Thread.Sleep(IOThread.AckWaitMillis - 10);
             ioThread.StopConnection();
             
             byte[] expected =
             {
                 0xFD, 0xFF, 0xFF, 0xFF, 0xFF,
+                0x00, 0x01, 0x00, 0x03,
                 0x06, 0xB0, 0xA3,
                 0xFE, 0xFF, 0xFF, 0xFF, 0xFF
             };
@@ -79,22 +80,24 @@ namespace MissionControl.Tests
                     actual = b;
                 });
 
-            ioThread.StartConnection(serial.Object);
+            ioThread.StartConnection(serial.Object, null);
             p.OnTimedCommand(cmd1, cmd2, 2000);
             
-            Thread.Sleep(500);
+            Thread.Sleep(IOThread.AckWaitMillis - 10);
             byte[] expected1 =
             {
                 0xFD, 0xFF, 0xFF, 0xFF, 0xFF,
+                0x00, 0x01, 0x00, 0x03,
                 0x06, 0xB0, 0xA3,
                 0xFE, 0xFF, 0xFF, 0xFF, 0xFF
             };
             Assert.AreEqual(expected1, actual);
             
-            Thread.Sleep(1600);
+            Thread.Sleep(2000 - IOThread.AckWaitMillis - 10);
             byte[] expected2 =
             {
                 0xFD, 0xFF, 0xFF, 0xFF, 0xFF,
+                0x00, 0x01, 0x00, 0x03,
                 0x06, 0x00, 0x00,
                 0xFE, 0xFF, 0xFF, 0xFF, 0xFF
             };
@@ -128,15 +131,16 @@ namespace MissionControl.Tests
                     actual = b;
                 });
 
-            ioThread.StartConnection(serial.Object);
+            ioThread.StartConnection(serial.Object, null);
             p.OnCommand(sc);
             
-            Thread.Sleep(500);
+            Thread.Sleep(IOThread.AckWaitMillis - 10);
             ioThread.StopConnection();
             
             byte[] expected =
             {
                 0xFD, 0xFF, 0xFF, 0xFF, 0xFF,
+                0x00, 0x01, 0x00, 0x03,
                 0x03, 0xFF, 0xFF,
                 0xFE, 0xFF, 0xFF, 0xFF, 0xFF
             };
@@ -169,15 +173,16 @@ namespace MissionControl.Tests
                     actual = b;
                 });
 
-            ioThread.StartConnection(serial.Object);
+            ioThread.StartConnection(serial.Object, null);
             p.OnCommand(sc);
             
-            Thread.Sleep(500);
+            Thread.Sleep(IOThread.AckWaitMillis - 10);
             ioThread.StopConnection();
             
             byte[] expected =
             {
                 0xFD, 0xFF, 0xFF, 0xFF, 0xFF,
+                0x00, 0x01, 0x00, 0x03,
                 0x03, 0x00, 0x00,
                 0xFE, 0xFF, 0xFF, 0xFF, 0xFF
             };

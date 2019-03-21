@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Globalization;
 using System.Timers;
 using GLib;
@@ -12,7 +13,7 @@ using Svg;
 
 namespace MissionControl
 {
-    class Program : IUIEvents
+    class Program : IUIEvents, IConnectionListener
     {
         IDataStore _dataStore;
         ILogThread _logThread;
@@ -113,7 +114,7 @@ namespace MissionControl
                 SerialSettings serial = PreferenceManager.Manager.Preferences.System.Serial;
                 port = new SerialPort(serial.PortName, serial.BaudRate);
             }
-            _ioThread.StartConnection(port);
+            _ioThread.StartConnection(port, this);
         }
 
         public void OnDisconnectPressed()
@@ -124,12 +125,8 @@ namespace MissionControl
     
         public void OnStartAutoSequencePressed()
         {
-
             AutoSequenceCommand command = new AutoSequenceCommand(true);
             _ioThread.SendCommand(command);
-
-            // Fake response
-            _dataStore.GetCurrentSession().IsAutoSequence = true;
         }
 
         public void OnStopAutoSequencePressed()
@@ -155,11 +152,11 @@ namespace MissionControl
 
         public void OnAutoParametersSet(AutoParameters ap)
         {
-            AutoParametersCommand command = new AutoParametersCommand(ap);
-            _ioThread.SendCommand(command);
-            
             PreferenceManager.Manager.Preferences.AutoSequence = ap;
             PreferenceManager.Manager.Save();
+            
+            AutoParametersCommand command = new AutoParametersCommand(ap, _dataStore.GetCurrentSession().Mapping);
+            _ioThread.SendCommand(command);
         }
 
         public void OnTarePressed()
@@ -168,6 +165,26 @@ namespace MissionControl
             {
                 lc.Tare();
              }
+        }
+
+        public void OnAcknowledge(Acknowledgement acknowledgement)
+        {
+            switch (acknowledgement.Command)
+            {
+                case AutoSequenceCommand asc:
+                    if (asc.Auto && !_dataStore.GetCurrentSession().IsAutoSequence)
+                    {
+                        _dataStore.GetCurrentSession().IsAutoSequence = true;
+                        _dataStore.GetCurrentSession().AutoSequenceStartTime = _dataStore.GetCurrentSession().SystemTime;
+                        _ui.SetAutoSequenceTimer(true);
+                    }
+                    else if (!asc.Auto && _dataStore.GetCurrentSession().IsAutoSequence)
+                    {
+                        _dataStore.GetCurrentSession().IsAutoSequence = false;
+                        _ui.SetAutoSequenceTimer(false);
+                    }
+                    break;
+            } 
         }
     }
 }
