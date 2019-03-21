@@ -191,8 +191,8 @@ namespace MissionControl.UI.Widgets
                         break;
                     case StackHealthComponent health:
                         _svgElements[health.GraphicId2].Fill = health.IsMainAlive ? aliveColor : warningColor;
-                        _svgElements[health.GraphicId3].Fill = health.IsSensorAlive ? aliveColor : warningColor;
-                        _svgElements[health.GraphicId4].Fill = health.IsActuatorAlive ? aliveColor : warningColor;
+                        _svgElements[health.GraphicId4].Fill = health.IsSensorAlive ? aliveColor : warningColor;
+                        _svgElements[health.GraphicId3].Fill = health.IsActuatorAlive ? aliveColor : warningColor;
                         break;
                     
                 }

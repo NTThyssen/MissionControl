@@ -34,7 +34,6 @@ namespace MissionControl.Connection
                        _buffer.Enqueue(b);
                    }  
                }
-               t.Stop();
             };
             t.Start();
         }

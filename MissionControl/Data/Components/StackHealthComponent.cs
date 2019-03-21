@@ -29,11 +29,9 @@ namespace MissionControl.Data.Components
         public override int Raw { get; }
         public override void Set(int val)
         {
-           
             IsMainAlive = (val  & 1) == 1 ;
-            IsActuatorAlive = ((val >> 1) & 1) == 1;
-            IsSensorAlive = ((val >> 2) & 1) == 1; 
-         
+            IsActuatorAlive = (val & 2) > 0;
+            IsSensorAlive = (val & 4) > 0; 
          }
 
         public string ToLog()
@@ -43,7 +41,7 @@ namespace MissionControl.Data.Components
 
         public string LogHeader()
         {
-            return "Stack";
+            return "Health";
         }
     }
 }
