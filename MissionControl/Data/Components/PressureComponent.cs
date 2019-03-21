@@ -5,14 +5,14 @@ namespace MissionControl.Data.Components
 {
     public class PressureComponent : SensorComponent, ILoggable
     {
-        private int _rawPressure = 373;
+        private int _rawPressure = 830;
 
         private const float _minADC = 372.36f;
         private const float _maxADC = 1861.81f;
-        private static int _maxPressure = 50;
+        private int _maxPressure = 50;
 
-        private Calibrator DefaultCalibrator = x => { return _maxPressure * (x - _minADC) / (_maxADC - _minADC); };
-        private Uncalibrator DefaultUncalibrator = x => { return ((x * (_maxADC - _minADC) / _maxPressure) + _minADC); };
+        private Calibrator DefaultCalibrator;
+        private Uncalibrator DefaultUncalibrator;
         //private float Calibrated => _maxPressure * (_rawPressure - _minADC) / (_maxADC - _minADC);
         private readonly Calibrator _calibrator;
         private readonly Uncalibrator _uncalibrator;
@@ -26,14 +26,18 @@ namespace MissionControl.Data.Components
         public PressureComponent(byte boardID, string graphicID, string name, int maxPressure) : base(boardID, graphicID, name)
         {
             _maxPressure = maxPressure;
+            DefaultUncalibrator = x => { return ((x * (_maxADC - _minADC) / _maxPressure) + _minADC); };
+            DefaultCalibrator = x => { return _maxPressure * (x - _minADC) / (_maxADC - _minADC); };
             _calibrator = DefaultCalibrator;
-            _uncalibrator = DefaultUncalibrator;
+           _uncalibrator = DefaultUncalibrator;
         }
         
         public PressureComponent(byte boardID, string graphicID, string name, int maxPressure, Calibrator calibrator, Uncalibrator uncalibrator) : base(boardID, graphicID, name)
         {
             _maxPressure = maxPressure;
+            DefaultCalibrator = x => { return _maxPressure * (x - _minADC) / (_maxADC - _minADC); };
             _calibrator = calibrator ?? DefaultCalibrator;
+            DefaultUncalibrator = x => { return ((x * (_maxADC - _minADC) / _maxPressure) + _minADC); };
             _uncalibrator = uncalibrator ?? DefaultUncalibrator;
         }
 
