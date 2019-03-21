@@ -114,31 +114,21 @@ namespace MissionControl.UI.Widgets
         {
             foreach (Component component in _session.Mapping.Components())
             {
-                if (component.GraphicID == null)
-                {
-                    if (component is StackHealthComponent health)
-                    {
-                        _svgElements[health.GraphicId2].Fill = health.IsMainAlive ? aliveColor : warningColor;
-                        _svgElements[health.GraphicId3].Fill = health.IsSensorAlive ? aliveColor : warningColor;
-                        _svgElements[health.GraphicId4].Fill = health.IsActuatorAlive ? aliveColor : warningColor;
-                    }
-                    continue;
-                }
-                
-                
-                
-                
-                SvgText text = (SvgText)_svgElements[component.GraphicID];
+                SvgText text = null;
 
-                if (!component.Enabled)
+                if (component.GraphicID != null && _svgElements.ContainsKey(component.GraphicID))
                 {
-                    FindTextByID(component.GraphicID + "_NAME").Color = disabledColor;
-                    text.Text = "N/A";
-                    text.Color = disabledColor;
-                    continue;
+                    text = (SvgText)_svgElements[component.GraphicID];
+                    FindTextByID(component.GraphicID + "_NAME").Color = nominalColor;
+                    
+                    if (!component.Enabled)
+                    {
+                        FindTextByID(component.GraphicID + "_NAME").Color = disabledColor;
+                        text.Text = "N/A";
+                        text.Color = disabledColor;
+                        continue;
+                    }
                 }
-                
-                FindTextByID(component.GraphicID + "_NAME").Color = nominalColor;
 
                 switch (component)
                 {
@@ -200,7 +190,9 @@ namespace MissionControl.UI.Widgets
                         text.Color = flow.IsNominal(flow.MassFlow) ? nominalColor : warningColor;
                         break;
                     case StackHealthComponent health:
-                        
+                        _svgElements[health.GraphicId2].Fill = health.IsMainAlive ? aliveColor : warningColor;
+                        _svgElements[health.GraphicId3].Fill = health.IsSensorAlive ? aliveColor : warningColor;
+                        _svgElements[health.GraphicId4].Fill = health.IsActuatorAlive ? aliveColor : warningColor;
                         break;
                     
                 }

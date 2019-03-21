@@ -19,7 +19,7 @@ namespace MissionControl.Data
         TankComponent T_IPA;
         VoltageComponent BATTERY;
         FlowComponent FLO_IPA, FLO_N2O;
-        private StackHealthComponent STACK_HEALTH;
+        StackHealthComponent STACK_HEALTH;
         
 
         List<State> _states;

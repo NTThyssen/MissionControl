@@ -34,6 +34,7 @@ namespace MissionControl.Connection
                        _buffer.Enqueue(b);
                    }  
                }
+               t.Stop();
             };
             t.Start();
         }
@@ -168,6 +169,12 @@ namespace MissionControl.Connection
                         break;
                     case VoltageComponent battery:
                         value = BitConverter.GetBytes((ushort)random.Next(12, 14));
+                        break;
+                    case StackHealthComponent stack:
+                        value = new []
+                        {
+                            (byte) random.Next(0, 8)
+                        };
                         break;
                 }
 
