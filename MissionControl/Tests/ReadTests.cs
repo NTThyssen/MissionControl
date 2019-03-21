@@ -47,7 +47,7 @@ namespace MissionControl.Tests
         public void Pressure_Component_Is_Updated_Correctly ()
         {
             byte ID = 16;
-            PressureComponent expectedResult = new PressureComponent(0, "", "", 50);
+            PressureComponent expectedResult = new PressureComponent(0, "", "", 400);
             expectedResult.Set(40000);
 
             TestStandMapping mapping = new TestStandMapping();
