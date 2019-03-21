@@ -49,7 +49,7 @@ namespace MissionControl.Data
                             if (readState != null)
                             {
                                 State = readState;
-                                Console.WriteLine("State set: {0}", State.StateName);
+                                //Console.WriteLine("State set: {0}", State.StateName);
                             }
                             else
                             {

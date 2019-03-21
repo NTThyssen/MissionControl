@@ -219,7 +219,7 @@ namespace MissionControl.UI
             tankFillContainer.PackStart(_btnFuelTankSet, true, true, 0);
 
             _timerLabel = new DSectionTitle("", 24);
-            _timerInfoLabel = new DSectionTitle("", 18);
+            _timerInfoLabel = new DSectionTitle("", 14);
             ResetTimer();
             
             // Mid panel
@@ -414,7 +414,7 @@ namespace MissionControl.UI
             {
                 _timerLabel.ModifyFg(StateType.Normal, Colors.GreenText);
                 _timerInfoLabel.ModifyFg(StateType.Normal, Colors.GreenText);
-                _timerInfoLabel.Text = "Sequence is running";
+                _timerInfoLabel.Text = "Sequence running";
             }
             else
             {
