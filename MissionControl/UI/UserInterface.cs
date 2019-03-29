@@ -54,6 +54,7 @@ namespace MissionControl.UI
         }
 
         public bool UpdateControls() {
+            _session.UpdateComponents(_session.LastReceivedBytes);
             if(_testStandView != null)
             {
                 _testStandView.UpdateControls();

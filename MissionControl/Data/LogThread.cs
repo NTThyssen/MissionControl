@@ -3,6 +3,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Text;
 using System.Threading;
+using Newtonsoft.Json;
 
 namespace MissionControl.Data
 {
@@ -14,9 +15,15 @@ namespace MissionControl.Data
 
     public class LogThread : ILogThread
     {
+        private readonly string FN_RAW = "raw.danstar";
+        private readonly string FN_PRETTY = "pretty.csv";
+        private readonly string FN_SETTINGS = "settings.json";
+        
         Thread t;
         string _rawFilename;
         string _prettyFilename;
+        private string _settingsFilename;
+        private string _folderName;
         IDataLog _dataLog;
 
         bool _isLogging;
@@ -31,8 +38,15 @@ namespace MissionControl.Data
         {
             t = new Thread(RunMethod) { Name = "Logger Thread" };
             string logPath = PreferenceManager.Manager.Preferences.System.LogFilePath;
-            _rawFilename = logPath + "/" + "raw_" + DateTime.Now.ToString("ddMMyy_HHmmss_");
-            _prettyFilename = logPath + "/" + "pretty_" + DateTime.Now.ToString("ddMMyy_HHmmss_");
+            
+            string timestamp = DateTime.Now.ToString("ddMMyy_HHmmss_");
+            _folderName = Path.Combine(logPath, "log_" + timestamp);
+            Directory.CreateDirectory(_folderName);
+
+            _rawFilename = Path.Combine(_folderName, FN_RAW);
+            _prettyFilename = Path.Combine(_folderName, FN_PRETTY);
+            _settingsFilename = Path.Combine(_folderName, FN_SETTINGS);
+            
             _isLogging = true;
             t.Start();
         }
@@ -47,13 +61,8 @@ namespace MissionControl.Data
             _isLogging = false;
             t.Join();
 
-            string newFilename;
-           
-            newFilename = _rawFilename + DateTime.Now.ToString("HHmmss") + ".danstar";
-            File.Move(_rawFilename, newFilename);
-
-            newFilename = _prettyFilename + DateTime.Now.ToString("HHmmss") + ".csv";
-            File.Move(_prettyFilename, newFilename);
+            string newFolderName = _folderName + DateTime.Now.ToString("HHmmss");
+            Directory.Move(_folderName, newFolderName);
         }
 
         private void RunMethod() {
@@ -69,44 +78,58 @@ namespace MissionControl.Data
                 File.Delete(_rawFilename);
             }
 
+            using (FileStream fs = File.Create(_rawFilename))
+            {
+                while (_isLogging)
+                {
+
+                    while (!_dataLog.Empty())
+                    {
+                        DataPacket packet = _dataLog.Dequeue();
+                        if (packet == null) { continue; }
+
+                        // Write raw as backup
+                        byte[] raw = FormatRaw.ToRaw(packet.Bytes);
+                        fs.Write(raw, 0, raw.Length);
+
+                    }
+                    Thread.Sleep(5);
+                }
+            }
+            
             // Clear pretty file
             if (File.Exists(_prettyFilename))
             {
                 File.Delete(_prettyFilename);
             }
-
-            using (FileStream fs = File.Create(_rawFilename))
+            
+            using (StreamWriter sw = new StreamWriter(_prettyFilename))
             {
-                using (StreamWriter sw = new StreamWriter(_prettyFilename))
+                string header = FormatPretty.PrettyHeader(_dataLog.GetCurrentSession().Mapping.Loggables());
+                sw.WriteLine(header);
+                
+                byte[] fileBytes = File.ReadAllBytes(_rawFilename);
+
+                byte[][] frames = FormatRaw.FromRaw(fileBytes);
+
+                Session sessionCopy = _dataLog.GetCurrentSession();
+                
+                foreach (byte[] frame in frames)
                 {
-                    string header = FormatWriter.PrettyHeader(_dataLog.GetCurrentSession().Mapping.Loggables());
-                    sw.WriteLine(header);
-
-                    Stopwatch stopWatch = new Stopwatch();
-                    stopWatch.Start();
-
-                    while (_isLogging)
-                    {
-
-                        while (!_dataLog.Empty())
-                        {
-                            DataPacket packet = _dataLog.Dequeue();
-
-                            // Write raw as backup
-                            byte[] raw = FormatWriter.ToRaw(packet.Bytes);
-                            fs.Write(raw, 0, raw.Length);
-                            //Console.WriteLine("Raw length written: {0}", raw.Length);
-
-                            // Update components
-                            _dataLog.GetCurrentSession().UpdateComponents(packet.Bytes);
-
-                            // Write pretty
-                            string pretty = FormatWriter.PrettyLine(_dataLog.GetCurrentSession().SystemTime, packet.Bytes, _dataLog.GetCurrentSession().Mapping.Loggables());
-                            //string pretty = FormatWriter.PrettyLine(stopWatch.ElapsedMilliseconds, packet.Bytes, _dataLog.GetCurrentSession().Mapping.Loggables());
-                            sw.WriteLine(pretty);
-                        }
-                    }
+                    sessionCopy.UpdateComponents(frame);
+                    // Write pretty
+                    string pretty = FormatPretty.PrettyLine(sessionCopy.SystemTime, sessionCopy.Mapping.Loggables());
+                    //string pretty = FormatWriter.PrettyLine(stopWatch.ElapsedMilliseconds, packet.Bytes, _dataLog.GetCurrentSession().Mapping.Loggables());
+                    sw.WriteLine(pretty);
                 }
+            }
+            
+            
+            // Write preferences to log
+            using (StreamWriter sw = new StreamWriter(_settingsFilename, false))
+            {
+                string text = JsonConvert.SerializeObject(PreferenceManager.Manager.Preferences);
+                sw.Write(text);
             }
         }
     }

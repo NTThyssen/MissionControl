@@ -12,6 +12,7 @@ namespace MissionControl.Data
         public State State { get; set; }
         public long SystemTime { get; set; }
         public DateTime LastReceived { get; set; } = DateTime.Now - TimeSpan.FromMinutes(1);
+        public byte[] LastReceivedBytes { get; set; } = new byte[0];
         public int QueueSize { get; set; }
         public bool Connected { get; set; }
 

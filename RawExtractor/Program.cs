@@ -67,12 +67,12 @@ namespace RawExtractor
                 
                 using (StreamWriter sw = new StreamWriter(newFilePath))
                 {
-                    string header = FormatWriter.PrettyHeader(session.Mapping.Loggables());
+                    string header = FormatPretty.PrettyHeader(session.Mapping.Loggables());
                     sw.WriteLine(header);
                     foreach (DataPacket dp in frames)
                     {
                         session.UpdateComponents(dp.Bytes);
-                        string pretty = FormatWriter.PrettyLine(session.SystemTime, dp.Bytes, session.Mapping.Loggables());
+                        string pretty = FormatPretty.PrettyLine(session.SystemTime, session.Mapping.Loggables());
                         sw.WriteLine(pretty);
                     }
                 }

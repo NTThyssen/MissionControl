@@ -80,6 +80,7 @@
     <Compile Include="Data\Components\ServoTargetComponent.cs" />
     <Compile Include="Data\Components\StackHealthComponent.cs" />
     <Compile Include="Data\Components\TankComponent.cs" />
+    <Compile Include="Data\FormatRaw.cs" />
     <Compile Include="Data\Preferences.cs" />
     <Compile Include="gtk-gui\generated.cs" />
     <Compile Include="gtk-gui\MissionControl.UI.LabelledCheckboxWidget.cs" />
@@ -127,8 +128,7 @@
     <Compile Include="UI\Widgets\DSectionTitle.cs" />
     <Compile Include="Data\Components\ValveComponent.cs" />
     <Compile Include="Connection\IOThread.cs" />
-    <Compile Include="Data\FormatWriter.cs" />
-    <Compile Include="Data\FormatReader.cs" />
+    <Compile Include="Data\FormatPretty.cs" />
     <Compile Include="Data\Components\ILoggable.cs" />
     <Compile Include="Data\State.cs" />
     <Compile Include="Data\PreferenceManager.cs" />

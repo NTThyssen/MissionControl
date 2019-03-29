@@ -38,14 +38,11 @@ namespace MissionControl.Data
 
         public void Enqueue(DataPacket packet) {
             _session.LastReceived = packet.ReceivedTime;
+            _session.LastReceivedBytes = packet.Bytes;
             _session.QueueSize = _data.Count;
             if (_isLogging)
             {
                 _data.Enqueue(packet);
-            }
-            else
-            {
-                _session.UpdateComponents(packet.Bytes);
             }
         }
 
