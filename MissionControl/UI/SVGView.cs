@@ -189,9 +189,10 @@ namespace MissionControl.UI.Widgets
                         text.Color = flow.IsNominal(flow.MassFlow) ? nominalColor : warningColor;
                         break;
                     case StackHealthComponent health:
-                        _svgElements[health.GraphicId2].Fill = (_session.Connected && health.IsMainAlive) ? aliveColor : warningColor;
-                        _svgElements[health.GraphicId4].Fill = (_session.Connected && health.IsSensorAlive) ? aliveColor : warningColor;
-                        _svgElements[health.GraphicId3].Fill = (_session.Connected && health.IsActuatorAlive) ? aliveColor : warningColor;
+                        bool isActive = (DateTime.Now - _session.LastReceived).TotalMilliseconds < 4000;
+                        _svgElements[health.GraphicId2].Fill = (_session.Connected && isActive && health.IsMainAlive) ? aliveColor : warningColor;
+                        _svgElements[health.GraphicId4].Fill = (_session.Connected && isActive && health.IsSensorAlive) ? aliveColor : warningColor;
+                        _svgElements[health.GraphicId3].Fill = (_session.Connected && isActive && health.IsActuatorAlive) ? aliveColor : warningColor;
                         break;
                     
                 }
