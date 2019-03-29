@@ -26,8 +26,8 @@ namespace MissionControl.Data
         private string _folderName;
         IDataLog _dataLog;
 
-        bool _isLogging;
-
+        private bool _isLogging;
+        
         public LogThread(IDataLog dataLog)
         {
             _dataLog = dataLog;
@@ -48,6 +48,7 @@ namespace MissionControl.Data
             _settingsFilename = Path.Combine(_folderName, FN_SETTINGS);
             
             _isLogging = true;
+            _dataLog.GetCurrentSession().IsLogging = true;
             t.Start();
         }
 
@@ -59,6 +60,7 @@ namespace MissionControl.Data
             }
 
             _isLogging = false;
+            _dataLog.GetCurrentSession().IsLogging = false;
             t.Join();
 
             string newFolderName = _folderName + DateTime.Now.ToString("HHmmss");

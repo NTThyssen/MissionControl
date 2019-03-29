@@ -159,7 +159,7 @@ namespace MissionControl.Connection
                         ushort randServoVal = (ushort) random.Next(0, ushort.MaxValue);
                         value = BitConverter.GetBytes(randServoVal);
                         break;
-                    case ServoTargetComponent servoTarget:
+                    case SimpleComponent simple:
                         ushort randServoTargetVal = (ushort) random.Next(0, ushort.MaxValue);
                         value = BitConverter.GetBytes(randServoTargetVal);
                         break;

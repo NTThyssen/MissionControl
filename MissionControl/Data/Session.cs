@@ -25,6 +25,8 @@ namespace MissionControl.Data
                        - (PreferenceManager.Manager.Preferences.AutoSequence.StartDelay
                        + PreferenceManager.Manager.Preferences.AutoSequence.IgnitionTime));
 
+        public bool IsLogging { get; set; }
+        
         public Session(ComponentMapping map)
         {
             Mapping = map;

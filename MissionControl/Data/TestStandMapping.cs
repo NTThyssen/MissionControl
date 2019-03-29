@@ -13,7 +13,7 @@ namespace MissionControl.Data
         LoadComponent LOAD;
         SolenoidComponent SV_IPA, SV_N2O;
         ServoComponent MV_IPA, MV_N2O;
-        ServoTargetComponent TARGET_MV_IPA, TARGET_MV_N2O;
+        SimpleComponent TARGET_MV_IPA, TARGET_MV_N2O;
         SolenoidComponent SN_N2O_FILL, SN_FLUSH; 
         LevelComponent T_N2O;
         TankComponent T_IPA;
@@ -49,8 +49,8 @@ namespace MissionControl.Data
             MV_IPA = new ServoComponent(6, "MV_IPA", "MV-IPA", "MV_IPA_SYMBOL");
             MV_N2O = new ServoComponent(7, "MV_N2O", "MV-N2O", "MV_N2O_SYMBOL");
 
-            TARGET_MV_IPA = new ServoTargetComponent(25, "TARGET-MV-IPA");
-            TARGET_MV_N2O = new ServoTargetComponent(26, "TARGET-MV-N20");
+            TARGET_MV_IPA = new SimpleComponent(25, 2, false, "TARGET-MV-IPA", "TARGET-MV-IPA [%]", x => ((float) x) / ushort.MaxValue * 100.0f);
+            TARGET_MV_N2O = new SimpleComponent(26, 2, false, "TARGET-MV-N20", "TARGET-MV-N20 [%]", x => ((float) x) / ushort.MaxValue * 100.0f);
             
             SN_N2O_FILL = new SolenoidComponent(2, "SN_N2O_FILL", "SN-N2O-FILL", "SN_N2O_FILL_SYMBOL");
             SN_FLUSH = new SolenoidComponent(3,  "SN_FLUSH", "SN-FLUSH", "SN_FLUSH_SYMBOL");

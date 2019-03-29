@@ -40,7 +40,6 @@ namespace MissionControl.UI
         ITestStandViewListener _listener;
         Session _session;
        
-        bool _logRunning = false;
         Button _btnLogStart, _btnLogStop;
 
         Button _btnStartSequence;
@@ -328,17 +327,15 @@ namespace MissionControl.UI
         void LogStartPressed(object sender, EventArgs e)
         {
             _listener.OnLogStartPressed();
-            _logRunning = true;
-            _btnLogStart.Sensitive = !_logRunning;
-            _btnLogStop.Sensitive = _logRunning;
+            _btnLogStart.Sensitive = !_session.IsLogging;
+            _btnLogStop.Sensitive = _session.IsLogging;
         }
 
         void LogStopPressed(object sender, EventArgs e)
         {
             _listener.OnLogStopPressed();
-            _logRunning = false;
-            _btnLogStart.Sensitive = !_logRunning;
-            _btnLogStop.Sensitive = _logRunning;
+            _btnLogStart.Sensitive = !_session.IsLogging;
+            _btnLogStop.Sensitive = _session.IsLogging;
         }
 
         void LockButtonPressed (object sender, EventArgs e)
@@ -367,8 +364,8 @@ namespace MissionControl.UI
             _btnFuelTankSet.Sensitive = !_btnLock.Active;
             _fuelTankInput.Sensitive = !_btnLock.Active;
 
-            _btnLogStart.Sensitive = !_logRunning && !_btnLock.Active;
-            _btnLogStop.Sensitive = _logRunning && !_btnLock.Active;
+            _btnLogStart.Sensitive = !_session.IsLogging && !_btnLock.Active;
+            _btnLogStop.Sensitive = _session.IsLogging && !_btnLock.Active;
 
             if (_session.IsAutoSequence)
             {
