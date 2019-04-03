@@ -15,33 +15,57 @@ namespace MissionControl.Connection
     {
         void SendCommand(Command cmd);
         void SendEmergency(Command cmd);
-        void StartConnection(ISerialPort port);
+        void StartConnection(ISerialPort port, IConnectionListener listener);
         void StopConnection();
+    }
+
+    public interface IConnectionListener
+    {
+        void OnAcknowledge(Acknowledgement acknowledgement);
+    }
+    
+    public enum ConnectionStatus
+    {
+        DISCONNECTED, 
+        CONNECTING,
+        CONNECTED
     }
 
     public class IOThread : IIOThread
     {
+        private Queue<Command> _commands;
+        private Dictionary<byte, Acknowledgement> _waitingForAcknowledment;
+        private byte _commandID;
+
+        public const int AckWaitMillis = 150;
+        
+        bool _shouldRun;
+        
         Thread t;
         IDataLog _dataLog;
-        Queue<Command> _commands;
         Session _session;
         ISerialPort _port;
-        bool _shouldRun;
+        private Protocol _protocol;
+        private IConnectionListener _listener;
+
+        public List<Command> Commands => _commands.ToList();
 
         public IOThread(IDataLog dataLog, ref Session session)
         {
             _dataLog = dataLog;
             _commands = new Queue<Command>();
+            _waitingForAcknowledment = new Dictionary<byte, Acknowledgement>();
             _session = session;
         }
 
-        public void StartConnection(ISerialPort port) {
+        public void StartConnection(ISerialPort port, IConnectionListener listener) {
             if (t != null && t.ThreadState == ThreadState.Running)
             {
                 StopConnection();
             }
 
             _port = port;
+            _listener = listener;
             t = new Thread(RunMethod) { Name = "IO Thread" };
             _shouldRun = true;
             t.Start(); 
@@ -49,11 +73,11 @@ namespace MissionControl.Connection
 
         public void StopConnection() {
             _shouldRun = false;
-            _session.Connected = false;
             if (t != null && t.ThreadState == ThreadState.Running)
             {
                 t.Join(2000);
             }
+            _session.Connected = false;
          }
 
         public void SendCommand(Command cmd)
@@ -69,37 +93,41 @@ namespace MissionControl.Connection
             _commands.Enqueue(cmd);
         }
 
-        List<byte> buffered;
-        bool reading;
-
-        const byte HIGH = 0xFF;
-        const byte LOW = 0x01;
-        const int endHighs = 3;
-        const int endLows = 1;
-        const int bufsize = 8;
-        int highs, lows;
-
-        //byte[] fakeBuffer = { 0xA, 0xFF, 0xC, 0xFF, 0x01, 0x14, 0x0B, 0xD0, 0xC8, 0x02, 0xC9, 0x00, 0x00, 0x27, 0x10, 0x01, 0xFF, 0xFF, 0xFF, 0xFF, 0xA };
-
         public void RunMethod()
         {
-            buffered = new List<byte>();
-            Open();
-
-            while (_shouldRun && _port.IsOpen)
+            _commands.Clear();
+            _protocol = new Protocol(PackageFound);
+            
+            while (_shouldRun)
             {
-                WriteAll();
-                ReadAll();
+                if (_port.IsOpen)
+                {
+                    WriteAll();
+                    ReadAll();    
+                }
+                else
+                {
+                    Open();
+                    Thread.Sleep(1000);
+                }
             }
-
+            
+            _session.Connected = false;
+            try
+            {
+                _port.Close();
+            }
+            catch (IOException e)
+            {
+                Console.WriteLine("Serial IO error in closing: {0}", e.Message);
+            }
         }
 
         private void Open()
         {
+            //_session.IsTryingConnect = true;
             try
             {
-                _port.BaudRate = _session.Setting.BaudRate.Value;
-                _port.PortName = _session.Setting.PortName.Value;
                 _port.Open();
                 _port.DiscardInBuffer();
                 _session.Connected = true;
@@ -107,31 +135,68 @@ namespace MissionControl.Connection
             }
             catch (IOException e)
             {
-                Console.WriteLine("Serial IO error: {0}", e.Message);
+                Console.WriteLine("Serial IO error in opening: {0}", e.Message);
+                _session.Connected = false;
+                StopConnection();
+                return;
             }
             catch (InvalidOperationException e)
             {
                 Console.WriteLine("Serial invalid operation error: {0}", e.Message);
             }
             StopConnection();
+            _session.Connected = false;
         }
 
         private void WriteAll()
         {
+            Dictionary<byte, Acknowledgement> newAcks = new Dictionary<byte, Acknowledgement>();
+            
+            foreach (KeyValuePair<byte, Acknowledgement> ack in _waitingForAcknowledment)
+            {
+                if (DateTime.Now - ack.Value.Time > TimeSpan.FromMilliseconds(AckWaitMillis))
+                {
+                    Command cmd = ack.Value.Command;
+                    Console.Write("Command {0} was not acknowledged fast enough. Resending.", ack.Key);
+                    Acknowledgement newAck = WriteCommand(cmd);
+                    newAcks.Add(newAck.CommandID, newAck);
+                }
+                else
+                {
+                    newAcks.Add(ack.Key, ack.Value);
+                }
+            }
+            
             while (_commands.Count > 0)
             {
-                byte[] wbuffer = _commands.Dequeue().ToByteData();
-                try
-                {
-                    _port.Write(wbuffer, 0, wbuffer.Length);
-                } catch (IOException)
-                {
-                    Console.WriteLine("While writing an IOException occured");
-                    StopConnection();
-                    return;
-                }
-
+                Command cmd = _commands.Dequeue();
+                Acknowledgement newAck = WriteCommand(cmd);
+                newAcks.Add(newAck.CommandID, newAck);
             }
+
+            _waitingForAcknowledment = newAcks;
+        }
+
+        private Acknowledgement WriteCommand(Command cmd)
+        {
+            _commandID++;
+            Acknowledgement ack = new Acknowledgement(cmd, _commandID);
+
+            byte[] wbuffer = _protocol.GetWriteBytes(ack);
+            try
+            {
+                _port.Write(wbuffer, 0, wbuffer.Length);
+                Console.Write("Writing: ");
+                Protocol.PrintArray(wbuffer);
+            }
+            catch (IOException)
+            {
+                Console.WriteLine("While writing an IOException occured");
+                StopConnection();
+                return null;
+            }
+
+            return ack;
         }
 
         private void ReadAll()
@@ -152,117 +217,48 @@ namespace MissionControl.Connection
                 StopConnection();
                 return;
             }
+            _protocol.Add(buf);
+        }
 
-            //Console.WriteLine("{0} bytes read", bytesRead);
-            for (int i = 0; i < bytesRead; i++)
+        public void PackageFound(Package package)
+        {
+
+            if (package.IsAck)
             {
-                byte b = buf[i];
-                // Search for starts and ends
-                if (reading)
+                if (_waitingForAcknowledment.ContainsKey(package.CommandID))
                 {
-                    if (lows == 1)
+                    Command cmd = _waitingForAcknowledment[package.CommandID].Command;
+
+                    if (Protocol.ArraysAreEqual(cmd.ToByteData(), package.Payload))
                     {
-                        if (b == HIGH && highs == endHighs - 1)
-                        {
-                            // Stop reading. Previous data was stop code
-                            int outslice = endHighs - 1 + endLows;
-                            buffered.RemoveRange(buffered.Count - outslice, outslice);
-                            reading = false;
-                            lows = 0;
-                            highs = 0;
-                            PackageDone();
-                        }
-                        else if (b == HIGH && highs < endHighs - 1)
-                        {
-                            // Maybe inside stop code, add anyways
-                            buffered.Add(b);
-                            highs++;
-                            reading = true;
-                        }
-                        else
-                        {
-                            // Low was data, continue reading. 
-                            buffered.Add(b);
-                            reading = true;
-                            highs = 0;
-                            lows = 0;
-                        }
+                        // We have received acknowledgement, remove from waiting dictionary
+                        Console.WriteLine("Command {0} was acknowledged!", package.CommandID);
+                        Acknowledgement ack = _waitingForAcknowledment[package.CommandID];
+                        _waitingForAcknowledment.Remove(package.CommandID);
+                        _listener?.OnAcknowledge(ack);
                     }
                     else
                     {
-                        if (b == LOW)
-                        {
-                            // Potential end, add anyways
-                            buffered.Add(b);
-                            reading = true;
-                            lows = 1;
-                            highs = 0;
-                        }
-                        else
-                        {
-                            // Was data, continue reading
-                            buffered.Add(b);
-                            reading = true;
-                            highs = 0;
-                            lows = 0;
-                        }
+                        Console.WriteLine("Acknowledgement for command {0} did not have the correct data", package.CommandID);
+                        return;
                     }
                 }
                 else
                 {
-                    if (highs == 1)
-                    {
-                        if (b == LOW)
-                        {
-                            // Start reading
-                            reading = true;
-                            highs = 0;
-                            lows = 0;
-                        }
-                        else
-                        {
-                            // Reset search
-                            reading = false;
-                            highs = 0;
-                            lows = 0;
-                        }
-                    }
-                    else
-                    {
-                        if (b == HIGH)
-                        {
-                            // Has potential start
-                            reading = false;
-                            highs = 1;
-                            lows = 0;
-                        }
-                        else
-                        {
-                            // Noise, reset search
-                            reading = false;
-                            highs = 0;
-                            lows = 0;
-                        }
-                    }
+                    Console.WriteLine("An non-existing command was acknowledged: {0}", package.CommandID);
                 }
                 
             }
-        }
-
-        private void PackageDone()
-        {
-            foreach (byte b in buffered)
+            else
             {
-                Console.Write("{0:X} ", b);
+                DataPacket packet = new DataPacket(package.Payload);
+                _dataLog.Enqueue(packet);
             }
-            Console.WriteLine();
-
-            DataPacket packet = new DataPacket(buffered.ToArray());
-            _dataLog.Enqueue(packet);
-
-            buffered.Clear();
         }
 
+
+
+        
 
     }
 }

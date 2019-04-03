@@ -9,7 +9,7 @@ namespace MissionControl.Data.Components
         public float MaxLimit { get; set; } = float.NaN;
         public float MinLimit { get; set; } = float.NaN;
 
-        protected SensorComponent(byte boardID, int byteSize, string graphicID, string name) : base(boardID, byteSize, graphicID, name)
+        protected SensorComponent(byte boardID, string graphicID, string name) : base(boardID, graphicID, name)
         {
         }
 

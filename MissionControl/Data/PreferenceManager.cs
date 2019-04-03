@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Text.RegularExpressions;
+using Newtonsoft.Json;
 
 namespace MissionControl.Data
 {
@@ -13,23 +14,27 @@ namespace MissionControl.Data
     public sealed class PreferenceManager
     {
   
-        private string _filepath;
-        private Dictionary<string, string> _preferences;
+        private readonly string _filepath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"preferences.json");
+        //private Dictionary<string, string> _preferences;
+        private readonly Preferences _preferences;
+        
+        public static PreferenceManager Manager { get; } = new PreferenceManager();
 
-        public static PreferenceManager Preferences { get; } = new PreferenceManager();
+        public Preferences Preferences => _preferences;
 
-        public string this [string key]
+        /* public string this [string key]
         {
             get {
                 return _preferences.ContainsKey(key) ? _preferences[key] : null;
             }
             set { _preferences[key] = value; }
-        }
+        }*/
 
         static PreferenceManager()
         {
         }
 
+        /*
         public PreferenceManager()
         {
             _filepath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"preferences.txt");
@@ -54,68 +59,81 @@ namespace MissionControl.Data
                     _preferences.Add(values[1], values[2]);
                 }
             }
+        }*/
+        
+        public PreferenceManager()
+        {
+            
+            //_preferences = new Dictionary<string, string>();
+            _preferences = new Preferences();
+
+            if (File.Exists(_filepath))
+            {
+                string file = File.ReadAllText(_filepath);
+                _preferences = JsonConvert.DeserializeObject<Preferences>(file);
+            }
+            else
+            {
+                _preferences = new Preferences();
+            }
         }
 
-        public void Remove(string key)
+        /*public void Remove(string key)
         {
             if (_preferences.ContainsKey(key))
             {
                 _preferences.Remove(key);
             }
-        }
+        }*/
 
         public void Save()
         {
             using (StreamWriter sw = new StreamWriter(_filepath, false))
             {
-                foreach (KeyValuePair<string, string> kv in _preferences)
+                string text = JsonConvert.SerializeObject(_preferences);
+                sw.Write(text);
+                /*foreach (KeyValuePair<string, string> kv in _preferences)
                 {
-                    sw.WriteLine(string.Format("{0}:{1}", kv.Key, kv.Value));
-                }
+                    sw.WriteLine("{0}:{1}", kv.Key, kv.Value);
+                }*/
             }
         }
 
-        public static int GetIfExists(string key, int defaultValue)
+        public static SensorSettings GetSensorSettings(byte key)
         {
-            string sval = Preferences[key];
-            return (sval != null && int.TryParse(sval, out int ival)) ? ival : defaultValue;
+            return Manager.Preferences.Visual.SensorVisuals.TryGetValue(key, out SensorSettings value) ? value : new SensorSettings();
         }
 
-        public static float GetIfExists(string key, float defaultValue)
+        public static void UpdatePreferences(Preferences updated)
         {
-            string sval = Preferences[key];
-            return (sval != null && float.TryParse(sval, NumberStyles.Any, CultureInfo.InvariantCulture, out float fval)) ? fval : defaultValue;
-        }
+            
+            Manager.Preferences.System.UseSerial = updated.System.UseSerial;
+            Manager.Preferences.System.LogFilePath = updated.System.LogFilePath;
+            
+            Manager.Preferences.System.Serial.BaudRate = updated.System.Serial.BaudRate;
+            Manager.Preferences.System.Serial.PortName = updated.System.Serial.PortName;
+            
+            Manager.Preferences.System.Ethernet.Port = updated.System.Ethernet.Port;
+            Manager.Preferences.System.Ethernet.IPAddress = updated.System.Ethernet.IPAddress;
 
-        public static string GetIfExists(string key, string defaultValue)
-        {
-            return Preferences[key] ?? defaultValue;
-        }
+            Manager.Preferences.Fluid.Fuel.Density = updated.Fluid.Fuel.Density;
+            Manager.Preferences.Fluid.Fuel.CV = updated.Fluid.Fuel.CV;
+            
+            Manager.Preferences.Fluid.Oxid.Density = updated.Fluid.Oxid.Density;
+            Manager.Preferences.Fluid.Oxid.CV = updated.Fluid.Oxid.CV;
 
-        public static bool GetIfExists(string key, bool defaultValue)
-        {
-            string sval = Preferences[key];
-            return (sval != null && bool.TryParse(sval, out bool bval)) ? bval : defaultValue;
-        }
+            Manager.Preferences.Fluid.TodaysPressure = updated.Fluid.TodaysPressure;
 
-        public static void Set(string key, string value)
-        {
-            Preferences[key] = value;
-        }
-
-        public static void Set(string key, int value)
-        {
-            Preferences[key] = Convert.ToString(value);
-        }
-
-        public static void Set(string key, float value)
-        {
-            Preferences[key] = Convert.ToString(value, CultureInfo.InvariantCulture);
-        }
-
-        public static void Set(string key, bool value)
-        {
-            Preferences[key] = Convert.ToString(value);
+            Manager.Preferences.Visual.ShowAbsolutePressure = updated.Visual.ShowAbsolutePressure;
+            Manager.Preferences.Visual.ShowSettingsOnStartup = updated.Visual.ShowSettingsOnStartup;
+            
+            foreach (KeyValuePair<byte, SensorSettings> kv in updated.Visual.SensorVisuals)
+            {
+                Manager.Preferences.Visual.SensorVisuals[kv.Key] = kv.Value;
+            }
+            
+            Manager.Save();
+            
         }
 
     }

@@ -1,7 +1,9 @@
-
+﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MissionControl", "MissionControl\MissionControl.csproj", "{984E47D8-CA6C-4FFD-BC51-E4E7534F869E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RawExtractor", "RawExtractor\RawExtractor.csproj", "{A9F0FDEB-16F5-475C-802E-FD1A8ABCFE19}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -13,5 +15,9 @@ Global
 		{984E47D8-CA6C-4FFD-BC51-E4E7534F869E}.Debug|x86.Build.0 = Debug|x86
 		{984E47D8-CA6C-4FFD-BC51-E4E7534F869E}.Release|x86.ActiveCfg = Release|x86
 		{984E47D8-CA6C-4FFD-BC51-E4E7534F869E}.Release|x86.Build.0 = Release|x86
+		{A9F0FDEB-16F5-475C-802E-FD1A8ABCFE19}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{A9F0FDEB-16F5-475C-802E-FD1A8ABCFE19}.Debug|x86.Build.0 = Debug|Any CPU
+		{A9F0FDEB-16F5-475C-802E-FD1A8ABCFE19}.Release|x86.ActiveCfg = Release|Any CPU
+		{A9F0FDEB-16F5-475C-802E-FD1A8ABCFE19}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

@@ -1,5 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Globalization;
+using System.Timers;
+using GLib;
 using Gtk;
 using MissionControl.Connection;
 using MissionControl.Connection.Commands;
@@ -10,7 +13,7 @@ using Svg;
 
 namespace MissionControl
 {
-    class Program : IUIEvents
+    class Program : IUIEvents, IConnectionListener
     {
         IDataStore _dataStore;
         ILogThread _logThread;
@@ -36,6 +39,7 @@ namespace MissionControl
 
         public static void Main(string[] args)
         {
+            PreferenceManager manager = PreferenceManager.Manager;
             TestStandMapping mapping = new TestStandMapping();
             Session session = new Session(mapping);
             DataStore dataStore = new DataStore(session);
@@ -56,30 +60,32 @@ namespace MissionControl
         public void OnCommand(Command command)
         {
             _ioThread.SendCommand(command);
+        }
 
-            if (command is StateCommand sc)
+        public void OnTimedCommand(Command cmd1, Command cmd2, int delayMillis)
+        {
+            _ioThread.SendCommand(cmd1);
+            Timer timer = new Timer();
+            timer.Interval = delayMillis;
+            timer.Elapsed += (sender, args) =>
             {
-                // Fake response
-                State state = _dataStore.GetCurrentSession().Mapping.States().Find((State obj) => obj.StateID == sc.StateID);
-                if (state != null) _dataStore.GetCurrentSession().State = state;
-            }
-
+                _ioThread.SendCommand(cmd2);
+                /*_ioThread.SendCommand(cmd2);
+                _ioThread.SendCommand(cmd2);
+                _ioThread.SendCommand(cmd2);
+                _ioThread.SendCommand(cmd2);*/
+                timer.Stop();
+            };
+            timer.Start();
         }
 
-        public void OnValvePressed(ValveCommand command)
+        public void OnSessionSettingsUpdated(Preferences preferences)
         {
-            _ioThread.SendCommand(command);
-        }
-
-        public void OnSessionSettingsUpdated(Session session)
-        {
-            _dataStore.UpdateSession(session);
+            _dataStore.UpdateSession(preferences);
         }
 
         public void OnEmergencyState()
         {
-            StateCommand command = new StateCommand(_dataStore.GetCurrentSession().Mapping.EmergencyState.StateID);
-            _ioThread.SendEmergency(command);
         }
 
         public void OnLogStartPressed()
@@ -98,25 +104,85 @@ namespace MissionControl
         {
 
             ISerialPort port;
+            Session currentSession = _dataStore.GetCurrentSession();
             if (_isUsingSimulatedSerialPort)
             {
-                port = new SimSerialPort(_dataStore.GetCurrentSession().Mapping);
+                port = new SimSerialPort(currentSession.Mapping);
             }
             else
             {
-                port = new SerialPort();
+                SerialSettings serial = PreferenceManager.Manager.Preferences.System.Serial;
+                port = new SerialPort(serial.PortName, serial.BaudRate);
             }
-            _ioThread.StartConnection(port);
+            _ioThread.StartConnection(port, this);
         }
 
-        public void OnRunAutoSequencePressed()
+        public void OnDisconnectPressed()
         {
+            _ioThread.StopConnection();
+        }
 
+    
+        public void OnStartAutoSequencePressed()
+        {
             AutoSequenceCommand command = new AutoSequenceCommand(true);
+            _ioThread.SendCommand(command);
+        }
+
+        public void OnStopAutoSequencePressed()
+        {
+            AutoSequenceCommand command = new AutoSequenceCommand(false);
             _ioThread.SendCommand(command);
 
             // Fake response
-            _dataStore.GetCurrentSession().IsAutoSequence = true;
+            _dataStore.GetCurrentSession().IsAutoSequence = false;
+        }
+
+        public void OnFuelTankFillSet(float mass)
+        {
+            if (_dataStore.GetCurrentSession().Mapping.ComponentsByID()[24] is TankComponent tc)
+            {
+                tc.SetInputVolume(_dataStore.GetCurrentSession().SystemTime, mass);    
+            }
+            else
+            {
+                Console.Write("Cannot set fill on fuel tank");
+            }
+        }
+
+        public void OnAutoParametersSet(AutoParameters ap)
+        {
+            PreferenceManager.Manager.Preferences.AutoSequence = ap;
+            PreferenceManager.Manager.Save();
+            
+            AutoParametersCommand command = new AutoParametersCommand(ap, _dataStore.GetCurrentSession().Mapping);
+            _ioThread.SendCommand(command);
+        }
+
+        public void OnTarePressed()
+        {
+            if (_dataStore.GetCurrentSession().Mapping.ComponentsByID()[0] is LoadComponent lc)
+            {
+                lc.Tare();
+             }
+        }
+
+        public void OnAcknowledge(Acknowledgement acknowledgement)
+        {
+            switch (acknowledgement.Command)
+            {
+                case AutoSequenceCommand asc:
+                    if (asc.Auto && !_dataStore.GetCurrentSession().IsAutoSequence)
+                    {
+                        _dataStore.GetCurrentSession().IsAutoSequence = true;
+                        _dataStore.GetCurrentSession().AutoSequenceStartTime = _dataStore.GetCurrentSession().SystemTime;
+                    }
+                    else if (!asc.Auto && _dataStore.GetCurrentSession().IsAutoSequence)
+                    {
+                        _dataStore.GetCurrentSession().IsAutoSequence = false;
+                    }
+                    break;
+            } 
         }
     }
 }

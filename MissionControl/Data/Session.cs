@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Timers;
+using MissionControl.Connection;
 using MissionControl.Data.Components;
 
 namespace MissionControl.Data
@@ -9,16 +11,27 @@ namespace MissionControl.Data
         public ComponentMapping Mapping { get; }
         public State State { get; set; }
         public long SystemTime { get; set; }
-        public DateTime LastReceived;
+        public DateTime LastReceived { get; set; } = DateTime.Now - TimeSpan.FromMinutes(1);
+        public byte[] LastReceivedBytes { get; set; } = new byte[0];
+        public int QueueSize { get; set; }
         public bool Connected { get; set; }
-        public Settings Setting { get; set; }
-        public bool IsAutoSequence { get; set; } = false;
 
+        public ConnectionStatus ConnectionStatus;
+        //public Settings Setting { get; set; }
+        public bool IsAutoSequence { get; set; } = false;
+        public long AutoSequenceStartTime { get; set; }
+        public int AutoSequenceTime => (int) (
+            SystemTime - AutoSequenceStartTime 
+                       - (PreferenceManager.Manager.Preferences.AutoSequence.StartDelay
+                       + PreferenceManager.Manager.Preferences.AutoSequence.IgnitionTime));
+
+        public bool IsLogging { get; set; }
+        
         public Session(ComponentMapping map)
         {
             Mapping = map;
             State = map.States()[0];
-            Setting = new Settings();
+            //Setting = new Settings();
         }
 
         public void UpdateComponents(byte[] bytes)
@@ -39,7 +52,7 @@ namespace MissionControl.Data
                             if (readState != null)
                             {
                                 State = readState;
-                                Console.WriteLine("State set: {0}", State.StateName);
+                                //Console.WriteLine("State set: {0}", State.StateName);
                             }
                             else
                             {
@@ -84,6 +97,7 @@ namespace MissionControl.Data
                         // Error
                         Console.WriteLine("Not enough value bytes for time");
                         break;
+                    
                 }
 
                 // If sensor/component
@@ -102,18 +116,33 @@ namespace MissionControl.Data
                                 byte[] valBytes = new byte[4];
                                 Array.Copy(bytes, i + 1, valBytes, 4 - size, size);
 
-                                byte sign = (byte)(((valBytes[4 - size] & 0b10000000) == 0) ? 0 : 0xFF);
-                                for (int j = 0; j < 4 - size; j++)
+                                if (component.Signed)
                                 {
-                                    valBytes[j] = sign;
+                                    byte sign = (byte)(((valBytes[4 - size] & 0b10000000) == 0) ? 0 : 0xFF);
+                                    for (int j = 0; j < 4 - size; j++)
+                                    {
+                                        valBytes[j] = sign;
+                                    }
                                 }
 
                                 if (BitConverter.IsLittleEndian)
                                 {
                                     Array.Reverse(valBytes);
                                 }
-                                int value = BitConverter.ToInt32(valBytes, 0);
-                                component.Set(value);
+                                
+                                if (component.Signed)
+                                {
+                                    int value = BitConverter.ToInt32(valBytes, 0);
+                                    component.Set(value);    
+                                }
+                                else
+                                {
+                                    //Console.WriteLine("Name: {0}, Bytes {1} {2} {3} {4}", component.Name, valBytes[3], valBytes[2], valBytes[1], valBytes[0]);
+                                    uint value = BitConverter.ToUInt32(valBytes, 0);
+                                    //Console.WriteLine("Name: {0}, uint: {1} int: {2}", component.Name, value, (int) value);
+                                    component.Set((int) value);
+                                }
+                                
                                 //Console.WriteLine("{0} set to {1}", component.Name, value);
                             }
                             else
@@ -140,9 +169,10 @@ namespace MissionControl.Data
                 switch (c)
                 {
                     case FlowComponent fc:
-                        float cv = (Setting.PropertiesByID()[fc.SettingsConstantName + "FluidCV"] as FloatProperty).Value;
-                        float density = (Setting.PropertiesByID()[fc.SettingsConstantName + "FluidDensity"] as FloatProperty).Value;
-                        fc.Compute(cv, density);
+                        fc.Compute();
+                        break;
+                    case TankComponent tc:
+                        tc.Compute(SystemTime);
                         break;
                 }
             }

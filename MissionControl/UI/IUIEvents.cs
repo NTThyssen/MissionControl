@@ -8,11 +8,18 @@ namespace MissionControl.UI
     public interface IUIEvents
     {
         void OnCommand(Command command);
-        void OnSessionSettingsUpdated(Session session);
+        void OnTimedCommand(Command cmd1, Command cmd2, int delayMillis);
+        void OnSessionSettingsUpdated(Preferences preferences);
         void OnEmergencyState();
         void OnLogStartPressed();
         void OnLogStopPressed();
         void OnConnectPressed();
-        void OnRunAutoSequencePressed();
+        void OnDisconnectPressed();
+        void OnStartAutoSequencePressed();
+        void OnStopAutoSequencePressed();
+        void OnFuelTankFillSet(float mass);
+        void OnAutoParametersSet(AutoParameters ap);
+        void OnTarePressed();
+
     }
 }

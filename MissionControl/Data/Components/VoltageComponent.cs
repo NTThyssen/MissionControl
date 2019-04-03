@@ -11,8 +11,11 @@ namespace MissionControl.Data.Components
         private int _rawVoltage;
 
         public override string TypeName => "Voltage";
+        public override int ByteSize => 2;
+        public override bool Signed => false;
+        public override int Raw => _rawVoltage;
 
-        public VoltageComponent(byte boardID, int byteSize, string graphicID, string name, float minVoltage, float maxVoltage) : base(boardID, byteSize, graphicID, name)
+        public VoltageComponent(byte boardID, string graphicID, string name, float minVoltage, float maxVoltage) : base(boardID, graphicID, name)
         {
             // Guard
             _minVoltage = Math.Min(minVoltage, maxVoltage);

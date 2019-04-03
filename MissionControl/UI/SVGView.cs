@@ -11,6 +11,7 @@ using MissionControl.Data;
 using MissionControl.Data.Components;
 using Svg;
 using Svg.Transforms;
+using Color = Gdk.Color;
 
 namespace MissionControl.UI.Widgets
 {
@@ -28,7 +29,7 @@ namespace MissionControl.UI.Widgets
         SvgColourServer nominalColor = new SvgColourServer(System.Drawing.Color.FromArgb(255, 255, 255));
         SvgColourServer warningColor = new SvgColourServer(System.Drawing.Color.FromArgb(255, 0, 0));
         SvgColourServer disabledColor = new SvgColourServer(System.Drawing.Color.FromArgb(150, 150, 150));
-
+        SvgColourServer aliveColor = new SvgColourServer(System.Drawing.Color.FromArgb(0, 255, 0));
 
         Cairo.Color cNominalColor = new Cairo.Color(1, 1, 1);
         Cairo.Color cWarningColor = new Cairo.Color(1, 0, 0);
@@ -72,6 +73,11 @@ namespace MissionControl.UI.Widgets
                         _svgElements.Add(component.GraphicID, FindTextByID(component.GraphicID));
                         FindTextByID(component.GraphicID + "_NAME").Text = component.Name;
                         break;
+                    case LevelComponent level:
+                        _svgElements.Add(component.GraphicID, FindTextByID(component.GraphicID));
+                        _svgElements.Add(level.GraphicIDGradient, _svg.GetElementById(level.GraphicIDGradient));
+                        FindTextByID(component.GraphicID + "_NAME").Text = component.Name;
+                        break;
                     case TankComponent tank:
                         _svgElements.Add(component.GraphicID, FindTextByID(component.GraphicID));
                         _svgElements.Add(tank.GraphicIDGradient, _svg.GetElementById(tank.GraphicIDGradient));
@@ -81,6 +87,11 @@ namespace MissionControl.UI.Widgets
                         _svgElements.Add(component.GraphicID, FindTextByID(component.GraphicID));
                         _svgElements.Add(v.GraphicIDSymbol, _svg.GetElementById(v.GraphicIDSymbol));
                         FindTextByID(component.GraphicID + "_NAME").Text = component.Name;
+                        break;
+                    case StackHealthComponent health:
+                        _svgElements.Add(health.GraphicId2, _svg.GetElementById(health.GraphicId2));
+                        _svgElements.Add(health.GraphicId3, _svg.GetElementById(health.GraphicId3));
+                        _svgElements.Add(health.GraphicId4, _svg.GetElementById(health.GraphicId4));
                         break;
                 }
             }
@@ -102,31 +113,35 @@ namespace MissionControl.UI.Widgets
         {
             foreach (Component component in _session.Mapping.Components())
             {
-                SvgText text = (SvgText)_svgElements[component.GraphicID];
+                SvgText text = null;
 
-                if (!component.Enabled)
+                if (component.GraphicID != null && _svgElements.ContainsKey(component.GraphicID))
                 {
-                    FindTextByID(component.GraphicID + "_NAME").Color = disabledColor;
-                    text.Text = "N/A";
-                    text.Color = disabledColor;
-                    continue;
-                }
-                else
-                {
+                    text = (SvgText)_svgElements[component.GraphicID];
                     FindTextByID(component.GraphicID + "_NAME").Color = nominalColor;
+                    
+                    if (!component.Enabled)
+                    {
+                        FindTextByID(component.GraphicID + "_NAME").Color = disabledColor;
+                        text.Text = "N/A";
+                        text.Color = disabledColor;
+                        continue;
+                    }
                 }
 
                 switch (component)
                 {
                     case PressureComponent pt:
-                        if (_session.Setting.ShowAbsolutePressure.Value)
+                        bool showAbsolute = PreferenceManager.Manager.Preferences.Visual.ShowAbsolutePressure;
+                        if (showAbsolute)
                         {
-                            text.Text = Component.ToRounded(pt.Absolute(_session.Setting.TodayPressure.Value), 2) + " barA";
-                            text.Color = pt.IsNominal(pt.Absolute(_session.Setting.TodayPressure.Value)) ? nominalColor : warningColor;
+                            float pressure = pt.Absolute(PreferenceManager.Manager.Preferences.Fluid.TodaysPressure);
+                            text.Text = Component.ToRounded(pressure, 2) + " bara";
+                            text.Color = pt.IsNominal(pressure) ? nominalColor : warningColor;
                         }
                         else
                         {
-                            text.Text = Component.ToRounded(pt.Relative(), 2) + " barR";
+                            text.Text = Component.ToRounded(pt.Relative(), 2) + " barg";
                             text.Color = pt.IsNominal(pt.Relative()) ? nominalColor : warningColor;
                         }
                         break;
@@ -138,10 +153,20 @@ namespace MissionControl.UI.Widgets
                         text.Text = load.ToDisplay() + " N";
                         text.Color = load.IsNominal(load.Newtons()) ? nominalColor : warningColor;
                         break;
-                    case TankComponent tank:
-                        text.Text = tank.ToDisplay() + " %";
+                    case LevelComponent level:
+                        text.Text = level.ToDisplay() + " %";
 
-                        float gradientStop = 1 - (tank.PercentageFull() / 100.0f);
+                        float levelGradientStop = 1 - (level.PercentageFull() / 100.0f);
+                        SvgLinearGradientServer levelGradient = (SvgLinearGradientServer)_svgElements[level.GraphicIDGradient];
+                        levelGradient.Stops[0].Offset = 0.0f;
+                        levelGradient.Stops[1].Offset = levelGradientStop;
+                        levelGradient.Stops[2].Offset = levelGradientStop;
+                        levelGradient.Stops[3].Offset = 1.0f;
+                        break;
+                    case TankComponent tank:
+                        text.Text = tank.ToDisplay();
+
+                        float gradientStop = 1 - (tank.ToPercentage() / 100.0f);
                         SvgLinearGradientServer gradient = (SvgLinearGradientServer)_svgElements[tank.GraphicIDGradient];
                         gradient.Stops[0].Offset = 0.0f;
                         gradient.Stops[1].Offset = gradientStop;
@@ -163,8 +188,26 @@ namespace MissionControl.UI.Widgets
                         text.Text = flow.ToDisplay() + " kg/s";
                         text.Color = flow.IsNominal(flow.MassFlow) ? nominalColor : warningColor;
                         break;
+                    case StackHealthComponent health:
+                        bool isActive = (DateTime.Now - _session.LastReceived).TotalMilliseconds < 4000;
+                        _svgElements[health.GraphicId2].Fill = (_session.Connected && isActive && health.IsMainAlive) ? aliveColor : warningColor;
+                        _svgElements[health.GraphicId4].Fill = (_session.Connected && isActive && health.IsSensorAlive) ? aliveColor : warningColor;
+                        _svgElements[health.GraphicId3].Fill = (_session.Connected && isActive && health.IsActuatorAlive) ? aliveColor : warningColor;
+                        break;
+                    
                 }
             }
+            SvgText ofRatioText = FindTextByID("MASS_FLOW_RATIO");
+            FlowComponent fuelFlow = _session.Mapping.ComponentsByID()[100] as FlowComponent;
+            FlowComponent oxidFlow = _session.Mapping.ComponentsByID()[101] as FlowComponent;
+            if (ofRatioText != null && fuelFlow != null && oxidFlow != null)
+            {
+                float ofRatio = (oxidFlow.MassFlow / fuelFlow.MassFlow);
+                ofRatioText.Text = !float.IsNaN(ofRatio) ? 
+                        Component.ToRounded(oxidFlow.MassFlow / fuelFlow.MassFlow, 2) 
+                        : "0.00";
+            }
+            
             UpdateImage();
 
         }
@@ -187,7 +230,7 @@ namespace MissionControl.UI.Widgets
     //            imageView.Pixbuf = new Pixbuf(ms.ToArray());
                 CairoHelper.SetSourcePixbuf(cr, new Pixbuf(ms.ToArray()), 0,0);
             }
-
+            
             cr.Paint();
             cr.Restore();
 

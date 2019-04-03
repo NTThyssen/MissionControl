@@ -7,41 +7,36 @@ using MissionControl.Data;
 namespace MissionControl.UI.Widgets
 {
 
-    public interface IStateControlListener
-    {
-        void OnStatePressed(State command);
-    }
-
     [System.ComponentModel.ToolboxItem(true)]
     public partial class StateControlWidget : Bin
     {
+        Dictionary<EventBox, State> _stateTexts;
 
-        IStateControlListener _listener;
-        Dictionary<Button, State> _stateButtons;
-
-        public StateControlWidget(List<State> states, IStateControlListener listener)
+        public StateControlWidget(List<State> states)
         {
-            _listener = listener ?? throw new ArgumentNullException(nameof(listener), "A listener was not provided");
 
             Build();
-            VBox container = new VBox(false, 10);
+            VBox container = new VBox(false, 5);
 
-            _stateButtons = new Dictionary<Button, State>();
+            _stateTexts = new Dictionary<EventBox, State>();
 
             for (int i = 0; i < states.Count; i++)
             {
-                Button stateButton = new Button
+                EventBox backgroundBox = new EventBox()
                 {
-                    Label = states[i].StateName,
                     WidthRequest = 80,
-                    HeightRequest = 40
+                    HeightRequest = 25
                 };
-                stateButton.Pressed += StateButton_Pressed;
+                
+                Label text = new Label
+                {
+                    Text = states[i].StateName
+                };
 
+                backgroundBox.Add(text);
+                _stateTexts.Add(backgroundBox, states[i]);
 
-                _stateButtons.Add(stateButton, states[i]);
-
-                container.PackStart(stateButton, false, false, 0);
+                container.PackStart(backgroundBox, false, false, 0);
             }
 
             Add(container);
@@ -50,49 +45,23 @@ namespace MissionControl.UI.Widgets
 
         }
 
-        void StateButton_Pressed(object sender, EventArgs e)
-        {
-            _listener.OnStatePressed(_stateButtons[(Button)sender]);
-        }
-
-
         public void SetCurrentState(State state, bool isAuto)
         {
-            foreach(KeyValuePair<Button, State> kv in _stateButtons)
+            foreach(KeyValuePair<EventBox, State> kv in _stateTexts)
             {
-
-                if (isAuto)
+                if (kv.Value.StateID == state.StateID)
                 {
-                    if (kv.Value.StateID == state.StateID)
-                    {
-                        kv.Key.ModifyBg(StateType.Normal, Colors.ButtonHighlight);
-                        kv.Key.ModifyBg(StateType.Prelight, Colors.ButtonHighlight);
-                        kv.Key.ModifyBg(StateType.Insensitive, Colors.ButtonHighlight);
-                    }
-                    else
-                    {
-                        kv.Key.ModifyBg(StateType.Normal, Colors.ButtonDim);
-                        kv.Key.ModifyBg(StateType.Prelight, Colors.ButtonDim);
-                        kv.Key.ModifyBg(StateType.Insensitive, Colors.ButtonDisabled);
-                    }
-                    kv.Key.Sensitive = false;
+                    kv.Key.ModifyBg(StateType.Normal, Colors.ButtonHighlight);
+                    kv.Key.ModifyBg(StateType.Insensitive, Colors.ButtonHighlight);
+                    kv.Key.Children[0].ModifyFg(StateType.Normal, Colors.ButtonHighlightText);
+                    kv.Key.Children[0].ModifyFg(StateType.Insensitive, Colors.ButtonHighlightText);
                 }
                 else
                 {
-                    if (kv.Value.StateID == state.StateID)
-                    {
-                        kv.Key.ModifyBg(StateType.Normal, Colors.ButtonHighlight);
-                        kv.Key.ModifyBg(StateType.Prelight, Colors.ButtonHighlight);
-                        kv.Key.ModifyBg(StateType.Insensitive, Colors.ButtonHighlight);
-                        kv.Key.Sensitive = false;
-                    }
-                    else
-                    {
-                        kv.Key.ModifyBg(StateType.Normal, Colors.ButtonNormal);
-                        kv.Key.ModifyBg(StateType.Prelight, Colors.ButtonNormal);
-                        kv.Key.ModifyBg(StateType.Insensitive, Colors.ButtonDisabled);
-                        kv.Key.Sensitive = true;
-                    }
+                    kv.Key.ModifyBg(StateType.Normal, Colors.ButtonNormal);
+                    kv.Key.ModifyBg(StateType.Insensitive, Colors.ButtonNormal);
+                    kv.Key.Children[0].ModifyFg(StateType.Normal, Colors.ButtonNormalText);
+                    kv.Key.Children[0].ModifyFg(StateType.Insensitive, Colors.ButtonNormalText);
                 }
             }
         }

@@ -125,7 +125,7 @@ namespace MissionControl.UI
                 _fileLabel.Text = (fileName.Length > 30) ? "..." + fileName.Substring(fileName.Length - 30 -1 ) : fileName;
 
                 StreamReader file = new StreamReader(fileName);
-                _data = FormatReader.PrettyToData(file);
+                _data = FormatPretty.PrettyToData(file);
                 _sensorStore.Clear();
                 foreach (KeyValuePair<string, List<float>> sensor in _data.Values)
                 {

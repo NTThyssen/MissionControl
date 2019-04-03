@@ -1,13 +1,46 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using MissionControl.UI;
+using System.Text;
+using MissionControl.Data.Components;
 
 namespace MissionControl.Data
 {
-
-    public static class FormatReader
+    public static class FormatPretty
     {
+     
+        public static string PrettyHeader(List<ILoggable> components)
+        {
+            StringBuilder sb = new StringBuilder();
+
+            string sep = (components.Count > 0) ? "," : string.Empty;
+            sb.Append("Time" + sep);
+
+            for (int i = 0; i < components.Count; i++)
+            {
+                sep = (i < components.Count - 1) ? "," : string.Empty;
+                sb.Append(components[i].LogHeader() + sep);
+            }
+
+            return sb.ToString();
+        }
+
+        public static string PrettyLine(long time, List<ILoggable> components)
+        {
+            StringBuilder sb = new StringBuilder();
+
+            string sep = (components.Count > 0) ? "," : string.Empty;
+            sb.Append(time + sep);
+
+            for (int i = 0; i < components.Count; i++)
+            {
+                sep = (i < components.Count - 1) ? "," : string.Empty;
+                string logval = components[i].ToLog();
+                sb.Append(logval + sep);
+            }
+
+            return sb.ToString();
+        }
 
         public static PlotData PrettyToData (StreamReader file) {
 
@@ -68,6 +101,6 @@ namespace MissionControl.Data
 
             return data;
         }
-
+        
     }
 }

@@ -9,17 +9,20 @@ namespace MissionControl.Data.Components
         public float OpenPosition { get; }
 
         public override string TypeName => "Servo";
+        public override int ByteSize => 2;
+        public override bool Signed => false;
+        public override int Raw => _rawPosition;
 
-        public ServoComponent(byte boardID, int byteSize, string graphicID, string name, float closePosition, float openPosition, string graphicIDSymbol) : base(boardID, byteSize, graphicID, name, graphicIDSymbol)
+        public ServoComponent(byte boardID, string graphicID, string name, float closePosition, float openPosition, string graphicIDSymbol) : base(boardID, graphicID, name, graphicIDSymbol)
         {
             ClosePosition = closePosition;
             OpenPosition = openPosition;
         }
 
-        public ServoComponent(byte boardID, int byteSize, string graphicID, string name, string graphicIDSymbol) : base(boardID, byteSize, graphicID, name, graphicIDSymbol)
+        public ServoComponent(byte boardID, string graphicID, string name, string graphicIDSymbol) : base(boardID, graphicID, name, graphicIDSymbol)
         {
-            ClosePosition = 100.0f;
-            OpenPosition = 0.0f;
+            ClosePosition = 0.0f;
+            OpenPosition = 100.0f;
         }
 
         public override void Set(int val)
@@ -29,17 +32,17 @@ namespace MissionControl.Data.Components
 
         public float Degree()
         {
-            return (_rawPosition / 100.0f) * 360;
+            return (Percentage() / 100.0f) * 360;
         }
 
         public float Percentage()
         {
-            return _rawPosition;
+            return ((float) _rawPosition) / ushort.MaxValue * 100.0f;
         }
 
         public string ToLog()
         {
-            return "" + Percentage();
+            return ToRounded(Percentage(), 1);
         }
 
         public string LogHeader()

@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Timers;
+using MissionControl.Connection.Commands;
 using MissionControl.Data;
 using MissionControl.Data.Components;
 
@@ -8,21 +10,45 @@ namespace MissionControl.Connection
 {
     public class SimSerialPort : ISerialPort
     {
-
-        private int _index;
-        private byte[] _buffer;
+        private Queue<byte> _buffer;
         private int _time;
         private ComponentMapping _mapping;
 
-        private DateTime _lastReadFull;
+        private Protocol _protocol;
 
         public SimSerialPort(ComponentMapping mapping)
         {
             _time = 0;
-            _index = 0;
             _mapping = mapping;
-            _buffer = GenerateFakeBytes(_time, _mapping);
-            _lastReadFull = new DateTime(1970, 1, 1);
+            _protocol = new Protocol(PackageHandler);
+            _buffer = new Queue<byte>();
+            Timer t = new Timer { Interval = 359 };
+            t.Elapsed += (sender, args) =>
+            {
+               _time += 359;
+               byte[] bytes = GenerateFakeBytes(_time, _mapping);
+               lock (_buffer)
+               {
+                   foreach (byte b in bytes)
+                   {
+                       _buffer.Enqueue(b);
+                   }  
+               }
+            };
+            t.Start();
+        }
+
+        private void PackageHandler(Package p)
+        {
+            Console.WriteLine("Simulated Serial Port received package");
+            byte[] bytes = _protocol.GetAcknowledgeWriteBytes(p);
+            lock (_buffer)
+            {
+                foreach (byte b in bytes)
+                {
+                    _buffer.Enqueue(b);
+                }
+            }
         }
 
         public string PortName { get; set; }
@@ -30,28 +56,16 @@ namespace MissionControl.Connection
 
         public bool IsOpen { get; set; }
 
-        public int BytesToRead
+        public int BytesToRead => _buffer.Count;
+
+        public void Close()
         {
-            get
-            {
-                if (_buffer.Length - _index == 0)
-                {
-                    if ((int)(DateTime.Now - _lastReadFull).TotalMilliseconds > 100)
-                    {
-                        _index = 0;
-                        _time++;
-                        _buffer = GenerateFakeBytes(_time, _mapping);
-                        return _buffer.Length;
-                    }
-                    return 0;
-                }
-                return _buffer.Length - _index;
-            }
+            IsOpen = false;
         }
 
         public void DiscardInBuffer()
         {
-            _index = 0;
+            _buffer.Clear();
         }
 
         public void Open()
@@ -61,34 +75,46 @@ namespace MissionControl.Connection
 
         public int Read(byte[] b, int o, int c)
         {
-
-            int nbytes = Math.Min(c, _buffer.Length - _index);
-            Array.Copy(_buffer, _index, b, 0, nbytes);
-            _index += nbytes;
-            if (_index == _buffer.Length)
+            int nbytes;
+            lock (_buffer)
             {
-                _lastReadFull = DateTime.Now;
+                nbytes = Math.Min(c, _buffer.Count);
+                for (int i = 0; i < nbytes; i++)
+                {
+                    b[i] = _buffer.Dequeue();
+                }
+      
+                /*Console.Write("Simulated sending: ");
+                Protocol.PrintArray(b);
+                Console.Write("Queue: ");
+                Protocol.PrintArray(_buffer.ToArray());
+                Console.WriteLine();*/
             }
-
+           
             return nbytes;
         }
 
         public void Write(byte[] buffer, int offset, int count)
         {
-            Console.Write("Writing to serial port: ");
-            for (int i = 0; i < count; i++)
+            Console.Write("Writing to simulated serial port: ");
+            Protocol.PrintArray(buffer);
+            if (new Random().NextDouble() > 0.5)
             {
-                Console.Write("{0:X} ", buffer[i]);
+                _protocol.Add(buffer);    
             }
-            Console.WriteLine();
+            else
+            {
+                Console.WriteLine("Package was lost!");
+            }
+            
         }
 
         public static byte[] GenerateFakeBytes(int time, ComponentMapping mapping)
         {
-            byte[] startNoise = { 0xA, 0xFF, 0xC };
-            byte[] startCode = { 0xFF, 0x01 };
-            byte[] endCode = { 0x01, 0xFF, 0xFF, 0xFF, 0xFF };
-            byte[] endNoise = { 0x0B, 0x0C, 0x0D };
+            byte[] startNoise = { 0xA, 0xB, 0xC, 0xFF, 0xFF };
+            byte[] startCode = { 0xFD, 0xFF, 0xFF, 0xFF, 0xFF };
+            byte[] endCode = { 0xFE, 0xFF, 0xFF, 0xFF, 0xFF };
+            byte[] endNoise = { 0x0D, 0x0E, 0x0F, 0xFF, 0xFF };
 
             Random random = new Random();
 
@@ -98,17 +124,15 @@ namespace MissionControl.Connection
             btime[0] = 0xC9;
             Array.Copy(timeValue, 0, btime, 1, timeValue.Length);
 
-            byte stateValue = (byte) random.Next(0, 3);
+            byte stateValue = (byte) random.Next(0, 9);
             byte[] bstate = { 0xC8, stateValue };
-            byte[] bauto = { 0xCA, (byte) random.Next(0, 2) };
+            byte[] bauto = { 0xCA, (byte) random.Next(0, 1) };
 
-            List<byte[]> data = new List<byte[]>
+            List<byte[]> payload = new List<byte[]>
             {
-                startNoise,
-                startCode,
                 btime,
-                bstate,
-                bauto
+                bstate
+                //bauto
             };
 
             foreach (MeasuredComponent c in mapping.MeasuredComponents())
@@ -120,25 +144,33 @@ namespace MissionControl.Connection
                 switch (c)
                 {
                     case PressureComponent pt:
-                        value = BitConverter.GetBytes((short)random.Next(0, 40));
+                        value = BitConverter.GetBytes((short)random.Next(400, 1900));
                         break;
                     case TemperatureComponent tc:
-                        value = BitConverter.GetBytes((short)random.Next(-50, 300));
+                        value = BitConverter.GetBytes((short)random.Next(short.MinValue, short.MaxValue));
                         break;
                     case LoadComponent load:
-                        value = BitConverter.GetBytes((short)random.Next(0, 311));
+                        value = BitConverter.GetBytes((short)random.Next(0, 2124));
                         break;
-                    case TankComponent tank:
-                        value = BitConverter.GetBytes((short)random.Next(0, (int)tank.Full + 1));
+                    case LevelComponent tank:
+                        value = BitConverter.GetBytes((short)random.Next(0, (int)tank.Total + 1));
                         break;
                     case ServoComponent servo:
-                        value = BitConverter.GetBytes((short)random.Next(0, 101));
+                        ushort randServoVal = (ushort) random.Next(0, ushort.MaxValue);
+                        value = BitConverter.GetBytes(randServoVal);
+                        break;
+                    case SimpleComponent simple:
+                        ushort randServoTargetVal = (ushort) random.Next(0, ushort.MaxValue);
+                        value = BitConverter.GetBytes(randServoTargetVal);
                         break;
                     case SolenoidComponent solenoid:
                         value = BitConverter.GetBytes((short)random.Next(0, 2));
                         break;
                     case VoltageComponent battery:
-                        value = BitConverter.GetBytes((short)random.Next(12, 14));
+                        value = BitConverter.GetBytes((ushort)random.Next(12, 14));
+                        break;
+                    case StackHealthComponent stack:
+                        value = new [] { (byte) random.Next(0, 8)};
                         break;
                 }
 
@@ -149,13 +181,27 @@ namespace MissionControl.Connection
 
                 sensor[0] = c.BoardID;
                 Array.Copy(value, 0, sensor, 1, value.Length);
-                data.Add(sensor);
+                payload.Add(sensor);
             }
+            
+            ushort payloadLength = (ushort) payload.SelectMany((byte[] arg) => arg).ToArray().Length;
+            
+            byte[] header = new byte[4];
+            header[0] = 0;
+            header[1] = 0;
+            byte[] payloadLengthBytes = BitConverter.GetBytes(payloadLength);
+            if (BitConverter.IsLittleEndian) { Array.Reverse(payloadLengthBytes); }
+            Array.Copy(payloadLengthBytes, 0, header, 2, 2);
 
-            data.Add(endCode);
-            data.Add(endNoise);
-
-            byte[] buffer = data.SelectMany((byte[] arg) => arg).ToArray();
+            
+            payload.Insert(0, startNoise);
+            payload.Insert(1, startCode);
+            payload.Insert(2, header);
+            
+            payload.Add(endCode);
+            payload.Add(endNoise);
+            
+            byte[] buffer = payload.SelectMany((byte[] arg) => arg).ToArray();
 
             return buffer;
 

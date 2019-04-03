@@ -12,14 +12,17 @@ namespace MissionControl.UI
         void ShowSessionSettings(bool initialWindow);
         void ShowPlotViewer();
         void StartUI(IUIEvents listener);
-        }
+        void ResetAutoSequenceTimer();
+    }
 
-    public class UserInterface : IUserInterface, ITestStandViewListener, ISessionSettingsViewListener
+    public class UserInterface : IUserInterface, ITestStandViewListener, ISessionSettingsViewListener, IAutoParameterListener
     {
 
         SessionSettingsView _newSessionView;
         TestStandView _testStandView;
         PlotView _plotView;
+        AutoRunConfigView _autoRunConfigView;
+        LoadComponent loadcell;
 
         private IUIEvents _listener;
         Session _session;
@@ -31,20 +34,27 @@ namespace MissionControl.UI
         public UserInterface(ref Session session)
         {
             _session = session;
-
         }
 
-        public void StartUI(IUIEvents listener) {
+        public void StartUI(IUIEvents listener)
+        {
             Application.Init();
 
             _listener = listener;
-            ShowSessionSettings(true);
-            //ShowTestStandView();
-            //ShowPlotViewer();
+            if (PreferenceManager.Manager.Preferences.Visual.ShowSettingsOnStartup)
+            {
+                ShowSessionSettings(true);
+            }
+            else
+            {
+                ShowTestStandView();
+            }
+
             Application.Run();
         }
 
         public bool UpdateControls() {
+            _session.UpdateComponents(_session.LastReceivedBytes);
             if(_testStandView != null)
             {
                 _testStandView.UpdateControls();
@@ -59,6 +69,11 @@ namespace MissionControl.UI
                 _testStandView.UpdateSVG();
             }
             return true;
+        }
+
+        public void ResetAutoSequenceTimer()
+        {
+            _testStandView.ResetTimer();
         }
 
         public void ShowSessionSettings(bool initialWindow)
@@ -100,6 +115,21 @@ namespace MissionControl.UI
             _plotView.DeleteEvent += (object o, DeleteEventArgs args) => _updateSVGTimer = SetUpdateSVGFrequency(_updateSVGTimer, UPDATE_FREQ_FOREGROUND);
             _updateSVGTimer = SetUpdateSVGFrequency(_updateSVGTimer, UPDATE_FREQ_BACKGROUND);
         }
+        
+        public void ShowAutoConfig()
+        {
+            if (_autoRunConfigView == null)
+            {
+                _autoRunConfigView = new AutoRunConfigView(this, PreferenceManager.Manager.Preferences.AutoSequence);
+            }
+            else
+            {
+                _autoRunConfigView.Destroy();
+                _autoRunConfigView = new AutoRunConfigView(this, PreferenceManager.Manager.Preferences.AutoSequence);
+            }
+            _autoRunConfigView.DeleteEvent += (object o, DeleteEventArgs args) => _updateSVGTimer = SetUpdateSVGFrequency(_updateSVGTimer, UPDATE_FREQ_FOREGROUND);
+            _updateSVGTimer = SetUpdateSVGFrequency(_updateSVGTimer, UPDATE_FREQ_BACKGROUND);
+        }
 
         public void OnMenuSettingsPressed()
         {
@@ -111,10 +141,22 @@ namespace MissionControl.UI
             ShowPlotViewer();
         }
 
-        public void OnStatePressed(State state)
+       
+
+        public void OnMenuAutoRunConfigPressed()
         {
-            StateCommand command = new StateCommand(state.StateID);
-            _listener.OnCommand(command);
+            ShowAutoConfig();
+            
+        }
+
+        public void OnFuelTankFillSet(float mass)
+        {
+            _listener.OnFuelTankFillSet(mass);
+        }
+
+        public void OnTarePressed()
+        {
+            _listener.OnTarePressed();
         }
 
         public void OnServoPressed(ServoComponent servo, float value)
@@ -123,17 +165,24 @@ namespace MissionControl.UI
             _listener.OnCommand(command);
         }
 
+        public void OnServoTimed(ServoComponent servo, float startValue, float endValue, int delayMillis)
+        {
+            ServoCommand command1 = new ServoCommand(servo.BoardID, startValue);
+            ServoCommand command2 = new ServoCommand(servo.BoardID, endValue);
+            _listener.OnTimedCommand(command1, command2, delayMillis);
+        }
+
         public void OnSolenoidPressed(SolenoidComponent solenoid, bool open)
         {
             SolenoidCommand command = new SolenoidCommand(solenoid.BoardID, open);
             _listener.OnCommand(command);
         }
 
-        public void OnSave(Session session)
+        public void OnSave(Preferences preferences)
         {
             if (_listener != null)
             {
-                _listener.OnSessionSettingsUpdated(session);
+                _listener.OnSessionSettingsUpdated(preferences);
             }
 
             if (_newSessionView != null) _newSessionView.Destroy();
@@ -181,9 +230,25 @@ namespace MissionControl.UI
             _listener.OnConnectPressed();
         }
 
-        public void OnRunAutoSequencePressed()
+        public void OnDisconnectPressed()
         {
-            _listener.OnRunAutoSequencePressed();
+            _listener.OnDisconnectPressed();
+        }
+
+        public void OnStartAutoSequencePressed()
+        {
+            _listener.OnStartAutoSequencePressed();
+        }
+        
+        public void OnStopAutoSequencePressed()
+        {
+            _listener.OnStopAutoSequencePressed();
+        }
+
+        public void OnParametersSave(AutoParameters ap)
+        {
+            _listener.OnAutoParametersSet(ap);
+            _autoRunConfigView?.Destroy();
         }
     }
 }

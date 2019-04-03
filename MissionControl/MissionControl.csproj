@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="..\packages\NUnit.3.11.0\build\NUnit.props" Condition="Exists('..\packages\NUnit.3.11.0\build\NUnit.props')" />
   <PropertyGroup>
@@ -28,6 +28,10 @@
     <PlatformTarget>x86</PlatformTarget>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Newtonsoft.Json, Version=12.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed">
+      <HintPath>..\packages\Newtonsoft.Json.12.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="Mono.Posix" />
     <Reference Include="gtk-sharp, Version=2.12.0.0, Culture=neutral, PublicKeyToken=35e10195dab3c99f" />
@@ -68,10 +72,24 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Connection\Commands\Acknowledgement.cs" />
+    <Compile Include="Connection\Commands\AutoParameters.cs" />
+    <Compile Include="Connection\Commands\AutoParametersCommand.cs" />
+    <Compile Include="Connection\EthernetPort.cs" />
+    <Compile Include="Connection\Protocol.cs" />
+    <Compile Include="Data\Components\SimpleComponent.cs" />
+    <Compile Include="Data\Components\StackHealthComponent.cs" />
+    <Compile Include="Data\Components\TankComponent.cs" />
+    <Compile Include="Data\FormatRaw.cs" />
+    <Compile Include="Data\Preferences.cs" />
     <Compile Include="gtk-gui\generated.cs" />
+    <Compile Include="gtk-gui\MissionControl.UI.LabelledCheckboxWidget.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Data\LogThread.cs" />
+    <Compile Include="Tests\UIInterfaceTests.cs" />
+    <Compile Include="Tests\WriteTests.cs" />
+    <Compile Include="UI\AutoRunConfigView.cs" />
     <Compile Include="UI\IUIEvents.cs" />
     <Compile Include="UI\UserInterface.cs" />
     <Compile Include="UI\SessionSettingsView.cs" />
@@ -83,17 +101,17 @@
     <Compile Include="Data\Session.cs" />
     <Compile Include="Connection\Commands\Command.cs" />
     <Compile Include="Connection\Commands\ValveCommand.cs" />
-    <Compile Include="Connection\Commands\StateCommand.cs" />
     <Compile Include="Data\DataPacket.cs" />
     <Compile Include="Data\Components\Component.cs" />
     <Compile Include="Data\Components\PressureComponent.cs" />
     <Compile Include="Data\Components\TemperatureComponent.cs" />
-    <Compile Include="Data\Components\TankComponent.cs" />
+    <Compile Include="Data\Components\LevelComponent.cs" />
     <Compile Include="UI\ILockable.cs" />
     <Compile Include="Data\Components\ServoComponent.cs" />
     <Compile Include="Data\Components\VoltageComponent.cs" />
     <Compile Include="Data\Components\LoadComponent.cs" />
     <Compile Include="Data\Components\SolenoidComponent.cs" />
+    <Compile Include="UI\Widgets\LabelledCheckboxWidget.cs" />
     <Compile Include="UI\Widgets\ValveControlWidget.cs" />
     <Compile Include="gtk-gui\MissionControl.UI.Widgets.ValveControlWidget.cs" />
     <Compile Include="gtk-gui\MissionControl.UI.SessionSettingsView.cs" />
@@ -110,8 +128,7 @@
     <Compile Include="UI\Widgets\DSectionTitle.cs" />
     <Compile Include="Data\Components\ValveComponent.cs" />
     <Compile Include="Connection\IOThread.cs" />
-    <Compile Include="Data\FormatWriter.cs" />
-    <Compile Include="Data\FormatReader.cs" />
+    <Compile Include="Data\FormatPretty.cs" />
     <Compile Include="Data\Components\ILoggable.cs" />
     <Compile Include="Data\State.cs" />
     <Compile Include="Data\PreferenceManager.cs" />
@@ -153,9 +170,11 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
-    <None Include="ToDo.txt" />
+    <Content Include="README.md" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="componentMappingSchema.xml" />
+    <Content Include="configComponentMapping.xml" />
     <Content Include="Resources\TestStand.svg">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>

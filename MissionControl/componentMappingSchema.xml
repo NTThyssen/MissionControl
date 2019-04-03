@@ -1,0 +1,72 @@
+<?xml version="1.0"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+           targetNamespace="https://www.w3schools.com"
+           xmlns="https://www.w3schools.com"
+           elementFormDefault="qualified">
+
+    <xs:element name="componentMapping" type="ComponentMapping"/>
+    <xs:complexType name="ComponentMapping">
+        <xs:all>
+            <xs:element name="components" type="components"/>            
+        </xs:all>
+    </xs:complexType>
+    
+    <xs:complexType name="components">
+        <xs:all>
+            <xs:element name="messurebleComp" type="messurebleComponenet"/>
+            <xs:element name="computedComponenet" type="comptuedComponent"/>
+        </xs:all>
+    </xs:complexType>
+    <xs:complexType name="messurebleComponenet">
+            <xs:all>
+                <xs:element name="pressure" type="pressureComponent"/>
+                <xs:element name="thermocouple" type="thermocoupleComponent"/>
+                <xs:element name="servo" type="servoComponenet"/>
+                <xs:element name="load" type="loadCell"/>
+            </xs:all>
+    </xs:complexType>
+
+    <xs:complexType name="comptuedComponent">
+        <xs:all>
+            <xs:element name="flow" type="flowComponenet"/>
+        </xs:all>
+    </xs:complexType>
+    
+    <xs:complexType name="flowComponenet">
+        <xs:attribute name="boardID" type="xs:byte" use="required"/>
+        <xs:attribute name="graphicID" type="xs:string" use="required"/>
+    </xs:complexType>
+
+    <xs:complexType name="loadCell">
+        <xs:attribute name="boardID" type="xs:byte" use="required"/>
+        <xs:attribute name="byteSize" type="xs:integer" use="required"/>
+        <xs:attribute name="graphicID" type="xs:string" use="required"/>
+        <xs:attribute name="name" type="xs:string" use="required"/>
+        <xs:attribute name="scale" type="xs:integer" default="0"/>
+    </xs:complexType>
+
+    <xs:complexType name="pressureComponent">
+            <xs:attribute name="boardID"  type="xs:byte" use="required" />
+            <xs:attribute name="byteSize" type="xs:int" use="required"/>
+            <xs:attribute name="graphicID" type="xs:string" use="required"/>
+            <xs:attribute name="name" type="xs:string" use="required"/>
+            <xs:attribute name="scale" type="xs:integer" default="0"/>
+    </xs:complexType>
+    
+    
+    <xs:complexType name="thermocoupleComponent">
+            <xs:attribute name="boardID"  type="xs:byte" use="required"/>
+            <xs:attribute name="byteSize" type="xs:int" use="required"/>
+            <xs:attribute name="graphicID" type="xs:string" use="required"/>
+            <xs:attribute name="name" type="xs:string" use="required"/>
+            <xs:attribute name="scale" type="xs:integer" default="0"/>
+    </xs:complexType>
+    
+    <xs:complexType name="servoComponenet">
+            <xs:attribute name="boardId" type="xs:byte" use="required"/>
+            <xs:attribute name="byteSize" type="xs:int" use="required"/>
+            <xs:attribute name="graphicID" type="xs:string" use="required"/>
+            <xs:attribute name="name" type="xs:string" use="required"/>
+            <xs:attribute name="graphicIDSymbol" type="xs:string" use="required"/>
+    </xs:complexType>
+</xs:schema>

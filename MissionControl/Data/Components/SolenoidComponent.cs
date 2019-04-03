@@ -10,8 +10,12 @@ namespace MissionControl.Data.Components
         };
 
         private int _raw;
+        
+        public override int ByteSize => 2;
+        public override bool Signed => false;
+        public override int Raw => _raw;
 
-        public SolenoidComponent(byte boardID, int byteSize, string graphicID, string name, string graphicIDSymbol) : base(boardID, byteSize, graphicID, name, graphicIDSymbol)
+        public SolenoidComponent(byte boardID, string graphicID, string name, string graphicIDSymbol) : base(boardID, graphicID, name, graphicIDSymbol)
         {
         }
 
